@@ -186,18 +186,34 @@ async function reveal() {
   if (selectedTopic !== 'chart' && !requireSubscription()) return;
 
   // --- 4. Calculate the three placements from astrology.js ---
-  // We parse the date at noon to avoid timezone edge cases
   const bd    = new Date(birthDate + 'T12:00:00');
   const month = bd.getMonth() + 1;
   const day   = bd.getDate();
 
-  const sunIdx    = getSunSign(month, day);
-  const moonIdx   = estimateMoonSign(bd);
-  const risingIdx = estimateRising(bd, birthTime);
+  const sunIdx  = getSunSign(month, day);
+  const moonIdx = estimateMoonSign(bd);
+  const sun     = SIGNS[sunIdx];
+  const moon    = SIGNS[moonIdx];
 
-  const sun    = SIGNS[sunIdx];
-  const moon   = SIGNS[moonIdx];
-  const rising = risingIdx !== null ? SIGNS[risingIdx] : null;
+  // Geocode birth city to get lat/lon for accurate rising sign
+  let rising = null;
+  if (birthTime && birthCity) {
+    try {
+      const geo = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(birthCity)}&format=json&limit=1`,
+        { headers: { 'Accept-Language': 'en' } }
+      );
+      const geoData = await geo.json();
+      if (geoData.length > 0) {
+        const lat = parseFloat(geoData[0].lat);
+        const lon = parseFloat(geoData[0].lon);
+        const risingIdx = calculateRising(bd, birthTime, lat, lon);
+        if (risingIdx !== null) rising = SIGNS[risingIdx];
+      }
+    } catch (_) {
+      // Geocoding failed — rising sign stays null
+    }
+  }
 
   // --- 5. Save birth info immediately (don't wait for reading to complete) ---
   saveProfile();

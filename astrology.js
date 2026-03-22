@@ -67,18 +67,39 @@ function estimateMoonSign(birthDate) {
 
 // ------------------------------------------------------------
 // RISING SIGN (Ascendant)
-// Uses Greenwich Mean Sidereal Time + birth hour to estimate
-// the ascendant. Still approximate without exact latitude/longitude
-// but far more accurate than splitting the day into 12 chunks.
+// Calculates the ascendant from birth date, local time,
+// and geographic coordinates (lat/lon from birth city geocoding).
+// Formula: LST = GMST + longitude, then standard ASC formula.
 // ------------------------------------------------------------
-function estimateRising(birthDate, birthTime) {
-  if (!birthTime) return null;
-  const [h, m]      = birthTime.split(':').map(Number);
-  const epoch       = new Date('2000-01-01T12:00:00Z');
-  const daysSince   = (birthDate - epoch) / 86400000;
-  // GMST at J2000.0 was 280.46° — advances 360.9856°/day
-  const gmst        = (280.46 + 360.9856 * daysSince) % 360;
-  const hourDeg     = (h + m / 60) * 15; // 15° per hour
-  const ascLon      = ((gmst + hourDeg) % 360 + 360) % 360;
-  return Math.floor(ascLon / 30);
+function calculateRising(birthDate, birthTime, lat, lon) {
+  if (!birthTime || lat == null || lon == null) return null;
+
+  const [h, m] = birthTime.split(':').map(Number);
+
+  // Approximate UTC offset from longitude (solar time)
+  const utcOffset  = lon / 15;
+  const utcHour    = ((h + m / 60) - utcOffset + 24) % 24;
+
+  // Days since J2000.0 (Jan 1 2000, 12:00 UTC)
+  const epoch      = new Date('2000-01-01T12:00:00Z');
+  const birthUTC   = new Date(birthDate);
+  birthUTC.setUTCHours(Math.floor(utcHour), Math.round((utcHour % 1) * 60), 0, 0);
+  const d          = (birthUTC - epoch) / 86400000;
+
+  // GMST in degrees
+  const gmst       = ((280.46061837 + 360.98564736629 * d) % 360 + 360) % 360;
+
+  // Local Sidereal Time
+  const lst        = ((gmst + lon) % 360 + 360) % 360;
+
+  // Ascendant formula
+  const eps        = 23.437 * Math.PI / 180; // obliquity of ecliptic
+  const lstRad     = lst    * Math.PI / 180;
+  const latRad     = lat    * Math.PI / 180;
+  const y          = -Math.cos(lstRad);
+  const x          = Math.sin(lstRad) * Math.cos(eps) + Math.tan(latRad) * Math.sin(eps);
+  let   asc        = Math.atan2(y, x) * 180 / Math.PI;
+  if (asc < 0) asc += 360;
+
+  return Math.floor(asc / 30);
 }
