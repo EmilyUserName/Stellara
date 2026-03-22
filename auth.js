@@ -172,8 +172,17 @@ async function startCheckout() {
     headers: { 'Content-Type': 'application/json' },
     body:    JSON.stringify({ userId: currentUser.id, email: currentUser.email }),
   });
-  const { url } = await res.json();
-  window.location.href = url;
+  const data = await res.json();
+
+  if (!data.url) {
+    btn.disabled = false;
+    btn.textContent = 'Upgrade to Pro — $7 / month';
+    alert('Could not start checkout. Please try again or contact support.');
+    console.error('[Stellara] Checkout error:', data);
+    return;
+  }
+
+  window.location.href = data.url;
 }
 
 // ------------------------------------------------------------
