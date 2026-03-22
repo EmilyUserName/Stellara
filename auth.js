@@ -11,8 +11,9 @@ const SUPABASE_KEY = 'sb_publishable_MUwjhSn76HY6ADWKeoMkrA_BuAMfrBI';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let currentUser = null;
-let activeTab    = 'signin';
+let currentUser      = null;
+let currentSubscribed = false;
+let activeTab        = 'signin';
 
 // ------------------------------------------------------------
 // AUTH STATE — fires on page load and whenever user signs in/out
@@ -22,6 +23,15 @@ sb.auth.onAuthStateChange((_event, session) => {
   updateAuthUI();
   if (currentUser) loadProfile();
 });
+
+// Handle return from Stripe checkout
+if (new URLSearchParams(window.location.search).get('subscribed') === 'true') {
+  history.replaceState({}, '', '/');
+  // Poll briefly — webhook may not have fired yet
+  setTimeout(async () => {
+    await loadProfile();
+  }, 2000);
+}
 
 function updateAuthUI() {
   const emailEl  = document.getElementById('userEmail');
@@ -125,13 +135,44 @@ async function signOut() {
 }
 
 // ------------------------------------------------------------
-// GATE — call this before showing a paid/auth-gated feature
-// Returns true if user is logged in, false + opens modal if not
+// GATE — auth and subscription checks
 // ------------------------------------------------------------
 function requireAuth() {
   if (currentUser) return true;
   openAuthModal();
   return false;
+}
+
+function requireSubscription() {
+  if (!currentUser) { openAuthModal(); return false; }
+  if (currentSubscribed) return true;
+  openUpgradeModal();
+  return false;
+}
+
+// ------------------------------------------------------------
+// UPGRADE — Stripe checkout
+// ------------------------------------------------------------
+function openUpgradeModal() {
+  document.getElementById('upgradeOverlay').classList.add('active');
+}
+
+function closeUpgradeModal() {
+  document.getElementById('upgradeOverlay').classList.remove('active');
+}
+
+async function startCheckout() {
+  const btn = document.getElementById('upgradeBtn');
+  btn.disabled = true;
+  btn.textContent = 'Redirecting…';
+
+  const res  = await fetch('/api/create-checkout', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ userId: currentUser.id, email: currentUser.email }),
+  });
+  const { url } = await res.json();
+  window.location.href = url;
 }
 
 // ------------------------------------------------------------
@@ -140,23 +181,22 @@ function requireAuth() {
 async function loadProfile() {
   const { data } = await sb
     .from('profiles')
-    .select('name, birth_date, birth_time, birth_city')
+    .select('name, birth_date, birth_time, birth_city, subscribed')
     .eq('id', currentUser.id)
     .maybeSingle();
 
   if (!data || !data.name) {
-    // No profile yet — show the form
     showForm();
     return;
   }
 
-  // Pre-fill the hidden form fields (reveal() reads from these)
+  currentSubscribed = data.subscribed || false;
+
   document.getElementById('name').value      = data.name;
   document.getElementById('birthDate').value = data.birth_date || '';
   document.getElementById('birthTime').value = data.birth_time || '';
   document.getElementById('birthCity').value = data.birth_city || '';
 
-  // Show the home screen
   document.getElementById('welcomeName').textContent = data.name;
   showHome();
 }

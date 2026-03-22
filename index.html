@@ -267,6 +267,31 @@
 
 
   <!-- =====================================================
+       UPGRADE MODAL — shown when a free user hits a pro feature
+       ===================================================== -->
+  <div class="auth-overlay" id="upgradeOverlay" onclick="closeUpgradeModal()">
+    <div class="auth-modal" onclick="event.stopPropagation()">
+      <button class="auth-close" onclick="closeUpgradeModal()">×</button>
+      <div class="auth-logo">✦</div>
+      <h2 class="auth-modal-title">Unlock Stellara Pro</h2>
+      <p class="auth-modal-sub">Everything you need to read your sky, every day.</p>
+
+      <div class="upgrade-features">
+        <div class="upgrade-feature">✦ 13 focused reading topics — Love, Career, Shadow Work & more</div>
+        <div class="upgrade-feature">✦ 4 reading styles — Psychological, Spiritual, Classical, Modern</div>
+        <div class="upgrade-feature">✦ Daily personalized reading delivered to your inbox</div>
+        <div class="upgrade-feature">✦ Fresh cosmic insight every morning, tailored to your chart</div>
+      </div>
+
+      <button class="btn" id="upgradeBtn" onclick="startCheckout()" style="margin-top:24px;">
+        Upgrade to Pro — $7 / month
+      </button>
+      <p class="auth-error" style="margin-top:12px; color:var(--silver); font-size:0.75rem;">Cancel anytime. Billed monthly.</p>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
        AUTH MODAL — sign in / sign up overlay
        ===================================================== -->
   <div class="auth-overlay" id="authOverlay" onclick="closeAuthModal()">

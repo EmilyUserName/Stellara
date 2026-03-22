@@ -623,6 +623,25 @@ select option { background: var(--navy-2); }
 
 
 /* ------------------------------------------------------------
+   UPGRADE MODAL
+   ------------------------------------------------------------ */
+.upgrade-features {
+  text-align: left;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.upgrade-feature {
+  font-size: 0.82rem;
+  color: var(--silver-light);
+  line-height: 1.5;
+  padding-left: 4px;
+}
+.upgrade-feature::first-letter { color: var(--accent); }
+
+
+/* ------------------------------------------------------------
    AUTH MODAL
    ------------------------------------------------------------ */
 .auth-overlay {
