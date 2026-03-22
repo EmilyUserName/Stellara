@@ -468,6 +468,27 @@ select option { background: var(--navy-2); }
   color: var(--white);
   box-shadow: 0 0 10px rgba(126,168,212,0.12);
 }
+.pill-pro, .pill-free {
+  display: inline-block;
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.pill-pro {
+  background: rgba(126,168,212,0.18);
+  color: var(--accent);
+  border: 1px solid rgba(126,168,212,0.35);
+}
+.pill-free {
+  background: rgba(255,255,255,0.07);
+  color: var(--silver);
+  border: 1px solid rgba(255,255,255,0.15);
+}
 
 
 /* ------------------------------------------------------------
