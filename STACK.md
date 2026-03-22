@@ -18,6 +18,9 @@
   - Generates personalized birth chart readings and daily transit interpretations
   - Called via the `/api/horoscope` serverless function
 
+## Domain
+- **stellara-horoscope.com** — registered via Cloudflare Registrar, DNS pointed to Netlify
+
 ## Hosting & Deployment
 - **Netlify** — [stellara-stars.netlify.app](https://stellara-stars.netlify.app)
   - Connected to GitHub for continuous deployment (push to `main` → auto-deploy)
