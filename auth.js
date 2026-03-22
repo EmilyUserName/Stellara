@@ -144,6 +144,7 @@ function requireAuth() {
 }
 
 function requireSubscription() {
+  console.log('[Stellara] requireSubscription — currentUser:', !!currentUser, '| currentSubscribed:', currentSubscribed);
   if (!currentUser) { openAuthModal(); return false; }
   if (currentSubscribed) return true;
   openUpgradeModal();
