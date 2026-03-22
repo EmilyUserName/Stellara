@@ -168,7 +168,7 @@ Write in a flowing, literary style. No bullet points. No headers. Just paragraph
     document.getElementById('placements').innerHTML = placementsHTML;
 
     // --- 10. Fill in the reading text ---
-    document.getElementById('resultName').textContent     = name;
+    document.getElementById('resultName').textContent     = name + "'s";
     document.getElementById('chartReading').textContent   = parts[0].trim();
     document.getElementById('transitReading').textContent = (parts[1] || '').trim();
     document.getElementById('todayDate').textContent      = today;
