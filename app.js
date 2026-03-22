@@ -249,13 +249,13 @@ Today's date: ${today}
 
 Write two sections separated by the exact delimiter "---TRANSITS---":
 
-SECTION 1 — CHART READING (3–4 paragraphs):
+SECTION 1 — CHART READING (2 paragraphs max):
 ${topic.prompt1(name, sun, moon, rising, partnerInfo)}
 
-SECTION 2 — TODAY (2–3 paragraphs):
+SECTION 2 — TODAY (1–2 paragraphs max):
 ${topic.prompt2(name, sun, moon, today, partnerInfo)}
 
-Write in a flowing, literary style. No bullet points. No headers. Just paragraphs.`;
+Be concise and potent — every sentence should land. No filler. No bullet points. No headers. Just paragraphs.`;
 
   // --- 7. Send the prompt to our serverless function ---
   // (horoscope.js in netlify/functions — that's what holds the API key safely)
