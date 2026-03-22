@@ -254,12 +254,11 @@ Write in a flowing, literary style. No bullet points. No headers. Just paragraph
 
     // --- 9. Render the placement cards (Sun / Moon / Rising) ---
     const placementsHTML = [
-      { label: 'Sun',    emoji: '☀️', value: sun },
-      { label: 'Moon',   emoji: '🌙', value: moon },
-      { label: 'Rising', emoji: '⬆️', value: rising || '—' }
+      { label: 'Sun',    value: sun },
+      { label: 'Moon',   value: moon },
+      { label: 'Rising', value: rising || '—' }
     ].map(p => `
       <div class="placement-card">
-        <div class="placement-emoji">${p.emoji}</div>
         <div class="placement-label">${p.label}</div>
         <div class="placement-value">${p.value}</div>
       </div>
