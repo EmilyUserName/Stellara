@@ -167,7 +167,7 @@ header p {
   letter-spacing: 0.06em;
   color: var(--white);
   margin-bottom: 28px;
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
 }
 .card-title span { color: var(--accent); font-size: 1rem; }
 
