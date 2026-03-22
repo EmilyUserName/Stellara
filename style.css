@@ -271,6 +271,10 @@ select option { background: var(--navy-2); }
   margin: 0 auto 40px;
   font-weight: 300;
 }
+.landing-hero em {
+  color: var(--silver-bright);
+  font-style: italic;
+}
 
 .landing-topics {
   display: flex;
@@ -290,8 +294,43 @@ select option { background: var(--navy-2); }
   letter-spacing: 0.06em;
 }
 
+.landing-value {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  background: rgba(11,22,48,0.5);
+  border: 1px solid rgba(126,168,212,0.12);
+  border-radius: 14px;
+  padding: 28px;
+  margin: 0 auto 36px;
+  max-width: 560px;
+  text-align: left;
+}
+.landing-plan { flex: 1; }
+.landing-plan-divider {
+  color: var(--accent);
+  font-size: 0.9rem;
+  padding: 0 20px;
+  padding-top: 2px;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+.landing-plan-name {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.landing-plan-desc {
+  font-size: 0.88rem;
+  color: var(--silver);
+  line-height: 1.7;
+}
+
 .landing-cta {
-  max-width: 320px;
+  max-width: 340px;
   margin: 0 auto;
 }
 
