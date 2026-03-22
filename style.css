@@ -380,6 +380,16 @@ select option { background: var(--navy-2); }
   text-transform: uppercase;
 }
 .edit-link:hover { color: var(--accent); }
+.placement-hint {
+  font-size: 0.75rem;
+  color: var(--silver);
+  opacity: 0.55;
+  text-align: center;
+  margin: 4px 0 0;
+}
+.placement-hint a { color: var(--accent); opacity: 0.8; }
+.placement-hint a:hover { opacity: 1; }
+
 .optional-label {
   font-size: 0.68rem;
   color: var(--silver);
