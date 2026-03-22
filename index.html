@@ -52,7 +52,7 @@
          ===================================================== -->
     <div id="landingSection">
       <div class="landing-hero">
-        <h2>Astrology that knows you — and updates every day.</h2>
+        <h2 id="landingHeadline"></h2>
         <p>Stellara reads your birth chart and connects it to what's happening in the sky <em>right now</em>. Not a generic horoscope. Your chart. Today's planets. Fresh every morning.</p>
       </div>
 
@@ -303,6 +303,52 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
     }
+  </script>
+  <script>
+    const HEADLINES = [
+      "Not your horoscope. Yours.",
+      "The only horoscope written for you, not your sign.",
+      "Your chart. Today's sky. Every day.",
+      "Ancient wisdom. Today's insight.",
+      "Your birth chart, alive and updated daily.",
+      "The stars have always known you.",
+      "Born under a specific sky. Read accordingly.",
+      "Your daily reading. Actually personal.",
+      "Astrology that keeps up with your life.",
+      "The sky has something to say to you today.",
+      "What the stars know about today — and about you.",
+      "Your cosmos. Read daily.",
+      "Everyone gets a horoscope. This one is only yours.",
+      "Finally, astrology that knows your name.",
+      "Not written for Scorpios. Written for you.",
+      "Your birth chart, read fresh every day.",
+      "One chart. Infinite readings.",
+      "Know yourself better. One day at a time.",
+      "Your story, written in the stars. Updated daily.",
+      "Astrology that knows you — and updates every day.",
+    ];
+
+    const el = document.getElementById('landingHeadline');
+    let current = Math.floor(Math.random() * HEADLINES.length);
+
+    function showHeadline(index, fade) {
+      if (fade) {
+        el.style.opacity = 0;
+        setTimeout(() => {
+          el.textContent = HEADLINES[index];
+          el.style.opacity = 1;
+        }, 400);
+      } else {
+        el.textContent = HEADLINES[index];
+      }
+    }
+
+    showHeadline(current, false);
+
+    setInterval(() => {
+      current = (current + 1) % HEADLINES.length;
+      showHeadline(current, true);
+    }, 4000);
   </script>
 
 </body>
