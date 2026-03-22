@@ -11,6 +11,61 @@
 
 
 // ------------------------------------------------------------
+// TOPIC SELECTION — tracks which focus pill is active
+// ------------------------------------------------------------
+let selectedTopic = 'chart';
+
+function selectTopic(el) {
+  document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  selectedTopic = el.dataset.topic;
+}
+
+const TOPIC_CONFIG = {
+  chart: {
+    section1Label: 'Your Cosmic Blueprint',
+    section2Label: 'How the sky speaks to your chart today',
+    prompt1: (name, sun, moon, rising) =>
+      `Give a personal, psychologically rich reading of ${name}'s ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''} combination. Highlight the interplay between their placements. Be specific and insightful, not generic. Avoid clichés. Reveal something they might not have heard before.`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe the current planetary weather (invent plausible but general transit themes for today — Mercury, Venus, Mars, Jupiter movements) and then specifically connect how this energy interacts with ${name}'s ${sun} Sun and ${moon} Moon. Give them 1-2 concrete things to lean into or watch out for today.`,
+  },
+  love: {
+    section1Label: 'Your Heart & Relational Style',
+    section2Label: 'Love energy in the sky today',
+    prompt1: (name, sun, moon, rising) =>
+      `Focus entirely on ${name}'s approach to love, relationships, and intimacy based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. Explore how they give and receive love, what they need from a partner, their attachment style, and patterns they may repeat. Be psychologically honest and compassionate.`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe what the current planetary energy means for love and relationships — focus on Venus, Mars, and the Moon's movements. Then connect this specifically to how ${name}'s ${sun} Sun and ${moon} Moon are being activated. Give 1-2 concrete things they can do or watch out for in their relationships today.`,
+  },
+  career: {
+    section1Label: 'Your Purpose & Ambition',
+    section2Label: 'Career energy in the sky today',
+    prompt1: (name, sun, moon, rising) =>
+      `Focus entirely on ${name}'s career, life purpose, and ambition based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. What drives them professionally? What kind of work fulfills them? What are their natural strengths and potential blind spots in a career context? Where are they being called to grow?`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe the current planetary energy around work and ambition — focus on Saturn, Mars, Mercury, and the Sun's movements. Then connect this specifically to ${name}'s ${sun} Sun and ${moon} Moon. Give 1-2 concrete actions or awarenesses for their professional life today.`,
+  },
+  finances: {
+    section1Label: 'Your Relationship with Abundance',
+    section2Label: 'Financial energy in the sky today',
+    prompt1: (name, sun, moon, rising) =>
+      `Focus entirely on ${name}'s relationship with money, resources, and material security based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. Explore their values around wealth, how they earn and spend, what abundance means to them at a deeper level, and any patterns around scarcity or generosity to be aware of.`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe the current planetary energy around finances and material decisions — focus on Venus, Jupiter, and Saturn movements. Then connect this to how ${name}'s ${sun} Sun and ${moon} Moon are being influenced. Give 1-2 concrete financial insights or awarenesses for today.`,
+  },
+  health: {
+    section1Label: 'Your Body, Mind & Rhythms',
+    section2Label: 'Wellbeing energy in the sky today',
+    prompt1: (name, sun, moon, rising) =>
+      `Focus entirely on ${name}'s health, wellbeing, and daily rhythms based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. Explore their physical and emotional needs, how stress shows up in their body, what restores them, and the connection between their inner world and physical vitality. Be holistic and grounded.`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe the current planetary energy around health and wellbeing — focus on the Moon, Mars, and Chiron movements. Then connect this to how ${name}'s ${sun} Sun and ${moon} Moon are being influenced. Give 1-2 concrete things they can do today to support their body and mind.`,
+  },
+};
+
+
+// ------------------------------------------------------------
 // REVEAL — runs when the user clicks "Reveal My Chart"
 // ------------------------------------------------------------
 async function reveal() {
@@ -55,6 +110,8 @@ async function reveal() {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
 
+  const topic = TOPIC_CONFIG[selectedTopic];
+
   const prompt = `You are Stellara, a sophisticated and poetic astrology guide. You combine psychological depth with cosmic wisdom. Your tone is warm, modern, and insightful — never generic.
 
 The user's name is ${name}.
@@ -66,11 +123,11 @@ Today's date: ${today}
 
 Write two sections separated by the exact delimiter "---TRANSITS---":
 
-SECTION 1 — BIRTH CHART READING (3–4 paragraphs):
-Give a personal, psychologically rich reading of their Sun/Moon${rising ? '/Rising' : ''} combination. Speak directly to ${name}. Highlight the interplay between their placements. Be specific and insightful, not generic. Avoid clichés. Reveal something they might not have heard before.
+SECTION 1 — CHART READING (3–4 paragraphs):
+${topic.prompt1(name, sun, moon, rising)}
 
-SECTION 2 — TODAY'S TRANSITS (2–3 paragraphs):
-Today is ${today}. Describe the current planetary weather (invent plausible but general transit themes for today — Mercury, Venus, Mars, Jupiter movements) and then specifically connect how this energy interacts with ${name}'s ${sun} Sun and ${moon} Moon. Give them 1-2 concrete things to lean into or watch out for today. Be specific to their chart, not generic horoscope copy.
+SECTION 2 — TODAY (2–3 paragraphs):
+${topic.prompt2(name, sun, moon, today)}
 
 Write in a flowing, literary style. No bullet points. No headers. Just paragraphs.`;
 
@@ -108,10 +165,12 @@ Write in a flowing, literary style. No bullet points. No headers. Just paragraph
     document.getElementById('placements').innerHTML = placementsHTML;
 
     // --- 10. Fill in the reading text ---
-    document.getElementById('resultName').textContent    = name;
-    document.getElementById('chartReading').textContent  = parts[0].trim();
+    document.getElementById('resultName').textContent     = name;
+    document.getElementById('chartReading').textContent   = parts[0].trim();
     document.getElementById('transitReading').textContent = (parts[1] || '').trim();
-    document.getElementById('todayDate').textContent     = today;
+    document.getElementById('todayDate').textContent      = today;
+    document.querySelector('#results .section-label').textContent       = topic.section1Label;
+    document.querySelector('.today-card .section-label').textContent    = topic.section2Label;
 
     // --- 11. Hide loading, show results ---
     document.getElementById('loading').className  = 'loading';

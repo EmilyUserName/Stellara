@@ -214,6 +214,44 @@ select option { background: var(--navy-2); }
 
 
 /* ------------------------------------------------------------
+   TOPIC SELECTOR — focus pills above the reveal button
+   ------------------------------------------------------------ */
+.topic-selector {
+  margin-top: 20px;
+}
+.topic-selector > label {
+  margin-bottom: 10px;
+}
+.topic-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.topic-pill {
+  background: rgba(6,13,31,0.6);
+  border: 1px solid rgba(126,168,212,0.2);
+  border-radius: 20px;
+  padding: 7px 16px;
+  color: var(--silver);
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.topic-pill:hover {
+  border-color: rgba(126,168,212,0.45);
+  color: var(--white);
+}
+.topic-pill.active {
+  background: rgba(126,168,212,0.15);
+  border-color: rgba(126,168,212,0.55);
+  color: var(--white);
+  box-shadow: 0 0 10px rgba(126,168,212,0.12);
+}
+
+
+/* ------------------------------------------------------------
    BUTTONS
    ------------------------------------------------------------ */
 .btn {

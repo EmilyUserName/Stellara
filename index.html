@@ -60,6 +60,17 @@
 
       </div>
 
+      <div class="topic-selector">
+        <label>Focus</label>
+        <div class="topic-pills">
+          <button class="topic-pill active" data-topic="chart"    onclick="selectTopic(this)">✦ Full Chart</button>
+          <button class="topic-pill"        data-topic="love"     onclick="selectTopic(this)">♥ Love</button>
+          <button class="topic-pill"        data-topic="career"   onclick="selectTopic(this)">★ Career</button>
+          <button class="topic-pill"        data-topic="finances" onclick="selectTopic(this)">◎ Finances</button>
+          <button class="topic-pill"        data-topic="health"   onclick="selectTopic(this)">✿ Health</button>
+        </div>
+      </div>
+
       <button class="btn" id="revealBtn" onclick="reveal()">✦ &nbsp;Reveal My Chart</button>
       <div class="error" id="errorMsg"></div>
     </div>
