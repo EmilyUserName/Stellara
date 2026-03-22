@@ -53,28 +53,32 @@ function getSunSign(month, day) {
 
 // ------------------------------------------------------------
 // MOON SIGN
-// The moon moves through all 12 signs roughly every 28 days
-// (about 2.5 days per sign). This is an estimate based on
-// how far the moon has traveled since a known starting point.
-// For exact accuracy you'd need an astronomy library.
+// Uses the moon's mean longitude at J2000.0 (Jan 1 2000 12:00 UTC)
+// and advances by 13.17634°/day — accurate to within ~1 sign
+// for most dates. True accuracy needs an ephemeris library.
 // ------------------------------------------------------------
 function estimateMoonSign(birthDate) {
-  const epoch = new Date('2000-01-06'); // Moon was in Capricorn ~here
-  const daysDiff = Math.floor((birthDate - epoch) / (1000 * 60 * 60 * 24));
-  const moonIdx = Math.floor(((daysDiff * 13.18) % 360) / 30);
-  return ((moonIdx % 12) + 12) % 12;
+  const epoch       = new Date('2000-01-01T12:00:00Z');
+  const moonLon2000 = 218.32; // Moon's ecliptic longitude at J2000.0
+  const daysDiff    = (birthDate - epoch) / 86400000;
+  const moonLon     = ((moonLon2000 + 13.17634 * daysDiff) % 360 + 360) % 360;
+  return Math.floor(moonLon / 30); // 0=Aries … 11=Pisces
 }
 
 // ------------------------------------------------------------
 // RISING SIGN (Ascendant)
-// The rising sign changes every ~2 hours as Earth rotates.
-// This is a simplified estimate based on time of birth.
-// A true calculation also needs the birth location's latitude,
-// which would require an astronomy library to do properly.
+// Uses Greenwich Mean Sidereal Time + birth hour to estimate
+// the ascendant. Still approximate without exact latitude/longitude
+// but far more accurate than splitting the day into 12 chunks.
 // ------------------------------------------------------------
-function estimateRising(birthTime) {
+function estimateRising(birthDate, birthTime) {
   if (!birthTime) return null;
-  const [h, m] = birthTime.split(':').map(Number);
-  const totalMinutes = h * 60 + m;
-  return Math.floor(totalMinutes / 120) % 12;
+  const [h, m]      = birthTime.split(':').map(Number);
+  const epoch       = new Date('2000-01-01T12:00:00Z');
+  const daysSince   = (birthDate - epoch) / 86400000;
+  // GMST at J2000.0 was 280.46° — advances 360.9856°/day
+  const gmst        = (280.46 + 360.9856 * daysSince) % 360;
+  const hourDeg     = (h + m / 60) * 15; // 15° per hour
+  const ascLon      = ((gmst + hourDeg) % 360 + 360) % 360;
+  return Math.floor(ascLon / 30);
 }

@@ -193,7 +193,7 @@ async function reveal() {
 
   const sunIdx    = getSunSign(month, day);
   const moonIdx   = estimateMoonSign(bd);
-  const risingIdx = estimateRising(birthTime);
+  const risingIdx = estimateRising(bd, birthTime);
 
   const sun    = SIGNS[sunIdx];
   const moon   = SIGNS[moonIdx];
