@@ -24,17 +24,32 @@ sb.auth.onAuthStateChange((_event, session) => {
 });
 
 function updateAuthUI() {
-  const btn     = document.getElementById('authBtn');
-  const emailEl = document.getElementById('userEmail');
+  const emailEl  = document.getElementById('userEmail');
+  const topNav   = document.getElementById('topNav');
+  const landing  = document.getElementById('landingSection');
+  const inputCard = document.getElementById('inputCard');
+
   if (currentUser) {
-    emailEl.textContent = currentUser.email;
-    btn.textContent     = 'Sign Out';
-    btn.onclick         = signOut;
+    emailEl.textContent    = currentUser.email;
+    topNav.style.display   = 'flex';
+    landing.style.display  = 'none';
+    inputCard.style.display = 'block';
   } else {
-    emailEl.textContent = '';
-    btn.textContent     = 'Sign In';
-    btn.onclick         = openAuthModal;
+    emailEl.textContent    = '';
+    topNav.style.display   = 'none';
+    landing.style.display  = 'block';
+    inputCard.style.display = 'none';
   }
+}
+
+function openSignUp() {
+  // Switch modal to sign up tab, then open
+  activeTab = 'signup';
+  document.querySelectorAll('.auth-tab').forEach((t, i) => {
+    t.classList.toggle('active', i === 1);
+  });
+  document.getElementById('authModalTitle').textContent = 'Create your account';
+  openAuthModal();
 }
 
 // ------------------------------------------------------------

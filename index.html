@@ -23,16 +23,15 @@
   <div class="container">
 
     <!-- =====================================================
-         AUTH BAR — top-right sign in / user display
+         TOP NAV — only visible when signed in
          ===================================================== -->
-    <div class="auth-bar">
+    <nav class="top-nav" id="topNav" style="display:none;">
       <span id="userEmail"></span>
-      <button id="authBtn" onclick="openAuthModal()">Sign In</button>
-    </div>
+      <button id="authBtn" onclick="signOut()">Sign Out</button>
+    </nav>
 
     <!-- =====================================================
          HEADER — logo, title, tagline
-         Want to change the name or tagline? Edit here.
          ===================================================== -->
     <header>
       <div class="logo-symbol">✦</div>
@@ -42,10 +41,32 @@
 
 
     <!-- =====================================================
-         INPUT CARD — the form users fill out
+         LANDING — shown to visitors who are not signed in
+         ===================================================== -->
+    <div id="landingSection">
+      <div class="landing-hero">
+        <h2>Your birth chart, decoded.</h2>
+        <p>Stellara combines the ancient wisdom of astrology with AI to give you deeply personal readings — your cosmic blueprint, love life, career path, and daily guidance, updated every day.</p>
+      </div>
+
+      <div class="landing-topics">
+        <div class="landing-topic">✦ Full Chart</div>
+        <div class="landing-topic">♥ Love</div>
+        <div class="landing-topic">★ Career</div>
+        <div class="landing-topic">◎ Finances</div>
+        <div class="landing-topic">✿ Health</div>
+      </div>
+
+      <button class="btn landing-cta" onclick="openSignUp()">✦ &nbsp;Begin Your Journey</button>
+      <p class="landing-signin">Already a member? <a href="#" onclick="openAuthModal(); return false;">Sign in</a></p>
+    </div>
+
+
+    <!-- =====================================================
+         INPUT CARD — the form users fill out (signed in only)
          Want to add a new field? Add it inside .form-grid.
          ===================================================== -->
-    <div class="card" id="inputCard">
+    <div class="card" id="inputCard" style="display:none;">
       <div class="card-title"><span>✦</span> Birth Chart & Daily Transits</div>
 
       <div class="form-grid">
