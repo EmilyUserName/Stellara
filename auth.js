@@ -263,6 +263,8 @@ async function loadProfile() {
   }
 
   currentSubscribed = data.subscribed || false;
+  const hint = document.getElementById('upgradeHint');
+  if (hint) hint.style.display = currentSubscribed ? 'none' : 'block';
 
   document.getElementById('name').value      = data.name;
   document.getElementById('birthDate').value = data.birth_date || '';
