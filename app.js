@@ -199,7 +199,10 @@ async function reveal() {
   const moon   = SIGNS[moonIdx];
   const rising = risingIdx !== null ? SIGNS[risingIdx] : null;
 
-  // --- 5. Show the loading spinner, hide the form ---
+  // --- 5. Save birth info immediately (don't wait for reading to complete) ---
+  saveProfile();
+
+  // --- 6. Show the loading spinner, hide the form ---
   document.getElementById('inputCard').style.display  = 'none';
   document.getElementById('homeSection').style.display = 'none';
   document.getElementById('loading').className = 'loading active';
@@ -301,9 +304,6 @@ Be concise and potent — every sentence should land. No filler. No bullet point
     clearInterval(msgInterval);
     document.getElementById('loading').className  = 'loading';
     document.getElementById('results').className  = 'results card active';
-
-    // --- 12. Save birth info to profile ---
-    saveProfile();
 
   } catch (e) {
     // --- 12. If something went wrong, show an error ---
