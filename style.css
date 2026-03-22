@@ -538,6 +538,7 @@ select option { background: var(--navy-2); }
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--accent);
+  transition: opacity 0.3s ease;
 }
 
 

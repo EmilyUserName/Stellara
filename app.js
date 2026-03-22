@@ -200,8 +200,31 @@ async function reveal() {
   const rising = risingIdx !== null ? SIGNS[risingIdx] : null;
 
   // --- 5. Show the loading spinner, hide the form ---
-  document.getElementById('inputCard').style.display = 'none';
+  document.getElementById('inputCard').style.display  = 'none';
+  document.getElementById('homeSection').style.display = 'none';
   document.getElementById('loading').className = 'loading active';
+
+  const LOADING_MSGS = [
+    'Reading the stars…',
+    'Consulting the planets…',
+    'Mapping your cosmos…',
+    'Listening to the sky…',
+    'Tracing your chart…',
+    'The universe is speaking…',
+    'Aligning the celestial spheres…',
+    'Decoding your blueprint…',
+  ];
+  let msgIndex = 0;
+  const loadingMsg = document.getElementById('loadingMsg');
+  loadingMsg.textContent = LOADING_MSGS[Math.floor(Math.random() * LOADING_MSGS.length)];
+  const msgInterval = setInterval(() => {
+    loadingMsg.style.opacity = 0;
+    setTimeout(() => {
+      msgIndex = (msgIndex + 1) % LOADING_MSGS.length;
+      loadingMsg.textContent = LOADING_MSGS[msgIndex];
+      loadingMsg.style.opacity = 1;
+    }, 300);
+  }, 2500);
 
   // --- 6. Build the prompt that gets sent to Claude ---
   const today = new Date().toLocaleDateString('en-US', {
@@ -275,6 +298,7 @@ Write in a flowing, literary style. No bullet points. No headers. Just paragraph
     document.querySelector('.today-card .section-label').textContent    = topic.section2Label;
 
     // --- 11. Hide loading, show results ---
+    clearInterval(msgInterval);
     document.getElementById('loading').className  = 'loading';
     document.getElementById('results').className  = 'results card active';
 
@@ -283,6 +307,7 @@ Write in a flowing, literary style. No bullet points. No headers. Just paragraph
 
   } catch (e) {
     // --- 12. If something went wrong, show an error ---
+    clearInterval(msgInterval);
     document.getElementById('loading').className     = 'loading';
     document.getElementById('inputCard').style.display = 'block';
     err.textContent = 'Something went wrong. Please try again.';
