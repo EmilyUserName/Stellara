@@ -27,8 +27,12 @@ async function updateProfile(userId, fields) {
 }
 
 exports.handler = async function (event) {
+  try {
   const sig    = event.headers['stripe-signature'];
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  if (!sig)    return { statusCode: 400, body: 'Missing stripe-signature header' };
+  if (!secret) return { statusCode: 500, body: 'STRIPE_WEBHOOK_SECRET not configured' };
 
   if (!verifySignature(event.body, sig, secret)) {
     return { statusCode: 400, body: 'Invalid signature' };
@@ -62,4 +66,8 @@ exports.handler = async function (event) {
   }
 
   return { statusCode: 200, body: 'ok' };
+  } catch (err) {
+    console.error('[stripe-webhook] crash:', err);
+    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+  }
 };
