@@ -127,7 +127,7 @@ async function loadProfile() {
     .from('profiles')
     .select('name, birth_date, birth_time, birth_city')
     .eq('id', currentUser.id)
-    .single();
+    .maybeSingle();
 
   if (!data) return;
   if (data.name)       document.getElementById('name').value      = data.name;
