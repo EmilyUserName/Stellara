@@ -19,6 +19,10 @@ let activeTab        = 'signin';
 // AUTH STATE — fires on page load and whenever user signs in/out
 // ------------------------------------------------------------
 sb.auth.onAuthStateChange((_event, session) => {
+  if (_event === 'PASSWORD_RECOVERY') {
+    openResetPasswordModal();
+    return;
+  }
   currentUser = session?.user ?? null;
   updateAuthUI();
   if (currentUser) loadProfile();
@@ -125,6 +129,65 @@ async function handleAuth() {
   } else {
     closeAuthModal();
   }
+}
+
+// ------------------------------------------------------------
+// FORGOT PASSWORD
+// ------------------------------------------------------------
+async function forgotPassword() {
+  const email = document.getElementById('authEmail').value.trim();
+  const errEl = document.getElementById('authError');
+
+  if (!email) {
+    errEl.style.color = '';
+    errEl.textContent = 'Enter your email above first.';
+    return;
+  }
+
+  await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://stellara-horoscope.com',
+  });
+
+  errEl.style.color = 'var(--accent)';
+  errEl.textContent = 'Reset link sent — check your email.';
+}
+
+// ------------------------------------------------------------
+// RESET PASSWORD MODAL
+// ------------------------------------------------------------
+function openResetPasswordModal() {
+  closeAuthModal();
+  document.getElementById('resetOverlay').classList.add('active');
+  document.getElementById('newPassword').focus();
+}
+
+function closeResetPasswordModal() {
+  document.getElementById('resetOverlay').classList.remove('active');
+  document.getElementById('resetError').textContent = '';
+}
+
+async function submitNewPassword() {
+  const password = document.getElementById('newPassword').value;
+  const errEl    = document.getElementById('resetError');
+  errEl.textContent = '';
+
+  if (password.length < 6) {
+    errEl.textContent = 'Password must be at least 6 characters.';
+    return;
+  }
+
+  const btn = document.getElementById('resetSubmitBtn');
+  btn.disabled = true;
+
+  const { error } = await sb.auth.updateUser({ password });
+  btn.disabled = false;
+
+  if (error) {
+    errEl.textContent = error.message;
+    return;
+  }
+
+  closeResetPasswordModal();
 }
 
 // ------------------------------------------------------------

@@ -311,6 +311,25 @@
 
       <button class="btn" id="authSubmitBtn" onclick="handleAuth()" style="margin-top:16px;">Continue</button>
       <div class="auth-error" id="authError"></div>
+      <p style="text-align:center; margin-top:12px; font-size:0.78rem;">
+        <a href="#" onclick="forgotPassword(); return false;" style="color:var(--silver); opacity:0.7;">Forgot password?</a>
+      </p>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
+       RESET PASSWORD MODAL
+       ===================================================== -->
+  <div class="auth-overlay" id="resetOverlay" onclick="closeResetPasswordModal()">
+    <div class="auth-modal" onclick="event.stopPropagation()">
+      <button class="auth-close" onclick="closeResetPasswordModal()">×</button>
+      <div class="auth-logo">✦</div>
+      <h2 class="auth-modal-title">Set new password</h2>
+      <p class="auth-modal-sub">Choose a new password for your account.</p>
+      <input type="password" id="newPassword" placeholder="New password" />
+      <button class="btn" id="resetSubmitBtn" onclick="submitNewPassword()" style="margin-top:16px;">Update password</button>
+      <div class="auth-error" id="resetError"></div>
     </div>
   </div>
 
