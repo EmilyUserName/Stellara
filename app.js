@@ -179,6 +179,9 @@ Write in a flowing, literary style. No bullet points. No headers. Just paragraph
     document.getElementById('loading').className  = 'loading';
     document.getElementById('results').className  = 'results card active';
 
+    // --- 12. Save birth info to profile ---
+    saveProfile();
+
   } catch (e) {
     // --- 12. If something went wrong, show an error ---
     document.getElementById('loading').className     = 'loading';

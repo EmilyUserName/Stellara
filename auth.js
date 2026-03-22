@@ -20,6 +20,7 @@ let activeTab    = 'signin';
 sb.auth.onAuthStateChange((_event, session) => {
   currentUser = session?.user ?? null;
   updateAuthUI();
+  if (currentUser) loadProfile();
 });
 
 function updateAuthUI() {
@@ -116,4 +117,32 @@ function requireAuth() {
   if (currentUser) return true;
   openAuthModal();
   return false;
+}
+
+// ------------------------------------------------------------
+// PROFILE — save and load birth info from Supabase
+// ------------------------------------------------------------
+async function loadProfile() {
+  const { data } = await sb
+    .from('profiles')
+    .select('name, birth_date, birth_time, birth_city')
+    .eq('id', currentUser.id)
+    .single();
+
+  if (!data) return;
+  if (data.name)       document.getElementById('name').value      = data.name;
+  if (data.birth_date) document.getElementById('birthDate').value = data.birth_date;
+  if (data.birth_time) document.getElementById('birthTime').value = data.birth_time;
+  if (data.birth_city) document.getElementById('birthCity').value = data.birth_city;
+}
+
+async function saveProfile() {
+  if (!currentUser) return;
+  await sb.from('profiles').upsert({
+    id:         currentUser.id,
+    name:       document.getElementById('name').value.trim(),
+    birth_date: document.getElementById('birthDate').value,
+    birth_time: document.getElementById('birthTime').value,
+    birth_city: document.getElementById('birthCity').value.trim(),
+  });
 }
