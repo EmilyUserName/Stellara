@@ -19,6 +19,10 @@ function selectTopic(el) {
   document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   selectedTopic = el.dataset.topic;
+  // Show partner input only for compatibility
+  document.querySelectorAll('.partner-input').forEach(d => {
+    d.style.display = selectedTopic === 'compatibility' ? 'block' : 'none';
+  });
 }
 
 const TOPIC_CONFIG = {
@@ -62,6 +66,70 @@ const TOPIC_CONFIG = {
     prompt2: (name, sun, moon, today) =>
       `Today is ${today}. Describe the current planetary energy around health and wellbeing — focus on the Moon, Mars, and Chiron movements. Then connect this to how ${name}'s ${sun} Sun and ${moon} Moon are being influenced. Give 1-2 concrete things they can do today to support their body and mind.`,
   },
+  thisMonth: {
+    section1Label: 'Your Monthly Forecast',
+    section2Label: 'Key themes and dates this month',
+    prompt1: (name, sun, moon, rising) =>
+      `Write a monthly forecast for ${name} based on their ${sun} Sun, ${moon} Moon${rising ? `, and ${rising} Rising` : ''}. What are the dominant themes this month? What areas of life are being activated? What is the overarching invitation of this month for ${name} specifically?`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Based on this month's planetary movements — including any retrogrades, sign changes, or lunations — describe the key energetic phases of this month and how they interact with ${name}'s ${sun} Sun and ${moon} Moon. Give 2-3 specific things to lean into or be aware of this month.`,
+  },
+  communication: {
+    section1Label: 'Your Mind & Voice',
+    section2Label: 'Communication energy today',
+    prompt1: (name, sun, moon, rising) =>
+      `Focus on how ${name} thinks, communicates, and is perceived by others based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. How do they process information? What is their natural communication style? How do they come across to others, and where might there be a gap between how they intend to be heard and how they actually land?`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe today's Mercury and Air sign energy and how it affects communication, thinking, and expression. Then connect this to ${name}'s ${sun} Sun and ${moon} Moon. Give 1-2 specific communication tips or awarenesses for ${name} today.`,
+  },
+  innerWorld: {
+    section1Label: 'Your Inner Landscape',
+    section2Label: 'What\'s stirring within today',
+    prompt1: (name, sun, moon, rising) =>
+      `Explore ${name}'s inner emotional world, subconscious patterns, and hidden drives based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. What do they need to feel emotionally safe? What patterns live beneath the surface? What does their inner child long for? Be tender and psychologically deep.`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe the Moon's current phase and sign, and what emotional undercurrents are active in the collective. Then speak to how this is landing specifically in ${name}'s inner world given their ${sun} Sun and ${moon} Moon. What is being stirred, and what might they need today?`,
+  },
+  energy: {
+    section1Label: 'Your Natural Energy & Timing',
+    section2Label: 'Today\'s energy forecast for you',
+    prompt1: (name, sun, moon, rising) =>
+      `Describe ${name}'s natural energy rhythms and relationship with time based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. Are they a sprinter or a marathon runner? When do they do their best work? What drains them and what replenishes them? How should they structure their life to work with — not against — their natural cycles?`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe today's overall cosmic energy level — is it a day for action, rest, reflection, or connection? Ground this in the current Mars, Sun, and Moon positions. Then tell ${name} specifically what kind of day today is for them given their ${sun} Sun and ${moon} Moon, and how to use the energy wisely.`,
+  },
+  travel: {
+    section1Label: 'Your Adventure & Wanderlust',
+    section2Label: 'Expansion energy right now',
+    prompt1: (name, sun, moon, rising) =>
+      `Explore ${name}'s relationship with travel, adventure, and the world beyond their comfort zone based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. What draws them when they travel? What kind of experiences feed their soul — deep immersion, cultural exploration, spontaneous adventure, or spiritual pilgrimage? Where in the world might call to them?`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe the current Jupiter and Sagittarius energy around expansion, travel, and new horizons. Then connect this to ${name}'s ${sun} Sun and ${moon} Moon. Is now a time to plan, to go, or to explore closer to home? Give ${name} 1-2 concrete ideas for expanding their world right now.`,
+  },
+  spiritual: {
+    section1Label: 'Your Soul\'s Path',
+    section2Label: 'Spiritual currents today',
+    prompt1: (name, sun, moon, rising) =>
+      `Explore ${name}'s spiritual nature, soul purpose, and karmic path based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. What are they here to learn? What spiritual gifts do they carry? What keeps pulling them back to growth even when it's uncomfortable? Speak to the deeper "why" behind their life.`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe the spiritual and cosmic undercurrents active today — focus on Neptune, Chiron, and the Moon's influence. Then connect this to ${name}'s ${sun} Sun and ${moon} Moon. What is the universe asking of ${name} spiritually today? Give them one meaningful practice or awareness to carry.`,
+  },
+  compatibility: {
+    section1Label: 'Your Cosmic Connection',
+    section2Label: 'The energy between you today',
+    prompt1: (name, sun, moon, rising, extra) =>
+      `Explore the compatibility between ${name} (${sun} Sun, ${moon} Moon${rising ? `, ${rising} Rising` : ''}) and ${extra || 'their person'}. What is the natural dynamic between these energies? Where do they complement each other beautifully? Where might friction arise, and what is that friction here to teach? Be honest, warm, and specific.`,
+    prompt2: (name, sun, moon, today, extra) =>
+      `Today is ${today}. Describe the current Venus and relationship energy in the sky. Then connect this to the connection between ${name} (${sun} Sun, ${moon} Moon) and ${extra || 'their person'}. How is today's energy affecting this relationship? Give 1-2 concrete things ${name} can do to nurture or navigate this connection today.`,
+  },
+  shadow: {
+    section1Label: 'Your Shadow & Hidden Gifts',
+    section2Label: 'Shadow work invitation today',
+    prompt1: (name, sun, moon, rising) =>
+      `Explore ${name}'s shadow — the unconscious patterns, suppressed traits, and hidden gifts that live in the darker corners of their chart based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. What do they tend to project onto others? What part of themselves are they still learning to integrate? Be courageous, compassionate, and ultimately empowering.`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe the current Pluto, Scorpio, and 12th house energy active in the collective. Then connect this to ${name}'s ${sun} Sun and ${moon} Moon. What shadow material might be surfacing for ${name} today, and what is the invitation in it? Give them one concrete shadow work reflection or practice.`,
+  },
 };
 
 
@@ -77,7 +145,7 @@ async function reveal() {
   const birthCity = document.getElementById('birthCity').value.trim();
 
   // --- 2. Clear any previous error message ---
-  const err = document.getElementById('errorMsg');
+  const err = document.getElementById('errorMsg') || document.getElementById('homeErrorMsg');
   err.className = 'error';
 
   // --- 3. Make sure required fields are filled in ---
@@ -115,6 +183,10 @@ async function reveal() {
 
   const topic = TOPIC_CONFIG[selectedTopic];
 
+  // Read partner info for compatibility topic
+  const partnerEl = [...document.querySelectorAll('.partner-input-field')].find(el => el.offsetParent !== null);
+  const partnerInfo = partnerEl ? partnerEl.value.trim() : '';
+
   const prompt = `You are Stellara, a sophisticated and poetic astrology guide. You combine psychological depth with cosmic wisdom. Your tone is warm, modern, and insightful — never generic.
 
 The user's name is ${name}.
@@ -127,10 +199,10 @@ Today's date: ${today}
 Write two sections separated by the exact delimiter "---TRANSITS---":
 
 SECTION 1 — CHART READING (3–4 paragraphs):
-${topic.prompt1(name, sun, moon, rising)}
+${topic.prompt1(name, sun, moon, rising, partnerInfo)}
 
 SECTION 2 — TODAY (2–3 paragraphs):
-${topic.prompt2(name, sun, moon, today)}
+${topic.prompt2(name, sun, moon, today, partnerInfo)}
 
 Write in a flowing, literary style. No bullet points. No headers. Just paragraphs.`;
 
