@@ -10,6 +10,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/geocode"
+  to = "/.netlify/functions/geocode"
+  status = 200
+
+[[redirects]]
   from = "/stripe-webhook"
   to = "/.netlify/functions/stripe-webhook"
   status = 200

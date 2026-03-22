@@ -199,14 +199,9 @@ async function reveal() {
   let rising = null;
   if (birthTime && birthCity) {
     try {
-      const geo = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(birthCity)}&format=json&limit=1`,
-        { headers: { 'Accept-Language': 'en' } }
-      );
-      const geoData = await geo.json();
-      if (geoData.length > 0) {
-        const lat = parseFloat(geoData[0].lat);
-        const lon = parseFloat(geoData[0].lon);
+      const geo     = await fetch(`/api/geocode?city=${encodeURIComponent(birthCity)}`);
+      if (geo.ok) {
+        const { lat, lon } = await geo.json();
         const risingIdx = calculateRising(bd, birthTime, lat, lon);
         if (risingIdx !== null) rising = SIGNS[risingIdx];
       }
