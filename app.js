@@ -190,24 +190,24 @@ async function reveal() {
   const month = bd.getMonth() + 1;
   const day   = bd.getDate();
 
-  const sunIdx  = getSunSign(month, day);
-  const moonIdx = estimateMoonSign(bd);
-  const sun     = SIGNS[sunIdx];
-  const moon    = SIGNS[moonIdx];
+  // Use manually entered signs if provided, otherwise calculate
+  const manualSun    = document.getElementById('sunSign').value;
+  const manualMoon   = document.getElementById('moonSign').value;
+  const manualRising = document.getElementById('risingSign').value;
 
-  // Geocode birth city to get lat/lon for accurate rising sign
-  let rising = null;
-  if (birthTime && birthCity) {
+  const sun  = manualSun  || SIGNS[getSunSign(month, day)];
+  const moon = manualMoon || SIGNS[estimateMoonSign(bd)];
+
+  let rising = manualRising || null;
+  if (!rising && birthTime && birthCity) {
     try {
-      const geo     = await fetch(`/api/geocode?city=${encodeURIComponent(birthCity)}`);
+      const geo = await fetch(`/api/geocode?city=${encodeURIComponent(birthCity)}`);
       if (geo.ok) {
         const { lat, lon } = await geo.json();
         const risingIdx = calculateRising(bd, birthTime, lat, lon);
         if (risingIdx !== null) rising = SIGNS[risingIdx];
       }
-    } catch (_) {
-      // Geocoding failed — rising sign stays null
-    }
+    } catch (_) {}
   }
 
   // --- 5. Save birth info immediately (don't wait for reading to complete) ---

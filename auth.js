@@ -253,7 +253,7 @@ async function startCheckout() {
 async function loadProfile() {
   const { data } = await sb
     .from('profiles')
-    .select('name, birth_date, birth_time, birth_city, subscribed')
+    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed')
     .eq('id', currentUser.id)
     .maybeSingle();
 
@@ -266,10 +266,13 @@ async function loadProfile() {
   const hint = document.getElementById('upgradeHint');
   if (hint) hint.style.display = currentSubscribed ? 'none' : 'block';
 
-  document.getElementById('name').value      = data.name;
-  document.getElementById('birthDate').value = data.birth_date || '';
-  document.getElementById('birthTime').value = data.birth_time || '';
-  document.getElementById('birthCity').value = data.birth_city || '';
+  document.getElementById('name').value        = data.name;
+  document.getElementById('birthDate').value   = data.birth_date  || '';
+  document.getElementById('birthTime').value   = data.birth_time  || '';
+  document.getElementById('birthCity').value   = data.birth_city  || '';
+  document.getElementById('sunSign').value     = data.sun_sign    || '';
+  document.getElementById('moonSign').value    = data.moon_sign   || '';
+  document.getElementById('risingSign').value  = data.rising_sign || '';
 
   document.getElementById('welcomeName').textContent = data.name;
   showHome();
@@ -289,10 +292,13 @@ function showForm() {
 async function saveProfile() {
   if (!currentUser) return;
   await sb.from('profiles').upsert({
-    id:         currentUser.id,
-    name:       document.getElementById('name').value.trim(),
-    birth_date: document.getElementById('birthDate').value,
-    birth_time: document.getElementById('birthTime').value,
-    birth_city: document.getElementById('birthCity').value.trim(),
+    id:           currentUser.id,
+    name:         document.getElementById('name').value.trim(),
+    birth_date:   document.getElementById('birthDate').value,
+    birth_time:   document.getElementById('birthTime').value,
+    birth_city:   document.getElementById('birthCity').value.trim(),
+    sun_sign:     document.getElementById('sunSign').value   || null,
+    moon_sign:    document.getElementById('moonSign').value  || null,
+    rising_sign:  document.getElementById('risingSign').value || null,
   });
 }

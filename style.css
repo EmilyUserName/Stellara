@@ -380,6 +380,15 @@ select option { background: var(--navy-2); }
   text-transform: uppercase;
 }
 .edit-link:hover { color: var(--accent); }
+.optional-label {
+  font-size: 0.68rem;
+  color: var(--silver);
+  opacity: 0.55;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 4px;
+}
 
 
 /* ------------------------------------------------------------
