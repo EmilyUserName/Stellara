@@ -69,6 +69,32 @@
       <p class="welcome-text">Welcome back, <span id="welcomeName"></span> ✦</p>
       <div class="card">
         <div class="card-title"><span>✦</span> What would you like to explore?</div>
+        <div class="style-selector">
+          <label>Reading Style</label>
+          <div class="style-cards">
+            <button class="style-card active" data-style="psychological" onclick="selectStyle(this)">
+              <div class="style-card-icon">🔮</div>
+              <div class="style-card-name">Psychological</div>
+              <div class="style-card-desc">Jungian depth, archetypes, shadow work</div>
+            </button>
+            <button class="style-card" data-style="spiritual" onclick="selectStyle(this)">
+              <div class="style-card-icon">✨</div>
+              <div class="style-card-name">Spiritual</div>
+              <div class="style-card-desc">Soul-centered, mystical, cosmic connection</div>
+            </button>
+            <button class="style-card" data-style="modern" onclick="selectStyle(this)">
+              <div class="style-card-icon">🧠</div>
+              <div class="style-card-name">Modern & Direct</div>
+              <div class="style-card-desc">Clear, grounded, practical insights</div>
+            </button>
+            <button class="style-card" data-style="classical" onclick="selectStyle(this)">
+              <div class="style-card-icon">📖</div>
+              <div class="style-card-name">Classical</div>
+              <div class="style-card-desc">Traditional astrology, mythological planets</div>
+            </button>
+          </div>
+        </div>
+
         <div class="topic-pills home-topic-pills">
           <button class="topic-pill active" data-topic="chart"         onclick="selectTopic(this)">✦ Full Chart</button>
           <button class="topic-pill"        data-topic="love"          onclick="selectTopic(this)">♥ Love</button>
@@ -125,6 +151,32 @@
           <input type="text" id="birthCity" placeholder="e.g. New York, NY" />
         </div>
 
+      </div>
+
+      <div class="style-selector">
+        <label>Reading Style</label>
+        <div class="style-cards">
+          <button class="style-card active" data-style="psychological" onclick="selectStyle(this)">
+            <div class="style-card-icon">🔮</div>
+            <div class="style-card-name">Psychological</div>
+            <div class="style-card-desc">Jungian depth, archetypes, shadow work</div>
+          </button>
+          <button class="style-card" data-style="spiritual" onclick="selectStyle(this)">
+            <div class="style-card-icon">✨</div>
+            <div class="style-card-name">Spiritual</div>
+            <div class="style-card-desc">Soul-centered, mystical, cosmic connection</div>
+          </button>
+          <button class="style-card" data-style="modern" onclick="selectStyle(this)">
+            <div class="style-card-icon">🧠</div>
+            <div class="style-card-name">Modern & Direct</div>
+            <div class="style-card-desc">Clear, grounded, practical insights</div>
+          </button>
+          <button class="style-card" data-style="classical" onclick="selectStyle(this)">
+            <div class="style-card-icon">📖</div>
+            <div class="style-card-name">Classical</div>
+            <div class="style-card-desc">Traditional astrology, mythological planets</div>
+          </button>
+        </div>
       </div>
 
       <div class="topic-selector">

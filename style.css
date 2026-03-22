@@ -342,6 +342,56 @@ select option { background: var(--navy-2); }
 
 
 /* ------------------------------------------------------------
+   STYLE SELECTOR — reading tone cards
+   ------------------------------------------------------------ */
+.style-selector {
+  margin-bottom: 24px;
+}
+.style-selector > label {
+  margin-bottom: 10px;
+}
+.style-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.style-card {
+  background: rgba(6,13,31,0.6);
+  border: 1px solid rgba(126,168,212,0.15);
+  border-radius: 10px;
+  padding: 13px 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  font-family: 'Barlow', sans-serif;
+}
+.style-card:hover {
+  border-color: rgba(126,168,212,0.4);
+  background: rgba(126,168,212,0.06);
+}
+.style-card.active {
+  background: rgba(126,168,212,0.12);
+  border-color: rgba(126,168,212,0.55);
+  box-shadow: 0 0 14px rgba(126,168,212,0.1);
+}
+.style-card-icon { font-size: 1.1rem; margin-bottom: 5px; }
+.style-card-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.04em;
+  margin-bottom: 3px;
+}
+.style-card.active .style-card-name { color: var(--accent); }
+.style-card-desc {
+  font-size: 0.67rem;
+  color: var(--silver);
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+
+
+/* ------------------------------------------------------------
    TOPIC SELECTOR — focus pills above the reveal button
    ------------------------------------------------------------ */
 .topic-selector {

@@ -11,6 +11,33 @@
 
 
 // ------------------------------------------------------------
+// STYLE SELECTION — controls the reading's tone and vocabulary
+// ------------------------------------------------------------
+let selectedStyle = 'psychological';
+
+const STYLE_CONFIG = {
+  psychological: {
+    system: `You are Stellara, a depth psychology astrologer who speaks through the lens of Jungian thought. Draw on archetypes, the shadow, the anima/animus, and individuation. Your language is thoughtful, layered, and exploratory. Help the user understand themselves through the symbolic grammar of the psyche. Use terms like "the unconscious," "archetypal patterns," and "inner work" naturally. Tone: reflective, profound, transformative.`
+  },
+  spiritual: {
+    system: `You are Stellara, a soul-centered spiritual guide and intuitive astrologer. Speak to the soul's journey, divine timing, energetic alignment, and cosmic connection. Your language is luminous, mystical, and heart-opening. Help the user feel held by the universe and aligned with their highest path. Tone: warm, ethereal, expansive, devotional.`
+  },
+  modern: {
+    system: `You are Stellara, a modern astrology coach who gives clear, practical, no-nonsense guidance. Focus on what the chart reveals about personality, behavioral patterns, and real-life insights. Skip abstract mysticism — make it concrete, contemporary, and immediately useful. Tone: direct, confident, grounded, conversational.`
+  },
+  classical: {
+    system: `You are Stellara, a classical astrologer steeped in ancient tradition. Draw on the mythology of the planets — Mars as the warrior god, Venus as the goddess of love and beauty, Saturn as the great timekeeper. Reference Hellenistic and Renaissance astrological wisdom, traditional dignities and debilities. Your language is rich with mythological depth and historical resonance. Tone: scholarly, mythic, timeless, dignified.`
+  },
+};
+
+function selectStyle(el) {
+  document.querySelectorAll(`[data-style="${el.dataset.style}"]`).forEach(c => c.classList.add('active'));
+  document.querySelectorAll(`.style-card:not([data-style="${el.dataset.style}"])`).forEach(c => c.classList.remove('active'));
+  selectedStyle = el.dataset.style;
+}
+
+
+// ------------------------------------------------------------
 // TOPIC SELECTION — tracks which focus pill is active
 // ------------------------------------------------------------
 let selectedTopic = 'chart';
@@ -182,12 +209,13 @@ async function reveal() {
   });
 
   const topic = TOPIC_CONFIG[selectedTopic];
+  const style = STYLE_CONFIG[selectedStyle];
 
   // Read partner info for compatibility topic
   const partnerEl = [...document.querySelectorAll('.partner-input-field')].find(el => el.offsetParent !== null);
   const partnerInfo = partnerEl ? partnerEl.value.trim() : '';
 
-  const prompt = `You are Stellara, a sophisticated and poetic astrology guide. You combine psychological depth with cosmic wisdom. Your tone is warm, modern, and insightful — never generic.
+  const prompt = `${style.system}
 
 The user's name is ${name}.
 Sun sign: ${sun}
