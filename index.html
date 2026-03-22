@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stellara — Your Personal Cosmos</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet"/>
+
+  <!-- All styling lives in style.css -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Animated starfield background (styled in style.css) -->
+  <div class="starfield"></div>
+
+  <div class="container">
+
+    <!-- =====================================================
+         HEADER — logo, title, tagline
+         Want to change the name or tagline? Edit here.
+         ===================================================== -->
+    <header>
+      <div class="logo-symbol">✦</div>
+      <h1>Stellara</h1>
+      <p>Your Personal Cosmos</p>
+    </header>
+
+
+    <!-- =====================================================
+         INPUT CARD — the form users fill out
+         Want to add a new field? Add it inside .form-grid.
+         ===================================================== -->
+    <div class="card" id="inputCard">
+      <div class="card-title"><span>✦</span> Birth Chart & Daily Transits</div>
+
+      <div class="form-grid">
+
+        <div class="full">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" placeholder="e.g. Emily" />
+        </div>
+
+        <div>
+          <label for="birthDate">Birth Date</label>
+          <input type="date" id="birthDate" />
+        </div>
+
+        <div>
+          <label for="birthTime">Birth Time</label>
+          <input type="time" id="birthTime" />
+        </div>
+
+        <div class="full">
+          <label for="birthCity">Birth City</label>
+          <input type="text" id="birthCity" placeholder="e.g. New York, NY" />
+        </div>
+
+      </div>
+
+      <button class="btn" id="revealBtn" onclick="reveal()">✦ &nbsp;Reveal My Chart</button>
+      <div class="error" id="errorMsg"></div>
+    </div>
+
+
+    <!-- =====================================================
+         LOADING STATE — shown while waiting for Claude
+         ===================================================== -->
+    <div class="loading" id="loading">
+      <div class="orbit"></div>
+      <p>Reading the stars…</p>
+    </div>
+
+
+    <!-- =====================================================
+         RESULTS — shown after Claude responds
+         Want to add a new section to the results? Add it here.
+         ===================================================== -->
+    <div class="results card" id="results" style="margin-top:24px;">
+
+      <div class="card-title"><span>✦</span> <span id="resultName"></span>'s Birth Chart</div>
+
+      <!-- Sun / Moon / Rising placement cards -->
+      <div class="placements" id="placements"></div>
+
+      <!-- Birth chart reading from Claude -->
+      <div class="section-label">Your Cosmic Blueprint</div>
+      <div class="insight-text" id="chartReading"></div>
+
+      <div class="divider"></div>
+
+      <!-- Today's transits from Claude -->
+      <div class="today-card">
+        <div class="today-header">
+          <div class="card-title" style="margin:0; font-size:1.1rem;"><span>☽</span> Today's Transits</div>
+          <div class="today-date" id="todayDate"></div>
+        </div>
+        <div class="section-label">How the sky speaks to your chart today</div>
+        <div class="insight-text" id="transitReading"></div>
+      </div>
+
+      <div style="text-align:center;">
+        <button class="reset-btn" onclick="reset()">← Read Another Chart</button>
+      </div>
+
+    </div>
+
+  </div><!-- end .container -->
+
+
+  <!-- =====================================================
+       SCRIPTS — loaded at the bottom so HTML loads first
+       astrology.js  = sign calculations
+       app.js        = button clicks & API calls
+       ===================================================== -->
+  <script src="astrology.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
