@@ -144,11 +144,32 @@ async function loadProfile() {
     .eq('id', currentUser.id)
     .maybeSingle();
 
-  if (!data) return;
-  if (data.name)       document.getElementById('name').value      = data.name;
-  if (data.birth_date) document.getElementById('birthDate').value = data.birth_date;
-  if (data.birth_time) document.getElementById('birthTime').value = data.birth_time;
-  if (data.birth_city) document.getElementById('birthCity').value = data.birth_city;
+  if (!data || !data.name) {
+    // No profile yet — show the form
+    showForm();
+    return;
+  }
+
+  // Pre-fill the hidden form fields (reveal() reads from these)
+  document.getElementById('name').value      = data.name;
+  document.getElementById('birthDate').value = data.birth_date || '';
+  document.getElementById('birthTime').value = data.birth_time || '';
+  document.getElementById('birthCity').value = data.birth_city || '';
+
+  // Show the home screen
+  document.getElementById('welcomeName').textContent = data.name;
+  showHome();
+}
+
+function showHome() {
+  document.getElementById('homeSection').style.display  = 'block';
+  document.getElementById('inputCard').style.display    = 'none';
+  document.getElementById('results').className          = 'results card';
+}
+
+function showForm() {
+  document.getElementById('homeSection').style.display = 'none';
+  document.getElementById('inputCard').style.display   = 'block';
 }
 
 async function saveProfile() {

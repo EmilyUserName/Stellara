@@ -310,6 +310,38 @@ select option { background: var(--navy-2); }
 
 
 /* ------------------------------------------------------------
+   HOME SCREEN — returning user welcome
+   ------------------------------------------------------------ */
+.welcome-text {
+  text-align: center;
+  font-size: 1rem;
+  color: var(--silver);
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+.welcome-text span {
+  color: var(--white);
+  font-weight: 600;
+}
+.home-topic-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+.edit-link {
+  font-size: 0.72rem;
+  color: var(--silver);
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.edit-link:hover { color: var(--accent); }
+
+
+/* ------------------------------------------------------------
    TOPIC SELECTOR — focus pills above the reveal button
    ------------------------------------------------------------ */
 .topic-selector {

@@ -193,14 +193,14 @@ Write in a flowing, literary style. No bullet points. No headers. Just paragraph
 
 
 // ------------------------------------------------------------
-// RESET — runs when the user clicks "Read Another Chart"
+// GO HOME — runs when the user clicks "← Home"
 // ------------------------------------------------------------
-function reset() {
-  // Hide results, show the form again, clear all fields
-  document.getElementById('results').className      = 'results card';
-  document.getElementById('inputCard').style.display = 'block';
-  document.getElementById('name').value      = '';
-  document.getElementById('birthDate').value = '';
-  document.getElementById('birthTime').value = '';
-  document.getElementById('birthCity').value = '';
+function goHome() {
+  document.getElementById('results').className = 'results card';
+  // Reset topic pills to Full Chart
+  selectedTopic = 'chart';
+  document.querySelectorAll('.topic-pill').forEach((p, i) => {
+    p.classList.toggle('active', i === 0);
+  });
+  showHome();
 }

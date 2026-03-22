@@ -63,11 +63,33 @@
 
 
     <!-- =====================================================
-         INPUT CARD — the form users fill out (signed in only)
-         Want to add a new field? Add it inside .form-grid.
+         HOME — returning users with saved profile
+         ===================================================== -->
+    <div id="homeSection" style="display:none;">
+      <p class="welcome-text">Welcome back, <span id="welcomeName"></span> ✦</p>
+      <div class="card">
+        <div class="card-title"><span>✦</span> What would you like to explore?</div>
+        <div class="topic-pills home-topic-pills">
+          <button class="topic-pill active" data-topic="chart"    onclick="selectTopic(this)">✦ Full Chart</button>
+          <button class="topic-pill"        data-topic="love"     onclick="selectTopic(this)">♥ Love</button>
+          <button class="topic-pill"        data-topic="career"   onclick="selectTopic(this)">★ Career</button>
+          <button class="topic-pill"        data-topic="finances" onclick="selectTopic(this)">◎ Finances</button>
+          <button class="topic-pill"        data-topic="health"   onclick="selectTopic(this)">✿ Health</button>
+        </div>
+        <button class="btn" onclick="reveal()">✦ &nbsp;Reveal My Reading</button>
+        <div class="error" id="homeErrorMsg"></div>
+        <div style="text-align:center; margin-top:16px;">
+          <a href="#" class="edit-link" onclick="showForm(); return false;">Edit birth info</a>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- =====================================================
+         INPUT CARD — the form (new users + editing)
          ===================================================== -->
     <div class="card" id="inputCard" style="display:none;">
-      <div class="card-title"><span>✦</span> Birth Chart & Daily Transits</div>
+      <div class="card-title"><span>✦</span> Your Birth Details</div>
 
       <div class="form-grid">
 
@@ -146,7 +168,7 @@
       </div>
 
       <div style="text-align:center;">
-        <button class="reset-btn" onclick="reset()">← Read Another Chart</button>
+        <button class="reset-btn" onclick="goHome()">← Home</button>
       </div>
 
     </div>
