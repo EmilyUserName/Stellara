@@ -87,6 +87,9 @@ async function reveal() {
     return;
   }
 
+  // --- 3b. Gate topic-specific readings behind auth ---
+  if (selectedTopic !== 'chart' && !requireAuth()) return;
+
   // --- 4. Calculate the three placements from astrology.js ---
   // We parse the date at noon to avoid timezone edge cases
   const bd    = new Date(birthDate + 'T12:00:00');

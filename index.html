@@ -10,6 +10,9 @@
 
   <!-- All styling lives in style.css -->
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Supabase JS (auth) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 
@@ -17,6 +20,14 @@
   <div class="starfield"></div>
 
   <div class="container">
+
+    <!-- =====================================================
+         AUTH BAR — top-right sign in / user display
+         ===================================================== -->
+    <div class="auth-bar">
+      <span id="userEmail"></span>
+      <button id="authBtn" onclick="openAuthModal()">Sign In</button>
+    </div>
 
     <!-- =====================================================
          HEADER — logo, title, tagline
@@ -122,11 +133,37 @@
 
 
   <!-- =====================================================
+       AUTH MODAL — sign in / sign up overlay
+       ===================================================== -->
+  <div class="auth-overlay" id="authOverlay" onclick="closeAuthModal()">
+    <div class="auth-modal" onclick="event.stopPropagation()">
+      <button class="auth-close" onclick="closeAuthModal()">×</button>
+      <div class="auth-logo">✦</div>
+      <h2 class="auth-modal-title" id="authModalTitle">Welcome back</h2>
+      <p class="auth-modal-sub">Sign in to unlock focused readings</p>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('signin', this)">Sign In</button>
+        <button class="auth-tab"        onclick="switchTab('signup', this)">Sign Up</button>
+      </div>
+
+      <input type="email"    id="authEmail"    placeholder="your@email.com" />
+      <input type="password" id="authPassword" placeholder="Password" />
+
+      <button class="btn" id="authSubmitBtn" onclick="handleAuth()" style="margin-top:16px;">Continue</button>
+      <div class="auth-error" id="authError"></div>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
        SCRIPTS — loaded at the bottom so HTML loads first
        astrology.js  = sign calculations
+       auth.js       = supabase authentication
        app.js        = button clicks & API calls
        ===================================================== -->
   <script src="astrology.js"></script>
+  <script src="auth.js"></script>
   <script src="app.js"></script>
 
 </body>
