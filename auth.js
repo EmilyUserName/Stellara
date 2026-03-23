@@ -296,8 +296,9 @@ function showHome() {
 }
 
 function showForm() {
-  document.getElementById('homeSection').style.display = 'none';
-  document.getElementById('inputCard').style.display   = 'block';
+  document.getElementById('homeSection').style.display  = 'none';
+  document.getElementById('inputCard').style.display    = 'block';
+  document.getElementById('signOverrides').style.display = 'block';
 }
 
 async function saveProfile() {
