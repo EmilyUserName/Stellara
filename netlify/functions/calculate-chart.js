@@ -92,9 +92,11 @@ function ascendant(jd, lat, lon) {
 // birth time to UTC using Node's Intl API (handles DST correctly)
 // ------------------------------------------------------------
 async function getTimeZone(lat, lon) {
-  const res  = await fetch(`https://timeapi.io/api/timezone/coordinate?latitude=${lat}&longitude=${lon}`);
+  // Open-Meteo returns timezone from coordinates for free, no API key needed
+  const res  = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&timezone=auto&forecast_days=0`);
   const data = await res.json();
-  return data.timeZone; // e.g. "America/New_York"
+  if (!data.timezone) throw new Error('No timezone returned');
+  return data.timezone; // e.g. "America/New_York"
 }
 
 function localToUTC(birthDate, birthTime, timeZone) {
@@ -162,13 +164,16 @@ exports.handler = async function (event) {
   const moonLon = moonLongitude(jd);
   const ascLon  = birthTime ? ascendant(jd, lat, lon) : null;
 
+  const result = {
+    sun:    SIGNS[Math.floor(sunLon  / 30)],
+    moon:   SIGNS[Math.floor(moonLon / 30)],
+    rising: ascLon !== null ? SIGNS[Math.floor(ascLon / 30)] : null,
+  };
+  console.log('[calculate-chart]', { birthDate, birthTime, birthCity, lat, lon, jd, sunLon, moonLon, ascLon, result });
+
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sun:    SIGNS[Math.floor(sunLon  / 30)],
-      moon:   SIGNS[Math.floor(moonLon / 30)],
-      rising: ascLon !== null ? SIGNS[Math.floor(ascLon / 30)] : null,
-    }),
+    body: JSON.stringify(result),
   };
 };
