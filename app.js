@@ -109,6 +109,7 @@ function selectTopic(el) {
 
 const TOPIC_CONFIG = {
   chart: {
+    displayName: 'Birth Chart',
     section1Label: 'Your Cosmic Blueprint',
     section2Label: 'How the sky speaks to your chart today',
     prompt1: (name, sun, moon, rising) =>
@@ -117,6 +118,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Describe the current planetary weather (invent plausible but general transit themes for today — Mercury, Venus, Mars, Jupiter movements) and then specifically connect how this energy interacts with ${name}'s ${sun} Sun and ${moon} Moon. Give them 1-2 concrete things to lean into or watch out for today.`,
   },
   love: {
+    displayName: 'Love Reading',
     section1Label: 'Your Heart & Relational Style',
     section2Label: 'Love energy in the sky today',
     prompt1: (name, sun, moon, rising) =>
@@ -125,6 +127,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Describe what the current planetary energy means for love and relationships — focus on Venus, Mars, and the Moon's movements. Then connect this specifically to how ${name}'s ${sun} Sun and ${moon} Moon are being activated. Give 1-2 concrete things they can do or watch out for in their relationships today.`,
   },
   career: {
+    displayName: 'Career Reading',
     section1Label: 'Your Purpose & Ambition',
     section2Label: 'Career energy in the sky today',
     prompt1: (name, sun, moon, rising) =>
@@ -133,6 +136,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Describe the current planetary energy around work and ambition — focus on Saturn, Mars, Mercury, and the Sun's movements. Then connect this specifically to ${name}'s ${sun} Sun and ${moon} Moon. Give 1-2 concrete actions or awarenesses for their professional life today.`,
   },
   finances: {
+    displayName: 'Finances Reading',
     section1Label: 'Your Relationship with Abundance',
     section2Label: 'Financial energy in the sky today',
     prompt1: (name, sun, moon, rising) =>
@@ -141,6 +145,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Describe the current planetary energy around finances and material decisions — focus on Venus, Jupiter, and Saturn movements. Then connect this to how ${name}'s ${sun} Sun and ${moon} Moon are being influenced. Give 1-2 concrete financial insights or awarenesses for today.`,
   },
   health: {
+    displayName: 'Health & Wellbeing',
     section1Label: 'Your Body, Mind & Rhythms',
     section2Label: 'Wellbeing energy in the sky today',
     prompt1: (name, sun, moon, rising) =>
@@ -149,6 +154,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Describe the current planetary energy around health and wellbeing — focus on the Moon, Mars, and Chiron movements. Then connect this to how ${name}'s ${sun} Sun and ${moon} Moon are being influenced. Give 1-2 concrete things they can do today to support their body and mind.`,
   },
   thisMonth: {
+    displayName: 'Monthly Forecast',
     section1Label: 'Your Monthly Forecast',
     section2Label: 'Key themes and dates this month',
     prompt1: (name, sun, moon, rising) =>
@@ -157,6 +163,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Based on this month's planetary movements — including any retrogrades, sign changes, or lunations — describe the key energetic phases of this month and how they interact with ${name}'s ${sun} Sun and ${moon} Moon. Give 2-3 specific things to lean into or be aware of this month.`,
   },
   communication: {
+    displayName: 'Communication Reading',
     section1Label: 'Your Mind & Voice',
     section2Label: 'Communication energy today',
     prompt1: (name, sun, moon, rising) =>
@@ -165,6 +172,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Describe today's Mercury and Air sign energy and how it affects communication, thinking, and expression. Then connect this to ${name}'s ${sun} Sun and ${moon} Moon. Give 1-2 specific communication tips or awarenesses for ${name} today.`,
   },
   innerWorld: {
+    displayName: 'Inner World Reading',
     section1Label: 'Your Inner Landscape',
     section2Label: 'What\'s stirring within today',
     prompt1: (name, sun, moon, rising) =>
@@ -173,6 +181,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Describe the Moon's current phase and sign, and what emotional undercurrents are active in the collective. Then speak to how this is landing specifically in ${name}'s inner world given their ${sun} Sun and ${moon} Moon. What is being stirred, and what might they need today?`,
   },
   energy: {
+    displayName: 'Energy & Timing',
     section1Label: 'Your Natural Energy & Timing',
     section2Label: 'Today\'s energy forecast for you',
     prompt1: (name, sun, moon, rising) =>
@@ -181,6 +190,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Describe today's overall cosmic energy level — is it a day for action, rest, reflection, or connection? Ground this in the current Mars, Sun, and Moon positions. Then tell ${name} specifically what kind of day today is for them given their ${sun} Sun and ${moon} Moon, and how to use the energy wisely.`,
   },
   travel: {
+    displayName: 'Travel Reading',
     section1Label: 'Your Adventure & Wanderlust',
     section2Label: 'Expansion energy right now',
     prompt1: (name, sun, moon, rising) =>
@@ -189,6 +199,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Describe the current Jupiter and Sagittarius energy around expansion, travel, and new horizons. Then connect this to ${name}'s ${sun} Sun and ${moon} Moon. Is now a time to plan, to go, or to explore closer to home? Give ${name} 1-2 concrete ideas for expanding their world right now.`,
   },
   spiritual: {
+    displayName: 'Spiritual Path Reading',
     section1Label: 'Your Soul\'s Path',
     section2Label: 'Spiritual currents today',
     prompt1: (name, sun, moon, rising) =>
@@ -197,6 +208,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Describe the spiritual and cosmic undercurrents active today — focus on Neptune, Chiron, and the Moon's influence. Then connect this to ${name}'s ${sun} Sun and ${moon} Moon. What is the universe asking of ${name} spiritually today? Give them one meaningful practice or awareness to carry.`,
   },
   compatibility: {
+    displayName: 'Compatibility Reading',
     section1Label: 'Your Cosmic Connection',
     section2Label: 'The energy between you today',
     prompt1: (name, sun, moon, rising, extra) =>
@@ -205,6 +217,7 @@ const TOPIC_CONFIG = {
       `Today is ${today}. Describe the current Venus and relationship energy in the sky. Then connect this to the connection between ${name} (${sun} Sun, ${moon} Moon) and ${extra || 'their person'}. How is today's energy affecting this relationship? Give 1-2 concrete things ${name} can do to nurture or navigate this connection today.`,
   },
   shadow: {
+    displayName: 'Shadow Work Reading',
     section1Label: 'Your Shadow & Hidden Gifts',
     section2Label: 'Shadow work invitation today',
     prompt1: (name, sun, moon, rising) =>
@@ -369,6 +382,7 @@ Be concise and potent — every sentence should land. No filler. No bullet point
 
     // --- 10. Fill in the reading text ---
     document.getElementById('resultName').textContent     = name + "'s";
+    document.getElementById('resultTopic').textContent   = topic.displayName;
     document.getElementById('chartReading').textContent   = parts[0].trim();
     document.getElementById('transitReading').textContent = (parts[1] || '').trim();
     document.getElementById('todayDate').textContent      = today;

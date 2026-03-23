@@ -208,9 +208,10 @@ function requireAuth() {
 
 function requireSubscription() {
   if (!currentUser) { openAuthModal(); return false; }
-  if (currentSubscribed) return true;
-  openUpgradeModal();
-  return false;
+  return true; // TEMP: all users get Pro access
+  // if (currentSubscribed) return true;
+  // openUpgradeModal();
+  // return false;
 }
 
 // ------------------------------------------------------------
@@ -295,9 +296,10 @@ function showHome() {
 }
 
 function showForm() {
-  document.getElementById('homeSection').style.display  = 'none';
-  document.getElementById('inputCard').style.display    = 'block';
+  document.getElementById('homeSection').style.display   = 'none';
+  document.getElementById('inputCard').style.display     = 'block';
   document.getElementById('signOverrides').style.display = 'block';
+  document.getElementById('onboardingIntro').style.display = 'none';
 }
 
 async function saveProfile() {
