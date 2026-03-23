@@ -10,6 +10,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/calculate-chart"
+  to = "/.netlify/functions/calculate-chart"
+  status = 200
+
+[[redirects]]
   from = "/api/geocode"
   to = "/.netlify/functions/geocode"
   status = 200

@@ -190,24 +190,33 @@ async function reveal() {
   const month = bd.getMonth() + 1;
   const day   = bd.getDate();
 
-  // Use manually entered signs if provided, otherwise calculate
+  // Use manually entered signs if provided, otherwise calculate server-side
   const manualSun    = document.getElementById('sunSign').value;
   const manualMoon   = document.getElementById('moonSign').value;
   const manualRising = document.getElementById('risingSign').value;
 
-  const sun  = manualSun  || SIGNS[getSunSign(month, day)];
-  const moon = manualMoon || SIGNS[estimateMoonSign(bd)];
-
+  let sun    = manualSun    || null;
+  let moon   = manualMoon   || null;
   let rising = manualRising || null;
-  if (!rising && birthTime && birthCity) {
+
+  if (!sun || !moon || (!rising && birthTime)) {
     try {
-      const geo = await fetch(`/api/geocode?city=${encodeURIComponent(birthCity)}`);
-      if (geo.ok) {
-        const { lat, lon } = await geo.json();
-        const risingIdx = calculateRising(bd, birthTime, lat, lon);
-        if (risingIdx !== null) rising = SIGNS[risingIdx];
+      const chartRes = await fetch('/api/calculate-chart', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ birthDate, birthTime, birthCity }),
+      });
+      if (chartRes.ok) {
+        const chart = await chartRes.json();
+        if (!sun)    sun    = chart.sun;
+        if (!moon)   moon   = chart.moon;
+        if (!rising) rising = chart.rising;
       }
-    } catch (_) {}
+    } catch (_) {
+      // Fallback to client-side estimates
+      if (!sun)  sun  = SIGNS[getSunSign(month, day)];
+      if (!moon) moon = SIGNS[estimateMoonSign(bd)];
+    }
   }
 
   // --- 5. Save birth info immediately (don't wait for reading to complete) ---
