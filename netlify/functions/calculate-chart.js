@@ -83,8 +83,8 @@ function ascendant(jd, lat, lon) {
   const y      = -Math.cos(lstRad);
   const x      =  Math.sin(lstRad) * Math.cos(eps) + Math.tan(latRad) * Math.sin(eps);
   let   asc    = Math.atan2(y, x) / d2r;
-  if (asc < 0) asc += 360;
-  return asc;
+  if (x < 0) asc += 180;   // quadrant correction — without this we get the Descendant
+  return ((asc % 360) + 360) % 360;
 }
 
 // ------------------------------------------------------------
