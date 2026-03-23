@@ -267,8 +267,19 @@ async function loadProfile() {
   if (hint) hint.style.display = currentSubscribed ? 'none' : 'block';
 
   document.getElementById('name').value        = data.name;
-  document.getElementById('birthDate').value   = data.birth_date  || '';
-  document.getElementById('birthTime').value   = data.birth_time  || '';
+  const savedDate = data.birth_date || '';
+  if (savedDate) {
+    const [sy, sm, sd] = savedDate.split('-');
+    document.getElementById('birthMonth').value = parseInt(sm, 10) || '';
+    document.getElementById('birthDay').value   = parseInt(sd, 10) || '';
+    document.getElementById('birthYear').value  = sy || '';
+  }
+  const savedTime = data.birth_time || '';
+  if (savedTime) {
+    const [th, tm] = savedTime.split(':');
+    document.getElementById('birthHour').value   = th || '';
+    document.getElementById('birthMinute').value = tm || '';
+  }
   document.getElementById('birthCity').value   = data.birth_city  || '';
   document.getElementById('sunSign').value     = data.sun_sign    || '';
   document.getElementById('moonSign').value    = data.moon_sign   || '';
@@ -293,9 +304,10 @@ async function saveProfile() {
   if (!currentUser) return;
   await sb.from('profiles').upsert({
     id:           currentUser.id,
+    email:        currentUser.email,
     name:         document.getElementById('name').value.trim(),
-    birth_date:   document.getElementById('birthDate').value,
-    birth_time:   document.getElementById('birthTime').value,
+    birth_date:   getBirthDate(),
+    birth_time:   getBirthTime(),
     birth_city:   document.getElementById('birthCity').value.trim(),
     sun_sign:     document.getElementById('sunSign').value   || null,
     moon_sign:    document.getElementById('moonSign').value  || null,

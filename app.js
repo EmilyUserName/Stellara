@@ -11,6 +11,61 @@
 
 
 // ------------------------------------------------------------
+// BIRTH TIME — populate hour/minute selects in 24-hour format
+// and expose getBirthTime() for the rest of the app to use.
+// ------------------------------------------------------------
+(function () {
+  const hourSel = document.getElementById('birthHour');
+  const minSel  = document.getElementById('birthMinute');
+  if (!hourSel || !minSel) return;
+
+  for (let h = 0; h < 24; h++) {
+    const opt  = document.createElement('option');
+    const hStr = String(h).padStart(2, '0');
+    opt.value       = hStr;
+    opt.textContent = h === 0 ? '00 — midnight' : h === 12 ? '12 — noon' : hStr;
+    hourSel.appendChild(opt);
+  }
+
+  for (let m = 0; m < 60; m++) {
+    const opt  = document.createElement('option');
+    opt.value       = String(m).padStart(2, '0');
+    opt.textContent = String(m).padStart(2, '0');
+    minSel.appendChild(opt);
+  }
+})();
+
+// ------------------------------------------------------------
+// BIRTH DATE — MM / DD / YYYY text inputs with auto-advance.
+// getBirthDate() returns "YYYY-MM-DD" or "".
+// ------------------------------------------------------------
+(function () {
+  const mEl = document.getElementById('birthMonth');
+  const dEl = document.getElementById('birthDay');
+  const yEl = document.getElementById('birthYear');
+  if (!mEl || !dEl || !yEl) return;
+
+  // Auto-advance: jump to next field when enough digits entered
+  mEl.addEventListener('input', () => { if (mEl.value.length >= 2) dEl.focus(); });
+  dEl.addEventListener('input', () => { if (dEl.value.length >= 2) yEl.focus(); });
+})();
+
+function getBirthDate() {
+  const m = document.getElementById('birthMonth')?.value;
+  const d = document.getElementById('birthDay')?.value;
+  const y = document.getElementById('birthYear')?.value;
+  if (!m || !d || !y || y.length < 4) return '';
+  return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+
+function getBirthTime() {
+  const h = document.getElementById('birthHour')?.value;
+  const m = document.getElementById('birthMinute')?.value;
+  return (h && m) ? `${h}:${m}` : '';
+}
+
+
+// ------------------------------------------------------------
 // STYLE SELECTION — controls the reading's tone and vocabulary
 // ------------------------------------------------------------
 let selectedStyle = 'psychological';
@@ -167,8 +222,8 @@ async function reveal() {
 
   // --- 1. Read what the user typed into the form ---
   const name      = document.getElementById('name').value.trim();
-  const birthDate = document.getElementById('birthDate').value;
-  const birthTime = document.getElementById('birthTime').value;
+  const birthDate = getBirthDate();
+  const birthTime = getBirthTime();
   const birthCity = document.getElementById('birthCity').value.trim();
 
   // --- 2. Clear any previous error message ---
@@ -348,3 +403,83 @@ function goHome() {
   });
   showHome();
 }
+
+
+// ------------------------------------------------------------
+// BIRTH CITY AUTOCOMPLETE
+// Debounced search → dropdown of "City, State, Country" options
+// so users always pick an unambiguous location.
+// ------------------------------------------------------------
+(function () {
+  let debounceTimer = null;
+  let skipNext = false; // prevent re-triggering after programmatic value set
+
+  const input = document.getElementById('birthCity');
+  if (!input) return;
+
+  // Create and position the dropdown
+  const wrap = input.parentNode;
+  wrap.style.position = 'relative';
+  const dropdown = document.createElement('div');
+  dropdown.className = 'city-dropdown';
+  wrap.appendChild(dropdown);
+
+  input.addEventListener('input', () => {
+    if (skipNext) { skipNext = false; return; }
+    clearTimeout(debounceTimer);
+    const q = input.value.trim();
+    if (q.length < 2) { closeDropdown(); return; }
+    debounceTimer = setTimeout(() => fetchSuggestions(q), 350);
+  });
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (!wrap.contains(e.target)) closeDropdown();
+  });
+
+  async function fetchSuggestions(q) {
+    try {
+      const res = await fetch(`/api/geocode?city=${encodeURIComponent(q)}&autocomplete=true`);
+      if (!res.ok) { closeDropdown(); return; }
+      const results = await res.json();
+      renderDropdown(results);
+    } catch (_) { closeDropdown(); }
+  }
+
+  // Build "City, State, Country" from Nominatim address object
+  function formatPlace(addr) {
+    const city    = addr.city || addr.town || addr.village || addr.municipality || addr.county || '';
+    const state   = addr.state || addr.region || '';
+    const country = addr.country || '';
+    return [city, state, country].filter(Boolean).join(', ');
+  }
+
+  function renderDropdown(results) {
+    dropdown.innerHTML = '';
+    const seen = new Set();
+    results.forEach(r => {
+      const label = formatPlace(r.address);
+      if (!label || seen.has(label)) return;
+      seen.add(label);
+      const item = document.createElement('div');
+      item.className = 'city-dropdown-item';
+      item.textContent = label;
+      item.addEventListener('mousedown', (e) => {
+        e.preventDefault(); // keep focus on input
+        skipNext = true;
+        input.value = label;
+        // Cache coordinates so calculate-chart can skip re-geocoding
+        input.dataset.lat = r.lat;
+        input.dataset.lon = r.lon;
+        closeDropdown();
+      });
+      dropdown.appendChild(item);
+    });
+    dropdown.classList.toggle('active', dropdown.children.length > 0);
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove('active');
+    dropdown.innerHTML = '';
+  }
+})();

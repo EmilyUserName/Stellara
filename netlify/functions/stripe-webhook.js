@@ -13,16 +13,18 @@ function verifySignature(payload, sig, secret) {
 }
 
 async function updateProfile(userId, fields) {
-  const url = `${process.env.SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`;
+  // POST with merge-duplicates = upsert: creates the row if it doesn't exist yet,
+  // updates it if it does. Needed because a user may pay before ever saving a profile.
+  const url = `${process.env.SUPABASE_URL}/rest/v1/profiles`;
   await fetch(url, {
-    method: 'PATCH',
+    method: 'POST',
     headers: {
       'apikey':        process.env.SUPABASE_SERVICE_KEY,
       'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_KEY}`,
       'Content-Type':  'application/json',
-      'Prefer':        'return=minimal',
+      'Prefer':        'resolution=merge-duplicates,return=minimal',
     },
-    body: JSON.stringify(fields),
+    body: JSON.stringify({ id: userId, ...fields }),
   });
 }
 
@@ -45,6 +47,7 @@ exports.handler = async function (event) {
     const userId  = session.client_reference_id;
     await updateProfile(userId, {
       subscribed:             true,
+      email:                  session.customer_details?.email || session.customer_email || null,
       stripe_customer_id:     session.customer,
       stripe_subscription_id: session.subscription,
     });

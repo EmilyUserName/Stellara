@@ -72,7 +72,7 @@
           <div class="landing-plan-name">Free</div>
           <div class="landing-plan-desc">Your full birth chart reading, personalized to you.</div>
         </div>
-        <div class="landing-plan-divider">✦</div>
+        <div class="landing-plan-divider"></div>
         <div class="landing-plan">
           <div class="landing-plan-name">Pro — $7 / month</div>
           <div class="landing-plan-desc">13 reading topics, 4 astrology styles, and a personalized daily reading delivered to your inbox every morning.</div>
@@ -158,13 +158,20 @@
         </div>
 
         <div>
-          <label for="birthDate">Birth Date</label>
-          <input type="date" id="birthDate" />
+          <label>Birth Date</label>
+          <div class="date-inputs">
+            <input type="number" id="birthMonth" placeholder="MM" min="1" max="12" />
+            <input type="number" id="birthDay"   placeholder="DD" min="1" max="31" />
+            <input type="number" id="birthYear"  placeholder="YYYY" min="1920" max="2025" />
+          </div>
         </div>
 
         <div>
-          <label for="birthTime">Birth Time</label>
-          <input type="time" id="birthTime" />
+          <label>Birth Time <span class="optional-label">24-hour · leave blank if unknown</span></label>
+          <div class="time-selects">
+            <select id="birthHour"><option value="">Hour</option></select>
+            <select id="birthMinute"><option value="">Min</option></select>
+          </div>
         </div>
 
         <div class="full">

@@ -169,7 +169,7 @@ header p {
   margin-bottom: 28px;
   display: flex; align-items: center; justify-content: center; gap: 10px;
 }
-.card-title span { color: var(--accent); font-size: 1rem; }
+.card-title > span:first-child { color: var(--accent); font-size: 1rem; }
 
 
 /* ------------------------------------------------------------
@@ -211,6 +211,27 @@ input:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(126,168,212,0.08);
 }
 select option { background: var(--navy-2); }
+
+
+/* Birth date — MM / DD / YYYY text inputs */
+.date-inputs {
+  display: flex;
+  gap: 8px;
+}
+.date-inputs input:nth-child(1) { flex: 1; }   /* MM */
+.date-inputs input:nth-child(2) { flex: 1; }   /* DD */
+.date-inputs input:nth-child(3) { flex: 1.8; } /* YYYY */
+/* Hide the browser number spinners */
+.date-inputs input::-webkit-inner-spin-button,
+.date-inputs input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.date-inputs input[type=number] { -moz-appearance: textfield; }
+
+/* Birth time — two selects side by side */
+.time-selects {
+  display: flex;
+  gap: 8px;
+}
+.time-selects select { flex: 1; }
 
 
 /* ------------------------------------------------------------
@@ -298,24 +319,26 @@ select option { background: var(--navy-2); }
 
 .landing-value {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 0;
   background: rgba(11,22,48,0.5);
   border: 1px solid rgba(126,168,212,0.12);
   border-radius: 14px;
-  padding: 28px;
+  overflow: hidden;
   margin: 0 auto 36px;
   max-width: 560px;
   text-align: left;
 }
-.landing-plan { flex: 1; }
+.landing-plan {
+  padding: 22px 28px;
+}
 .landing-plan-divider {
-  color: var(--accent);
-  font-size: 0.9rem;
-  padding: 0 20px;
-  padding-top: 2px;
-  opacity: 0.5;
+  height: 1px;
+  background: rgba(126,168,212,0.12);
+  padding: 0;
   flex-shrink: 0;
+  color: transparent;
+  font-size: 0;
 }
 .landing-plan-name {
   font-size: 0.68rem;
@@ -806,6 +829,38 @@ select option { background: var(--navy-2); }
 }
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+
+/* ------------------------------------------------------------
+   CITY AUTOCOMPLETE DROPDOWN
+   ------------------------------------------------------------ */
+.city-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: var(--navy-2);
+  border: 1px solid rgba(126,168,212,0.25);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 50;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.city-dropdown.active { display: block; }
+
+.city-dropdown-item {
+  padding: 11px 16px;
+  font-size: 0.88rem;
+  color: var(--silver-light);
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(126,168,212,0.08);
+}
+.city-dropdown-item:last-child { border-bottom: none; }
+.city-dropdown-item:hover {
+  background: rgba(126,168,212,0.1);
+  color: var(--white);
 }
 
 
