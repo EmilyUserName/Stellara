@@ -281,9 +281,8 @@ async function loadProfile() {
     document.getElementById('birthMinute').value = tm || '';
   }
   document.getElementById('birthCity').value   = data.birth_city  || '';
-  document.getElementById('sunSign').value     = data.sun_sign    || '';
-  document.getElementById('moonSign').value    = data.moon_sign   || '';
-  document.getElementById('risingSign').value  = data.rising_sign || '';
+  // Sign dropdowns are for manual overrides only — don't pre-fill from
+  // auto-calculated saved values, or they'd block fresh recalculation.
 
   document.getElementById('welcomeName').textContent = data.name;
   showHome();

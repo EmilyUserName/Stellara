@@ -70,7 +70,10 @@ function moonLongitude(jd) {
 }
 
 // ------------------------------------------------------------
-// ASCENDANT — standard formula using Local Sidereal Time
+// ASCENDANT — Local Sidereal Time method (Meeus Ch. 14)
+//
+// The raw atan2 formula yields the Descendant (western horizon).
+// Adding 180° converts it to the Ascendant (eastern horizon).
 // ------------------------------------------------------------
 function ascendant(jd, lat, lon) {
   const T      = (jd - 2451545.0) / 36525;
@@ -82,21 +85,30 @@ function ascendant(jd, lat, lon) {
   const latRad = lat * d2r;
   const y      = -Math.cos(lstRad);
   const x      =  Math.sin(lstRad) * Math.cos(eps) + Math.tan(latRad) * Math.sin(eps);
-  let   asc    = Math.atan2(y, x) / d2r;
-  if (x < 0) asc += 180;   // quadrant correction — without this we get the Descendant
+  // atan2(y,x) gives the Descendant; +180° flips to the Ascendant
+  const asc    = Math.atan2(y, x) / d2r + 180;
   return ((asc % 360) + 360) % 360;
 }
 
 // ------------------------------------------------------------
-// TIMEZONE — get IANA timezone from lat/lon, then convert local
-// birth time to UTC using Node's Intl API (handles DST correctly)
+// TIMEZONE — try timeapi.io first (accurate historical DST),
+// fall back to Open-Meteo if unavailable.
 // ------------------------------------------------------------
 async function getTimeZone(lat, lon) {
-  // Open-Meteo returns timezone from coordinates for free, no API key needed
+  try {
+    const res  = await fetch(
+      `https://timeapi.io/api/TimeZone/coordinate?latitude=${lat}&longitude=${lon}`,
+      { signal: AbortSignal.timeout(4000) }
+    );
+    const data = await res.json();
+    if (data.timeZone) return data.timeZone;
+  } catch (_) {}
+
+  // Fallback: Open-Meteo
   const res  = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&timezone=auto&forecast_days=0`);
   const data = await res.json();
   if (!data.timezone) throw new Error('No timezone returned');
-  return data.timezone; // e.g. "America/New_York"
+  return data.timezone;
 }
 
 function localToUTC(birthDate, birthTime, timeZone) {
@@ -150,7 +162,6 @@ exports.handler = async function (event) {
     } catch (_) {
       // Fallback: approximate from longitude
       const offsetH = lon / 15;
-      const [h, m]  = birthTime.split(':').map(Number);
       birthUTC = new Date(`${birthDate}T${birthTime}:00Z`);
       birthUTC.setUTCMinutes(birthUTC.getUTCMinutes() - offsetH * 60);
     }
