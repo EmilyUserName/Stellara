@@ -14,9 +14,9 @@
    Change these variables and they update everywhere at once!
    ------------------------------------------------------------ */
 :root {
-  --navy:         #060d1f;   /* darkest background */
-  --navy-2:       #0b1630;   /* card backgrounds */
-  --navy-3:       #111e40;   /* slightly lighter navy */
+  --navy:         #0d1b32;   /* darkest background */
+  --navy-2:       #132440;   /* card backgrounds */
+  --navy-3:       #192e50;   /* slightly lighter navy */
   --silver:       #b8c4d8;   /* muted text */
   --silver-light: #dce4f0;   /* body text */
   --silver-bright:#eef2f9;   /* bright text */
@@ -97,6 +97,19 @@ body {
 @keyframes twinkle {
   0%   { opacity: 0.6; }
   100% { opacity: 1; }
+}
+
+/* Individual star sparkles — each fades independently via JS-set delays */
+.star-sparkle {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  pointer-events: none;
+  animation: starFade ease-in-out infinite;
+}
+@keyframes starFade {
+  0%, 100% { opacity: 0; }
+  50%       { opacity: 1; }
 }
 
 

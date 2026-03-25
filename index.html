@@ -417,6 +417,29 @@
       navigator.serviceWorker.register('/sw.js');
     }
   </script>
+
+  <script>
+    // Individual twinkling stars — each fades in/out independently
+    (function () {
+      const starfield = document.querySelector('.starfield');
+      const COUNT = 60;
+      for (let i = 0; i < COUNT; i++) {
+        const s = document.createElement('div');
+        s.className = 'star-sparkle';
+        const size = Math.random() < 0.25 ? 2 : 1; // mostly 1px, occasional 2px
+        s.style.cssText = [
+          `left:${(Math.random() * 100).toFixed(2)}%`,
+          `top:${(Math.random() * 100).toFixed(2)}%`,
+          `width:${size}px`,
+          `height:${size}px`,
+          `opacity:0`,
+          `animation-duration:${(3 + Math.random() * 5).toFixed(2)}s`,
+          `animation-delay:${(Math.random() * 8).toFixed(2)}s`,
+        ].join(';');
+        starfield.appendChild(s);
+      }
+    })();
+  </script>
   <script>
     const HEADLINES = [
       "Your chart. Today's sky. Every day.",
