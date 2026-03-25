@@ -507,16 +507,9 @@ select option { background: var(--navy-2); }
   color: var(--white);
 }
 
-/* Full Chart + Today's Sky — side by side, equal size */
-.topic-pill-row {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-}
-
-/* Full Chart — prominent, equal to Today's Sky */
+/* Full Chart + Today's Sky — full-width, stacked, prominent */
 .topic-pill-featured {
-  flex: 1;
+  width: 100%;
   text-align: center;
   padding: 13px 20px;
   font-size: 0.95rem;
@@ -534,7 +527,6 @@ select option { background: var(--navy-2); }
 
 /* Today's Sky — same prominence as Full Chart, gold glow, animated pulse */
 .topic-pill[data-topic="daily"] {
-  flex: 1;
   border-color: rgba(200,169,110,0.45);
   color: var(--silver-bright);
   font-size: 0.95rem;
