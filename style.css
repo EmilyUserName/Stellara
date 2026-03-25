@@ -524,6 +524,31 @@ select option { background: var(--navy-2); }
   color: var(--white);
   box-shadow: 0 0 10px rgba(126,168,212,0.12);
 }
+
+/* Today's Sky — larger, gold glow, animated pulse to feel live and time-sensitive */
+.topic-pill[data-topic="daily"] {
+  border-color: rgba(200,169,110,0.45);
+  color: var(--silver-bright);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 9px 22px;
+  animation: dailyPulse 3s ease-in-out infinite;
+}
+.topic-pill[data-topic="daily"]:hover {
+  border-color: rgba(200,169,110,0.8);
+  box-shadow: 0 0 16px rgba(200,169,110,0.2);
+  color: var(--white);
+}
+.topic-pill[data-topic="daily"].active {
+  background: rgba(200,169,110,0.12);
+  border-color: rgba(200,169,110,0.7);
+  box-shadow: 0 0 18px rgba(200,169,110,0.2);
+}
+
+@keyframes dailyPulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(200,169,110,0.15); }
+  50%       { box-shadow: 0 0 14px rgba(200,169,110,0.35); }
+}
 .pill-pro, .pill-free {
   display: inline-block;
   font-size: 0.55rem;
