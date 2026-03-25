@@ -541,6 +541,7 @@ select option { background: var(--navy-2); }
   border: 1px solid rgba(126,168,212,0.35);
 }
 .is-pro .pill-pro { display: none; }
+.is-pro .pill-free-label { display: none; }
 .pill-free {
   background: rgba(255,255,255,0.07);
   color: var(--silver);
