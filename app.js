@@ -352,13 +352,18 @@ Moon sign: ${moon}
 ${rising ? `Rising sign: ${rising}` : 'Rising sign: unknown (no birth time provided)'}
 Birth city: ${birthCity}`;
 
+  // When no birth time was given, ask Claude to be honest about it in the reading
+  const noTimeNote = !birthTime
+    ? `\n\nNote: ${name} did not provide a birth time, so their Rising sign cannot be calculated. Weave this into your reading naturally and honestly — briefly acknowledge that without a birth time the Rising sign is unknown, and let the depth of the reading rest on their Sun and Moon combination instead. Don't dwell on it, just be transparent.`
+    : '';
+
   let prompt;
   if (mode === 'chart') {
     prompt = `${style.system}
 
 ${userContext}
 
-${topic.prompt1(name, sun, moon, rising, partnerInfo)}
+${topic.prompt1(name, sun, moon, rising, partnerInfo)}${noTimeNote}
 
 Be concise and potent — every sentence should land. No filler. No bullet points. No headers. Just paragraphs.`;
   } else if (mode === 'daily') {
@@ -367,7 +372,7 @@ Be concise and potent — every sentence should land. No filler. No bullet point
 ${userContext}
 Today's date: ${today}
 
-${topic.prompt2(name, sun, moon, today, partnerInfo)}
+${topic.prompt2(name, sun, moon, today, partnerInfo)}${noTimeNote}
 
 Be concise and potent — every sentence should land. No filler. No bullet points. No headers. Just paragraphs.`;
   } else {
@@ -382,7 +387,7 @@ SECTION 1 — CHART READING (2 paragraphs max):
 ${topic.prompt1(name, sun, moon, rising, partnerInfo)}
 
 SECTION 2 — TODAY (1–2 paragraphs max):
-${topic.prompt2(name, sun, moon, today, partnerInfo)}
+${topic.prompt2(name, sun, moon, today, partnerInfo)}${noTimeNote}
 
 Be concise and potent — every sentence should land. No filler. No bullet points. No headers. Just paragraphs.`;
   }
