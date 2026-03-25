@@ -507,15 +507,22 @@ select option { background: var(--navy-2); }
   color: var(--white);
 }
 
-/* Full Chart — full-width featured pill, own row */
-.topic-pill-featured {
+/* Full Chart + Today's Sky — side by side, equal size */
+.topic-pill-row {
+  display: flex;
+  gap: 8px;
   width: 100%;
+}
+
+/* Full Chart — prominent pill, same size as Today's Sky */
+.topic-pill-featured {
+  flex: 1;
   text-align: center;
-  padding: 11px 20px;
+  padding: 9px 22px;
   font-size: 0.88rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
-  border-color: rgba(126,168,212,0.35);
+  letter-spacing: 0.08em;
+  border-color: rgba(126,168,212,0.45);
   color: var(--white);
 }
 .topic-pill.active {
@@ -525,13 +532,15 @@ select option { background: var(--navy-2); }
   box-shadow: 0 0 10px rgba(126,168,212,0.12);
 }
 
-/* Today's Sky — larger, gold glow, animated pulse to feel live and time-sensitive */
+/* Today's Sky — same size as Full Chart, gold glow, animated pulse */
 .topic-pill[data-topic="daily"] {
+  flex: 1;
   border-color: rgba(200,169,110,0.45);
   color: var(--silver-bright);
   font-size: 0.88rem;
   font-weight: 600;
   padding: 9px 22px;
+  text-align: center;
   animation: dailyPulse 3s ease-in-out infinite;
 }
 .topic-pill[data-topic="daily"]:hover {
