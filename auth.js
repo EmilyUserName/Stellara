@@ -264,6 +264,7 @@ async function loadProfile() {
   }
 
   currentSubscribed = data.subscribed || false;
+  document.body.classList.toggle('is-pro', currentSubscribed);
   const hint = document.getElementById('upgradeHint');
   if (hint) hint.style.display = currentSubscribed ? 'none' : 'block';
 
