@@ -122,13 +122,7 @@ async function handleAuth() {
     return;
   }
 
-  if (activeTab === 'signup' && !result.data.session) {
-    // Email confirmation required
-    errEl.style.color = 'var(--accent)';
-    errEl.textContent = 'Check your email to confirm your account, then sign in.';
-  } else {
-    closeAuthModal();
-  }
+  closeAuthModal();
 }
 
 // ------------------------------------------------------------
