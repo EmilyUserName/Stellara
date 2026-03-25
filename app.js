@@ -350,7 +350,7 @@ async function reveal() {
 Sun sign: ${sun}
 Moon sign: ${moon}
 ${rising ? `Rising sign: ${rising}` : 'Rising sign: unknown (no birth time provided)'}
-Birth city: ${birthCity}`;
+Birth city: ${birthCity} (this is where they were born, not necessarily where they live now — do not make assumptions about their current location)`;
 
   // When no birth time was given, ask Claude to be honest about it in the reading
   const noTimeNote = !birthTime
