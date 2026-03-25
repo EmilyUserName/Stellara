@@ -221,6 +221,13 @@ input, select {
   -webkit-appearance: none;
 }
 input::placeholder { color: rgba(184,196,216,0.35); }
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #132440 inset;
+  -webkit-text-fill-color: var(--white);
+  caret-color: var(--white);
+}
 input:focus, select:focus {
   border-color: rgba(126,168,212,0.5);
   box-shadow: 0 0 0 3px rgba(126,168,212,0.08);
