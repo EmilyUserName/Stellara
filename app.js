@@ -266,8 +266,8 @@ async function reveal() {
   }
 
   // --- 3b. Gate topic-specific readings behind subscription ---
-  // Full Chart, Today's Sky, and Birthday are free; all other topics require Pro
-  if (!['chart', 'daily', 'birthday'].includes(selectedTopic) && !requireSubscription()) return;
+  // Full Chart and Birthday are free; all other topics (including Today's Sky) require Pro
+  if (!['chart', 'birthday'].includes(selectedTopic) && !requireSubscription()) return;
 
   // --- 4. Calculate the three placements from astrology.js ---
   const bd    = new Date(birthDate + 'T12:00:00');
