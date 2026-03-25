@@ -267,7 +267,7 @@ select option { background: var(--navy-2); }
 #authBtn {
   background: none;
   border: 1px solid rgba(126,168,212,0.3);
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 6px 16px;
   color: var(--silver-light);
   font-family: 'Barlow', sans-serif;
@@ -506,7 +506,7 @@ select option { background: var(--navy-2); }
 .topic-pill {
   background: rgba(6,13,31,0.6);
   border: 1px solid rgba(126,168,212,0.2);
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 7px 16px;
   color: var(--silver);
   font-family: 'Barlow', sans-serif;
@@ -620,7 +620,7 @@ select option { background: var(--navy-2); }
   margin-top: 28px;
   background: none;
   border: 1px solid rgba(126,168,212,0.18);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 10px 22px;
   color: var(--silver);
   font-family: 'Barlow', sans-serif;
@@ -829,7 +829,7 @@ select option { background: var(--navy-2); }
 .auth-tab {
   background: none;
   border: 1px solid rgba(126,168,212,0.2);
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 6px 20px;
   color: var(--silver);
   font-family: 'Barlow', sans-serif;
