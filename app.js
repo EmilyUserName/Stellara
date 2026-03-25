@@ -85,7 +85,10 @@ const STYLE_CONFIG = {
   },
 };
 
+const FREE_STYLES = ['psychological'];
+
 function selectStyle(el) {
+  if (!FREE_STYLES.includes(el.dataset.style) && !requireSubscription()) return;
   document.querySelectorAll(`[data-style="${el.dataset.style}"]`).forEach(c => c.classList.add('active'));
   document.querySelectorAll(`.style-card:not([data-style="${el.dataset.style}"])`).forEach(c => c.classList.remove('active'));
   selectedStyle = el.dataset.style;
@@ -114,6 +117,13 @@ const TOPIC_CONFIG = {
     section1Label: 'Your Cosmic Blueprint',
     prompt1: (name, sun, moon, rising) =>
       `Give a personal, psychologically rich reading of ${name}'s ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''} combination. Highlight the interplay between their placements. Be specific and insightful, not generic. Avoid clichés. Reveal something they might not have heard before.`,
+  },
+  birthday: {
+    mode: 'chart',
+    displayName: 'Solar Return Reading',
+    section1Label: 'Your New Year in the Stars',
+    prompt1: (name, sun, moon, rising) =>
+      `Today is ${name}'s birthday — their Solar Return. The Sun has completed its full journey and returned to the exact degree it occupied the moment they were born. Write ${name} a deeply personal birthday reading. What chapter is closing and what is opening? Based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}, what are the defining themes, gifts, and growth edges of this new year of their life? What is the cosmos asking of them in this next orbit? Make this feel like a genuine cosmic gift — honest, warm, and full of insight that only their chart could reveal. Speak to the magic of this specific moment.`,
   },
   daily: {
     mode: 'daily',
@@ -256,8 +266,8 @@ async function reveal() {
   }
 
   // --- 3b. Gate topic-specific readings behind subscription ---
-  // Full Chart and Today's Sky are free; all other topics require Pro
-  if (!['chart', 'daily'].includes(selectedTopic) && !requireSubscription()) return;
+  // Full Chart, Today's Sky, and Birthday are free; all other topics require Pro
+  if (!['chart', 'daily', 'birthday'].includes(selectedTopic) && !requireSubscription()) return;
 
   // --- 4. Calculate the three placements from astrology.js ---
   const bd    = new Date(birthDate + 'T12:00:00');
@@ -546,3 +556,48 @@ function goHome() {
     dropdown.innerHTML = '';
   }
 })();
+
+
+// ------------------------------------------------------------
+// BIRTHDAY EXPERIENCE
+// Called from auth.js when the user's birth month+day matches today.
+// ------------------------------------------------------------
+function triggerBirthdayExperience(name) {
+  // Swap welcome text
+  const welcomeEl = document.querySelector('.welcome-text');
+  if (welcomeEl) welcomeEl.style.display = 'none';
+
+  // Show birthday banner
+  document.getElementById('birthdayBanner').style.display = 'block';
+  document.getElementById('birthdayName').textContent = name;
+
+  // Pre-select the birthday/solar return topic
+  selectedTopic = 'birthday';
+  document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
+
+  // Update the reveal button label
+  const btn = document.querySelector('#homeSection .btn');
+  if (btn) btn.textContent = '✦  Reveal My Solar Return Reading';
+
+  // Confetti — Stellara gold & blue palette, two waves
+  const COLORS = ['#c8a96e', '#d4b97e', '#7ea8d4', '#a8c4e0', '#f5f8ff'];
+
+  function burst(opts) {
+    confetti({ colors: COLORS, ...opts });
+  }
+
+  // First wave — upward fountain from center
+  burst({ particleCount: 80,  spread: 70,  origin: { x: 0.5, y: 0.6 }, startVelocity: 55 });
+  burst({ particleCount: 40,  spread: 120, origin: { x: 0.5, y: 0.6 }, startVelocity: 35, scalar: 1.2 });
+
+  // Second wave after a beat — from the sides
+  setTimeout(() => {
+    burst({ particleCount: 60, angle: 60,  spread: 55, origin: { x: 0, y: 0.65 }, startVelocity: 60 });
+    burst({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1, y: 0.65 }, startVelocity: 60 });
+  }, 600);
+
+  // Third wave — gentle shimmer finishing touch
+  setTimeout(() => {
+    burst({ particleCount: 50, spread: 100, origin: { x: 0.5, y: 0.5 }, startVelocity: 20, gravity: 0.5, scalar: 0.8, ticks: 300 });
+  }, 1400);
+}

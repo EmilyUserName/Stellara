@@ -287,6 +287,15 @@ async function loadProfile() {
 
   document.getElementById('welcomeName').textContent = data.name;
   showHome();
+
+  // Check if today is their birthday (match month + day, ignore year)
+  if (data.birth_date) {
+    const now = new Date();
+    const [, bm, bd] = data.birth_date.split('-');
+    if (parseInt(bm, 10) === now.getMonth() + 1 && parseInt(bd, 10) === now.getDate()) {
+      triggerBirthdayExperience(data.name);
+    }
+  }
 }
 
 function showHome() {

@@ -16,6 +16,9 @@
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet"/>
 
+  <!-- Confetti (birthday celebration) -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
   <!-- All styling lives in style.css -->
   <link rel="stylesheet" href="style.css" />
 
@@ -89,6 +92,12 @@
          ===================================================== -->
     <div id="homeSection" style="display:none;">
       <p class="welcome-text">Welcome back, <span id="welcomeName"></span> ✦</p>
+
+      <div id="birthdayBanner" style="display:none;">
+        <p class="birthday-headline">✦ Happy Birthday, <span id="birthdayName"></span> ✦</p>
+        <p class="birthday-sub">Today the Sun returns to the exact degree it held the moment you were born. This is your Solar Return — a new chapter begins.</p>
+      </div>
+
       <div class="card">
         <div class="card-title"><span>✦</span> What would you like to explore?</div>
         <div class="style-selector">
@@ -99,15 +108,15 @@
               <div class="style-card-desc">Jungian depth, archetypes, shadow work</div>
             </button>
             <button class="style-card" data-style="spiritual" onclick="selectStyle(this)">
-              <div class="style-card-name">Spiritual</div>
+              <div class="style-card-name">Spiritual <span class="pill-pro">Pro</span></div>
               <div class="style-card-desc">Soul-centered, mystical, cosmic connection</div>
             </button>
             <button class="style-card" data-style="modern" onclick="selectStyle(this)">
-              <div class="style-card-name">Modern & Direct</div>
+              <div class="style-card-name">Modern & Direct <span class="pill-pro">Pro</span></div>
               <div class="style-card-desc">Clear, grounded, practical insights</div>
             </button>
             <button class="style-card" data-style="classical" onclick="selectStyle(this)">
-              <div class="style-card-name">Classical</div>
+              <div class="style-card-name">Classical <span class="pill-pro">Pro</span></div>
               <div class="style-card-desc">Traditional astrology, mythological planets</div>
             </button>
           </div>
