@@ -514,14 +514,14 @@ select option { background: var(--navy-2); }
   width: 100%;
 }
 
-/* Full Chart — prominent pill, same size as Today's Sky */
+/* Full Chart — prominent, equal to Today's Sky */
 .topic-pill-featured {
   flex: 1;
   text-align: center;
-  padding: 9px 22px;
-  font-size: 0.88rem;
+  padding: 13px 20px;
+  font-size: 0.95rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   border-color: rgba(126,168,212,0.45);
   color: var(--white);
 }
@@ -532,14 +532,14 @@ select option { background: var(--navy-2); }
   box-shadow: 0 0 10px rgba(126,168,212,0.12);
 }
 
-/* Today's Sky — same size as Full Chart, gold glow, animated pulse */
+/* Today's Sky — same prominence as Full Chart, gold glow, animated pulse */
 .topic-pill[data-topic="daily"] {
   flex: 1;
   border-color: rgba(200,169,110,0.45);
   color: var(--silver-bright);
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  padding: 9px 22px;
+  padding: 13px 20px;
   text-align: center;
   animation: dailyPulse 3s ease-in-out infinite;
 }
