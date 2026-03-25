@@ -109,13 +109,18 @@ function selectTopic(el) {
 
 const TOPIC_CONFIG = {
   chart: {
+    mode: 'chart',
     displayName: 'Birth Chart',
     section1Label: 'Your Cosmic Blueprint',
-    section2Label: 'How the sky speaks to your chart today',
     prompt1: (name, sun, moon, rising) =>
       `Give a personal, psychologically rich reading of ${name}'s ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''} combination. Highlight the interplay between their placements. Be specific and insightful, not generic. Avoid clichés. Reveal something they might not have heard before.`,
+  },
+  daily: {
+    mode: 'daily',
+    displayName: "Today's Sky",
+    section2Label: "Today's cosmic weather for you",
     prompt2: (name, sun, moon, today) =>
-      `Today is ${today}. Describe the current planetary weather (invent plausible but general transit themes for today — Mercury, Venus, Mars, Jupiter movements) and then specifically connect how this energy interacts with ${name}'s ${sun} Sun and ${moon} Moon. Give them 1-2 concrete things to lean into or watch out for today.`,
+      `Today is ${today}. Give ${name} (${sun} Sun, ${moon} Moon) their personal daily reading. Describe the most significant planetary energy active today — the Moon's sign and phase, any major aspects or movements worth noting. Invent plausible but grounded transit themes for today. Then make it personal: how does today's cosmic weather interact with ${name}'s chart specifically? What is today asking of them? What should they lean into, and what should they move through carefully? Fresh, direct, potent. 2 paragraphs max.`,
   },
   love: {
     displayName: 'Love Reading',
@@ -251,7 +256,8 @@ async function reveal() {
   }
 
   // --- 3b. Gate topic-specific readings behind subscription ---
-  if (selectedTopic !== 'chart' && !requireSubscription()) return;
+  // Full Chart and Today's Sky are free; all other topics require Pro
+  if (!['chart', 'daily'].includes(selectedTopic) && !requireSubscription()) return;
 
   // --- 4. Calculate the three placements from astrology.js ---
   const bd    = new Date(birthDate + 'T12:00:00');
@@ -323,19 +329,41 @@ async function reveal() {
   });
 
   const topic = TOPIC_CONFIG[selectedTopic];
+  const mode  = topic.mode || 'both';
   const style = STYLE_CONFIG[selectedStyle];
 
   // Read partner info for compatibility topic
   const partnerEl = [...document.querySelectorAll('.partner-input-field')].find(el => el.offsetParent !== null);
   const partnerInfo = partnerEl ? partnerEl.value.trim() : '';
 
-  const prompt = `${style.system}
-
-The user's name is ${name}.
+  const userContext = `The user's name is ${name}.
 Sun sign: ${sun}
 Moon sign: ${moon}
 ${rising ? `Rising sign: ${rising}` : 'Rising sign: unknown (no birth time provided)'}
-Birth city: ${birthCity}
+Birth city: ${birthCity}`;
+
+  let prompt;
+  if (mode === 'chart') {
+    prompt = `${style.system}
+
+${userContext}
+
+${topic.prompt1(name, sun, moon, rising, partnerInfo)}
+
+Be concise and potent — every sentence should land. No filler. No bullet points. No headers. Just paragraphs.`;
+  } else if (mode === 'daily') {
+    prompt = `${style.system}
+
+${userContext}
+Today's date: ${today}
+
+${topic.prompt2(name, sun, moon, today, partnerInfo)}
+
+Be concise and potent — every sentence should land. No filler. No bullet points. No headers. Just paragraphs.`;
+  } else {
+    prompt = `${style.system}
+
+${userContext}
 Today's date: ${today}
 
 Write two sections separated by the exact delimiter "---TRANSITS---":
@@ -347,6 +375,7 @@ SECTION 2 — TODAY (1–2 paragraphs max):
 ${topic.prompt2(name, sun, moon, today, partnerInfo)}
 
 Be concise and potent — every sentence should land. No filler. No bullet points. No headers. Just paragraphs.`;
+  }
 
   // --- 7. Send the prompt to our serverless function ---
   // (horoscope.js in netlify/functions — that's what holds the API key safely)
@@ -363,9 +392,6 @@ Be concise and potent — every sentence should land. No filler. No bullet point
     const data = await response.json();
     const text = data.content.map(b => b.text || '').join('');
 
-    // The response contains two sections split by ---TRANSITS---
-    const parts = text.split('---TRANSITS---');
-
     // --- 9. Render the placement cards (Sun / Moon / Rising) ---
     const placementsHTML = [
       { label: 'Sun',    value: sun },
@@ -381,13 +407,36 @@ Be concise and potent — every sentence should land. No filler. No bullet point
     document.getElementById('placements').innerHTML = placementsHTML;
 
     // --- 10. Fill in the reading text ---
-    document.getElementById('resultName').textContent     = name + "'s";
-    document.getElementById('resultTopic').textContent   = topic.displayName;
-    document.getElementById('chartReading').textContent   = parts[0].trim();
-    document.getElementById('transitReading').textContent = (parts[1] || '').trim();
-    document.getElementById('todayDate').textContent      = today;
-    document.querySelector('#results .section-label').textContent       = topic.section1Label;
-    document.querySelector('.today-card .section-label').textContent    = topic.section2Label;
+    document.getElementById('resultName').textContent   = name + "'s";
+    document.getElementById('resultTopic').textContent  = topic.displayName;
+    document.getElementById('todayDate').textContent    = today;
+
+    const chartSection = document.getElementById('chartSection');
+    const divider      = document.querySelector('#results .divider');
+    const todayCard    = document.querySelector('.today-card');
+
+    if (mode === 'chart') {
+      chartSection.style.display = 'block';
+      chartSection.querySelector('.section-label').textContent = topic.section1Label;
+      document.getElementById('chartReading').textContent = text.trim();
+      divider.style.display   = 'none';
+      todayCard.style.display = 'none';
+    } else if (mode === 'daily') {
+      chartSection.style.display = 'none';
+      divider.style.display      = 'none';
+      todayCard.style.display    = 'block';
+      todayCard.querySelector('.section-label').textContent = topic.section2Label;
+      document.getElementById('transitReading').textContent = text.trim();
+    } else {
+      const parts = text.split('---TRANSITS---');
+      chartSection.style.display = 'block';
+      chartSection.querySelector('.section-label').textContent = topic.section1Label;
+      document.getElementById('chartReading').textContent = parts[0].trim();
+      divider.style.display   = 'block';
+      todayCard.style.display = 'block';
+      todayCard.querySelector('.section-label').textContent = topic.section2Label;
+      document.getElementById('transitReading').textContent = (parts[1] || '').trim();
+    }
 
     // --- 11. Hide loading, show results ---
     clearInterval(msgInterval);

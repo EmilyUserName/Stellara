@@ -115,6 +115,7 @@
 
         <div class="topic-pills home-topic-pills">
           <button class="topic-pill active" data-topic="chart"         onclick="selectTopic(this)">✦ Full Chart</button>
+          <button class="topic-pill"        data-topic="daily"         onclick="selectTopic(this)">☽ Today's Sky</button>
           <button class="topic-pill"        data-topic="love"          onclick="selectTopic(this)">Love</button>
           <button class="topic-pill"        data-topic="career"        onclick="selectTopic(this)">Career</button>
           <button class="topic-pill"        data-topic="finances"      onclick="selectTopic(this)">Finances</button>
@@ -249,6 +250,7 @@
         <label>Focus</label>
         <div class="topic-pills">
           <button class="topic-pill active" data-topic="chart"         onclick="selectTopic(this)">✦ Full Chart</button>
+          <button class="topic-pill"        data-topic="daily"         onclick="selectTopic(this)">☽ Today's Sky</button>
           <button class="topic-pill"        data-topic="love"          onclick="selectTopic(this)">Love</button>
           <button class="topic-pill"        data-topic="career"        onclick="selectTopic(this)">Career</button>
           <button class="topic-pill"        data-topic="finances"      onclick="selectTopic(this)">Finances</button>
@@ -294,8 +296,10 @@
       <div class="placements" id="placements"></div>
 
       <!-- Birth chart reading from Claude -->
-      <div class="section-label">Your Cosmic Blueprint</div>
-      <div class="insight-text" id="chartReading"></div>
+      <div id="chartSection">
+        <div class="section-label">Your Cosmic Blueprint</div>
+        <div class="insight-text" id="chartReading"></div>
+      </div>
 
       <div class="divider"></div>
 
