@@ -506,6 +506,18 @@ select option { background: var(--navy-2); }
   border-color: rgba(126,168,212,0.45);
   color: var(--white);
 }
+
+/* Full Chart — full-width featured pill, own row */
+.topic-pill-featured {
+  width: 100%;
+  text-align: center;
+  padding: 11px 20px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  border-color: rgba(126,168,212,0.35);
+  color: var(--white);
+}
 .topic-pill.active {
   background: rgba(126,168,212,0.15);
   border-color: rgba(126,168,212,0.55);
