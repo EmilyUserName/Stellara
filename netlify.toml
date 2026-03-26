@@ -4,6 +4,10 @@
 [functions."horoscope"]
   timeout = 26
 
+[functions."daily-email"]
+  timeout = 120
+  schedule = "0 7 * * *"
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
