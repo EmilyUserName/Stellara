@@ -31,20 +31,28 @@ exports.handler = async function (event) {
     // Manual test mode: POST with { testEmail: "you@example.com" }
     // Bypasses subscribed check so you can test with your own account
     if (event.httpMethod === 'POST') {
-      const { testEmail } = JSON.parse(event.body || '{}');
-      if (!testEmail) return { statusCode: 400, body: 'testEmail required' };
+      const body = JSON.parse(event.body || '{}');
+      const emails = body.testEmails || (body.testEmail ? [body.testEmail] : null);
+      if (!emails) return { statusCode: 400, body: 'testEmail or testEmails required' };
 
-      const res  = await fetch(
-        `${SUPABASE_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(testEmail)}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`,
-        { headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` } }
-      );
-      const data = await res.json();
-      if (!Array.isArray(data)) return { statusCode: 500, body: `Supabase error: ${JSON.stringify(data)}` };
-      const [user] = data;
-      if (!user) return { statusCode: 404, body: `No profile found with email: ${testEmail}` };
-
-      await sendDailyEmail(user, today);
-      return { statusCode: 200, body: JSON.stringify({ sent: testEmail }) };
+      const results = [];
+      for (const testEmail of emails) {
+        const res  = await fetch(
+          `${SUPABASE_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(testEmail)}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`,
+          { headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` } }
+        );
+        const data = await res.json();
+        if (!Array.isArray(data)) { results.push({ email: testEmail, error: JSON.stringify(data) }); continue; }
+        const [user] = data;
+        if (!user) { results.push({ email: testEmail, error: 'no profile found' }); continue; }
+        try {
+          await sendDailyEmail(user, today);
+          results.push({ email: testEmail, sent: true });
+        } catch (e) {
+          results.push({ email: testEmail, error: e.message });
+        }
+      }
+      return { statusCode: 200, body: JSON.stringify(results) };
     }
 
     // Scheduled run — send to all Pro subscribers
