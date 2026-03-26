@@ -38,7 +38,9 @@ exports.handler = async function (event) {
         `${SUPABASE_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(testEmail)}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`,
         { headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` } }
       );
-      const [user] = await res.json();
+      const data = await res.json();
+      if (!Array.isArray(data)) return { statusCode: 500, body: `Supabase error: ${JSON.stringify(data)}` };
+      const [user] = data;
       if (!user) return { statusCode: 404, body: `No profile found with email: ${testEmail}` };
 
       await sendDailyEmail(user, today);
