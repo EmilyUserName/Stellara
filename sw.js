@@ -22,8 +22,10 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Always use network for API calls
+  // Always use network for API calls and POST requests (can't cache POST)
+  if (event.request.method !== 'GET') return;
   if (event.request.url.includes('/api/')) return;
+  if (event.request.url.includes('/.netlify/')) return;
 
   event.respondWith(
     fetch(event.request)
