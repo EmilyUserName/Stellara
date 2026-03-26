@@ -306,6 +306,18 @@ async function reveal() {
   // --- 5. Save birth info immediately (don't wait for reading to complete) ---
   saveProfile();
 
+  // Also persist calculated signs so future emails don't recalculate
+  // (only save if not manually overridden — overrides are already saved by saveProfile)
+  if (currentUser) {
+    const patch = {};
+    if (!manualSun    && sun)    patch.sun_sign    = sun;
+    if (!manualMoon   && moon)   patch.moon_sign   = moon;
+    if (!manualRising && rising) patch.rising_sign = rising;
+    if (Object.keys(patch).length) {
+      sb.from('profiles').update(patch).eq('id', currentUser.id).then(() => {});
+    }
+  }
+
   // --- 6. Show the loading spinner, hide the form ---
   document.getElementById('inputCard').style.display  = 'none';
   document.getElementById('homeSection').style.display = 'none';
