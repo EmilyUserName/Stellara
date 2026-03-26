@@ -35,24 +35,19 @@ exports.handler = async function (event) {
       const emails = body.testEmails || (body.testEmail ? [body.testEmail] : null);
       if (!emails) return { statusCode: 400, body: 'testEmail or testEmails required' };
 
-      const results = [];
-      for (const testEmail of emails) {
+      const results = await Promise.allSettled(emails.map(async (testEmail) => {
         const res  = await fetch(
           `${SUPABASE_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(testEmail)}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`,
           { headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` } }
         );
         const data = await res.json();
-        if (!Array.isArray(data)) { results.push({ email: testEmail, error: JSON.stringify(data) }); continue; }
+        if (!Array.isArray(data)) return { email: testEmail, error: JSON.stringify(data) };
         const [user] = data;
-        if (!user) { results.push({ email: testEmail, error: 'no profile found' }); continue; }
-        try {
-          await sendDailyEmail(user, today);
-          results.push({ email: testEmail, sent: true });
-        } catch (e) {
-          results.push({ email: testEmail, error: e.message });
-        }
-      }
-      return { statusCode: 200, body: JSON.stringify(results) };
+        if (!user) return { email: testEmail, error: 'no profile found' };
+        await sendDailyEmail(user, today);
+        return { email: testEmail, sent: true };
+      }));
+      return { statusCode: 200, body: JSON.stringify(results.map(r => r.value ?? { error: r.reason?.message })) };
     }
 
     // Scheduled run — send to all Pro subscribers
