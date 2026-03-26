@@ -11,6 +11,13 @@ const RESEND_API_KEY      = process.env.RESEND_API_KEY;
 
 const FROM_EMAIL = 'Stellara <daily@stellara-horoscope.com>';
 
+const STYLE_PROMPTS = {
+  psychological: `You are Stellara, a depth psychology astrologer who speaks through the lens of Jungian thought. Draw on archetypes, the shadow, and individuation. Tone: reflective, profound, transformative.`,
+  spiritual:     `You are Stellara, a soul-centered spiritual guide and intuitive astrologer. Speak to the soul's journey, divine timing, and cosmic connection. Tone: warm, ethereal, expansive.`,
+  modern:        `You are Stellara, a modern astrology coach who gives clear, practical, no-nonsense guidance. Make it concrete, contemporary, and immediately useful. Tone: direct, confident, grounded.`,
+  classical:     `You are Stellara, a classical astrologer steeped in ancient tradition. Draw on planetary mythology and Hellenistic wisdom. Tone: scholarly, mythic, timeless.`,
+};
+
 // ------------------------------------------------------------
 // ENTRY POINT
 // ------------------------------------------------------------
@@ -43,7 +50,7 @@ exports.handler = async function () {
 // ------------------------------------------------------------
 async function getSubscribers() {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&name=not.is.null&birth_date=not.is.null&birth_city=not.is.null&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign`,
+    `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&name=not.is.null&birth_date=not.is.null&birth_city=not.is.null&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style`,
     {
       headers: {
         'apikey': SUPABASE_SERVICE_KEY,
@@ -59,7 +66,7 @@ async function getSubscribers() {
 // GENERATE + SEND ONE EMAIL
 // ------------------------------------------------------------
 async function sendDailyEmail(user, today) {
-  const { name, email, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign } = user;
+  const { name, email, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, preferred_style } = user;
 
   // Calculate chart if signs aren't saved
   let sun    = sun_sign;
@@ -83,7 +90,8 @@ async function sendDailyEmail(user, today) {
   }
 
   // Generate the reading via Claude
-  const reading = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today });
+  const style = preferred_style || 'psychological';
+  const reading = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style });
 
   // Build and send the email
   await sendEmail({ name, email, sun, moon, rising, reading, today });
@@ -92,12 +100,15 @@ async function sendDailyEmail(user, today) {
 // ------------------------------------------------------------
 // CLAUDE — generate the personalized daily reading
 // ------------------------------------------------------------
-async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today }) {
+async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style }) {
+  const systemPrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.psychological;
   const noTimeNote = !birth_time
     ? `Note: ${name} did not provide a birth time so their Rising sign is unknown — acknowledge this briefly and naturally.`
     : '';
 
-  const prompt = `You are Stellara, a depth psychology astrologer. Write ${name} a personalized daily reading for ${today}.
+  const prompt = `${systemPrompt}
+
+Write ${name} a personalized daily reading for ${today}. This will be delivered as their morning email — make it feel like a meaningful ritual, not a generic horoscope.
 
 ${name}'s chart:
 Sun: ${sun}
@@ -106,12 +117,13 @@ ${rising ? `Rising: ${rising}` : 'Rising: unknown (no birth time provided)'}
 Birth city: ${birth_city} (birth location only — do not assume this is where they currently live)
 ${noTimeNote}
 
-Write 3 short paragraphs:
-1. What's happening in the sky today — the Moon's sign and phase, any notable planetary energy (invent plausible but grounded transit themes).
-2. How today's energy specifically connects to ${name}'s ${sun} Sun and ${moon} Moon.
-3. One concrete thing for ${name} to lean into or be mindful of today.
+Write exactly 4 paragraphs with no headers or labels:
+1. What's alive in the sky today — the Moon's sign and phase, any notable planetary energy (invent plausible but grounded transit themes for today).
+2. How today's energy specifically lands in ${name}'s chart — speak to their ${sun} Sun and ${moon} Moon directly.
+3. Something specific for ${name} to lean into or be mindful of today — concrete and personal.
+4. A closing intention or reflection — one sentence they can carry with them. Something that lingers.
 
-Tone: warm, personal, grounded. Every sentence should land. No bullet points. No headers. No filler.`;
+Every sentence should land. Warm, personal, potent. No bullet points. No filler.`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method:  'POST',

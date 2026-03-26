@@ -248,7 +248,7 @@ async function startCheckout() {
 async function loadProfile() {
   const { data } = await sb
     .from('profiles')
-    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed')
+    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, preferred_style')
     .eq('id', currentUser.id)
     .maybeSingle();
 
@@ -280,6 +280,13 @@ async function loadProfile() {
   // Sign dropdowns are for manual overrides only — don't pre-fill from
   // auto-calculated saved values, or they'd block fresh recalculation.
 
+  // Restore preferred reading style
+  if (data.preferred_style) {
+    selectedStyle = data.preferred_style;
+    document.querySelectorAll(`[data-style="${selectedStyle}"]`).forEach(c => c.classList.add('active'));
+    document.querySelectorAll(`.style-card:not([data-style="${selectedStyle}"])`).forEach(c => c.classList.remove('active'));
+  }
+
   document.getElementById('welcomeName').textContent = data.name;
   showHome();
 
@@ -309,14 +316,15 @@ function showForm() {
 async function saveProfile() {
   if (!currentUser) return;
   await sb.from('profiles').upsert({
-    id:           currentUser.id,
-    email:        currentUser.email,
-    name:         document.getElementById('name').value.trim(),
-    birth_date:   getBirthDate(),
-    birth_time:   getBirthTime(),
-    birth_city:   document.getElementById('birthCity').value.trim(),
-    sun_sign:     document.getElementById('sunSign').value   || null,
-    moon_sign:    document.getElementById('moonSign').value  || null,
-    rising_sign:  document.getElementById('risingSign').value || null,
+    id:              currentUser.id,
+    email:           currentUser.email,
+    name:            document.getElementById('name').value.trim(),
+    birth_date:      getBirthDate(),
+    birth_time:      getBirthTime(),
+    birth_city:      document.getElementById('birthCity').value.trim(),
+    sun_sign:        document.getElementById('sunSign').value   || null,
+    moon_sign:       document.getElementById('moonSign').value  || null,
+    rising_sign:     document.getElementById('risingSign').value || null,
+    preferred_style: selectedStyle || 'psychological',
   });
 }
