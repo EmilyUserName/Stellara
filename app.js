@@ -564,6 +564,91 @@ function goHome() {
 
 
 // ------------------------------------------------------------
+// SHARE — native share sheet on mobile, clipboard fallback on desktop
+// ------------------------------------------------------------
+async function shareStellara() {
+  const shareData = {
+    title: 'Stellara',
+    text: 'Get a personalized astrology reading based on your birth chart — not just your sign.',
+    url:  'https://stellara-horoscope.com',
+  };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText('https://stellara-horoscope.com');
+      const btn = document.querySelector('.share-btn');
+      const orig = btn.textContent;
+      btn.textContent = 'Link copied!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    }
+  } catch (_) {}
+}
+
+
+// ------------------------------------------------------------
+// MANAGE SUBSCRIPTION — Stripe customer portal
+// ------------------------------------------------------------
+async function manageSubscription() {
+  const res  = await fetch('/api/customer-portal', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ userId: currentUser.id }),
+  });
+  const data = await res.json();
+  if (data.url) window.location.href = data.url;
+}
+
+
+// ------------------------------------------------------------
+// ADD TO HOME SCREEN — custom install prompt
+// ------------------------------------------------------------
+let installPromptEvent = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installPromptEvent = e;
+  showInstallBanner('android');
+});
+
+function showInstallBanner(type) {
+  if (localStorage.getItem('installBannerDismissed')) return;
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+
+  const banner = document.getElementById('installBanner');
+  const msg    = document.getElementById('installBannerMsg');
+  const btn    = document.getElementById('installBtn');
+
+  if (type === 'ios') {
+    msg.textContent = 'Add Stellara to your home screen: tap Share then "Add to Home Screen."';
+    btn.style.display = 'none';
+  }
+  banner.style.display = 'flex';
+}
+
+function installApp() {
+  if (installPromptEvent) {
+    installPromptEvent.prompt();
+    installPromptEvent.userChoice.then(() => { installPromptEvent = null; });
+  }
+  dismissInstallBanner();
+}
+
+function dismissInstallBanner() {
+  document.getElementById('installBanner').style.display = 'none';
+  localStorage.setItem('installBannerDismissed', '1');
+}
+
+// Detect iOS Safari and show manual instructions
+(function () {
+  const isIOS    = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isSafari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+  if (isIOS && isSafari && !isStandalone) showInstallBanner('ios');
+})();
+
+
+// ------------------------------------------------------------
 // BIRTHDAY EXPERIENCE
 // Called from auth.js when the user's birth month+day matches today.
 // ------------------------------------------------------------

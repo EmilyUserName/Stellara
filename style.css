@@ -953,6 +953,80 @@ select option { background: var(--navy-2); }
 
 
 /* ------------------------------------------------------------
+   INSTALL BANNER — add to home screen prompt
+   ------------------------------------------------------------ */
+#installBanner {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 200;
+  background: var(--navy-2);
+  border-top: 1px solid rgba(126,168,212,0.2);
+  padding: 14px 20px;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  text-align: center;
+  backdrop-filter: blur(12px);
+}
+.install-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: var(--silver-light);
+  line-height: 1.5;
+}
+.install-banner-icon { color: var(--accent); font-size: 1rem; flex-shrink: 0; }
+.install-banner-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+#installBtn {
+  width: auto;
+  padding: 8px 20px;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  margin-top: 0;
+}
+.install-dismiss {
+  background: none;
+  border: none;
+  color: var(--silver);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-family: 'Barlow', sans-serif;
+}
+.install-dismiss:hover { color: var(--white); }
+
+
+/* ------------------------------------------------------------
+   SHARE BUTTON — shown at the bottom of results
+   ------------------------------------------------------------ */
+.share-btn {
+  margin-top: 0;
+  margin-left: 12px;
+  background: none;
+  border: 1px solid rgba(200,169,110,0.3);
+  border-radius: 10px;
+  padding: 10px 22px;
+  color: var(--gold);
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.share-btn:hover {
+  border-color: rgba(200,169,110,0.6);
+  color: var(--white);
+}
+
+
+/* ------------------------------------------------------------
    BIRTHDAY BANNER — shown when user logs in on their birthday
    ------------------------------------------------------------ */
 #birthdayBanner {

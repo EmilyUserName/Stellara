@@ -261,6 +261,9 @@ async function loadProfile() {
   document.body.classList.toggle('is-pro', currentSubscribed);
   const hint = document.getElementById('upgradeHint');
   if (hint) hint.style.display = currentSubscribed ? 'none' : 'block';
+  document.querySelectorAll('.is-pro-only').forEach(el => {
+    el.style.display = currentSubscribed ? 'inline' : 'none';
+  });
 
   document.getElementById('name').value        = data.name;
   const savedDate = data.birth_date || '';

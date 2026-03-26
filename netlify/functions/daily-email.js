@@ -65,7 +65,7 @@ exports.handler = async function (event) {
 // ------------------------------------------------------------
 async function getSubscribers() {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&name=not.is.null&birth_date=not.is.null&birth_city=not.is.null&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style`,
+    `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&name=not.is.null&birth_date=not.is.null&birth_city=not.is.null&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`,
     {
       headers: {
         'apikey': SUPABASE_SERVICE_KEY,
@@ -74,7 +74,7 @@ async function getSubscribers() {
     }
   );
   const data = await res.json();
-  return Array.isArray(data) ? data.filter(u => u.email) : [];
+  return Array.isArray(data) ? data.filter(u => u.email && !u.email_opt_out) : [];
 }
 
 // ------------------------------------------------------------
@@ -109,7 +109,7 @@ async function sendDailyEmail(user, today) {
   const reading = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style });
 
   // Build and send the email
-  await sendEmail({ name, email, sun, moon, rising, reading, today });
+  await sendEmail({ user, name, email, sun, moon, rising, reading, today });
 }
 
 // ------------------------------------------------------------
@@ -161,7 +161,7 @@ Every sentence should land. Warm, personal, potent. No bullet points. No filler.
 // ------------------------------------------------------------
 // RESEND — send the HTML email
 // ------------------------------------------------------------
-async function sendEmail({ name, email, sun, moon, rising, reading, today }) {
+async function sendEmail({ user, name, email, sun, moon, rising, reading, today }) {
   const paragraphs = reading.split('\n\n').filter(Boolean);
   const bodyHtml = paragraphs.map(p => `<p style="margin:0 0 20px 0;line-height:1.8;">${p.trim()}</p>`).join('');
 
@@ -215,7 +215,9 @@ async function sendEmail({ name, email, sun, moon, rising, reading, today }) {
         <tr><td style="text-align:center;padding-top:32px;">
           <p style="margin:0;font-size:11px;color:#b8c4d8;opacity:0.5;font-family:'Helvetica Neue',sans-serif;line-height:1.8;">
             You're receiving this because you're a Stellara Pro subscriber.<br/>
-            <a href="https://stellara-horoscope.com" style="color:#7ea8d4;opacity:0.8;">Manage your account</a>
+            <a href="https://stellara-horoscope.com" style="color:#7ea8d4;opacity:0.8;">Open Stellara</a>
+            &nbsp;·&nbsp;
+            <a href="https://stellara-horoscope.com/.netlify/functions/unsubscribe?id=${user.id}" style="color:#7ea8d4;opacity:0.8;">Unsubscribe</a>
           </p>
         </td></tr>
 
