@@ -20,15 +20,30 @@ const STYLE_PROMPTS = {
 
 // ------------------------------------------------------------
 // ENTRY POINT
+// Runs on cron schedule, OR accepts POST with { testEmail } for manual testing.
 // ------------------------------------------------------------
-exports.handler = async function () {
+exports.handler = async function (event) {
   try {
-    const subscribers = await getSubscribers();
-    console.log(`[daily-email] Sending to ${subscribers.length} subscribers`);
-
     const today = new Date().toLocaleDateString('en-US', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
+
+    // Manual test mode: POST with { testEmail: "you@example.com" }
+    if (event.httpMethod === 'POST') {
+      const { testEmail } = JSON.parse(event.body || '{}');
+      if (!testEmail) return { statusCode: 400, body: 'testEmail required' };
+
+      const all = await getSubscribers();
+      const user = all.find(u => u.email === testEmail);
+      if (!user) return { statusCode: 404, body: `No Pro subscriber found with email: ${testEmail}` };
+
+      await sendDailyEmail(user, today);
+      return { statusCode: 200, body: JSON.stringify({ sent: testEmail }) };
+    }
+
+    // Scheduled run — send to all Pro subscribers
+    const subscribers = await getSubscribers();
+    console.log(`[daily-email] Sending to ${subscribers.length} subscribers`);
 
     const results = await Promise.allSettled(
       subscribers.map(user => sendDailyEmail(user, today))
