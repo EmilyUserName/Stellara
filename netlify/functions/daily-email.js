@@ -109,6 +109,25 @@ async function sendDailyEmail(user, today) {
         sun    = sun    || chart.sun;
         moon   = moon   || chart.moon;
         rising = rising || chart.rising;
+
+        // Save calculated signs back to the profile so we never recalculate
+        // (and manual corrections made directly in Supabase are preserved on next run)
+        const patch = {};
+        if (!sun_sign   && sun)    patch.sun_sign    = sun;
+        if (!moon_sign  && moon)   patch.moon_sign   = moon;
+        if (!rising_sign && rising) patch.rising_sign = rising;
+        if (Object.keys(patch).length) {
+          fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
+            method:  'PATCH',
+            headers: {
+              'Content-Type':  'application/json',
+              'apikey':         SUPABASE_SERVICE_KEY,
+              'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+              'Prefer':        'return=minimal',
+            },
+            body: JSON.stringify(patch),
+          }).catch(() => {});
+        }
       }
     } catch (_) {}
   }
