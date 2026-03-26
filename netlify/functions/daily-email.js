@@ -29,13 +29,17 @@ exports.handler = async function (event) {
     });
 
     // Manual test mode: POST with { testEmail: "you@example.com" }
+    // Bypasses subscribed check so you can test with your own account
     if (event.httpMethod === 'POST') {
       const { testEmail } = JSON.parse(event.body || '{}');
       if (!testEmail) return { statusCode: 400, body: 'testEmail required' };
 
-      const all = await getSubscribers();
-      const user = all.find(u => u.email === testEmail);
-      if (!user) return { statusCode: 404, body: `No Pro subscriber found with email: ${testEmail}` };
+      const res  = await fetch(
+        `${SUPABASE_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(testEmail)}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`,
+        { headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` } }
+      );
+      const [user] = await res.json();
+      if (!user) return { statusCode: 404, body: `No profile found with email: ${testEmail}` };
 
       await sendDailyEmail(user, today);
       return { statusCode: 200, body: JSON.stringify({ sent: testEmail }) };
