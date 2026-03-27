@@ -268,7 +268,7 @@ async function startCheckout() {
 
   if (!data.url) {
     btn.disabled = false;
-    btn.textContent = 'Upgrade to Pro — $7 / month';
+    btn.textContent = 'Upgrade to Pro — $12 / month';
     alert('Could not start checkout. Please try again or contact support.');
     console.error('[Stellara] Checkout error:', data);
     return;
