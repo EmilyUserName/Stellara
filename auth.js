@@ -217,7 +217,7 @@ function requireNatalChart() {
 
 function requireSolarReturn() {
   if (!currentUser) { openAuthModal(); return false; }
-  if (currentSolarReturnYear === new Date().getFullYear()) return true;
+  if (parseInt(currentSolarReturnYear) === new Date().getFullYear()) return true;
   openSolarUpgradeModal();
   return false;
 }

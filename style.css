@@ -1183,7 +1183,8 @@ select option { background: var(--navy-2); }
    ASTROCARTOGRAPHY MAP
    ============================================================ */
 
-#astroSection {
+#astroSection,
+#solarSection {
   position: relative;
   z-index: 2;
   min-height: 100vh;
