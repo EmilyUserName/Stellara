@@ -303,6 +303,9 @@
 
       <button class="btn" id="revealBtn" onclick="reveal()">✦ &nbsp;Reveal My Chart</button>
       <div class="error" id="errorMsg"></div>
+      <div style="text-align:center; margin-top:14px;">
+        <a href="#" class="edit-link" onclick="showHome(); return false;">← Home</a>
+      </div>
     </div>
 
 
@@ -397,15 +400,6 @@
       </div>
     </div>
 
-    <div class="astro-panel-backdrop" id="astroPanelBackdrop" onclick="closeAstroPanel()"></div>
-    <div class="astro-interpret-panel" id="astroPanel">
-      <div class="astro-panel-drag-handle"></div>
-      <div class="astro-panel-header">
-        <span id="astroPanelTitle"></span>
-        <button class="astro-panel-close" onclick="closeAstroPanel()">×</button>
-      </div>
-      <div class="astro-panel-body" id="astroPanelBody"></div>
-    </div>
   </div>
 
 
@@ -484,6 +478,19 @@
        app.js        = button clicks & API calls
        ===================================================== -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- =====================================================
+       ASTROCARTOGRAPHY INTERPRETATION PANEL
+       ===================================================== -->
+  <div class="astro-panel-backdrop" id="astroPanelBackdrop" onclick="closeAstroPanel()"></div>
+  <div class="astro-interpret-panel" id="astroPanel">
+    <div class="astro-panel-drag-handle"></div>
+    <div class="astro-panel-header">
+      <span id="astroPanelTitle"></span>
+      <button class="astro-panel-close" onclick="closeAstroPanel()">×</button>
+    </div>
+    <div class="astro-panel-body" id="astroPanelBody"></div>
+  </div>
+
   <!-- =====================================================
        FEEDBACK MODAL
        ===================================================== -->
