@@ -49,11 +49,18 @@ exports.handler = async function (event) {
     const email   = session.customer_details?.email || session.customer_email || null;
 
     if (product === 'natal_chart') {
-      // One-time natal chart purchase
       await updateProfile(userId, {
         has_natal_chart:    true,
         email,
         stripe_customer_id: session.customer,
+      });
+    } else if (product === 'solar_return') {
+      const year = parseInt(session.metadata?.year) || new Date().getFullYear();
+      await updateProfile(userId, {
+        solar_return_year:    year,
+        solar_return_reading: null, // cleared so a fresh reading generates on first view
+        email,
+        stripe_customer_id:   session.customer,
       });
     } else {
       // Recurring subscription

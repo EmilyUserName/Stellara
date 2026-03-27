@@ -216,6 +216,7 @@
         </div>
         <button class="btn" onclick="reveal()">✦ &nbsp;Reveal My Reading</button>
         <button class="btn btn-map" onclick="openAstroMap()">✦ &nbsp;Astrocartography Map <span style="font-size:0.65rem;opacity:0.6;margin-left:4px;">Beta</span></button>
+        <button class="btn btn-solar" onclick="openSolarReturn()">✦ &nbsp;Solar Return <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">Yearly Forecast — $29</span></button>
         <div class="error" id="homeErrorMsg"></div>
         <div style="text-align:center; margin-top:16px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
           <a href="#" class="edit-link" onclick="showForm(); return false;">Edit birth info</a>
@@ -419,8 +420,29 @@
 
     </div>
 
+    <p style="text-align:center;font-size:0.65rem;color:var(--silver);opacity:0.35;margin-top:32px;letter-spacing:0.06em;">
+      Astronomical calculations powered by <a href="https://www.astro.com/swisseph/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Swiss Ephemeris</a>
+    </p>
+
   </div><!-- end .container -->
 
+
+  <!-- =====================================================
+       SOLAR RETURN — full reading view
+       ===================================================== -->
+  <div id="solarSection" style="display:none;">
+    <div class="results card" style="margin-top:0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+        <div class="card-title" style="margin:0;"><span>☀</span> Solar Return <span id="solarReturnYearTitle"></span></div>
+        <button class="edit-link" onclick="closeSolarReturn()" style="font-size:0.75rem;">← Home</button>
+      </div>
+      <div id="solarLoading" style="text-align:center;padding:40px 0;">
+        <div class="orbit" style="margin:0 auto;"></div>
+        <p style="color:var(--silver);margin-top:16px;font-size:0.9rem;">Generating your yearly forecast…</p>
+      </div>
+      <div id="solarReadingBody" style="display:none;"></div>
+    </div>
+  </div>
 
   <!-- =====================================================
        ASTROCARTOGRAPHY — full-screen map view
@@ -504,6 +526,31 @@
         Unlock Natal Chart — $19
       </button>
       <p class="auth-error" style="margin-top:12px; color:var(--silver); font-size:0.75rem;">One-time payment. No recurring charges.</p>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       SOLAR RETURN UPGRADE MODAL
+       ===================================================== -->
+  <div class="auth-overlay" id="solarUpgradeOverlay" onclick="closeSolarUpgradeModal()">
+    <div class="auth-modal" onclick="event.stopPropagation()">
+      <button class="auth-close" onclick="closeSolarUpgradeModal()">×</button>
+      <div class="auth-logo">☀</div>
+      <h2 class="auth-modal-title">Your Solar Return</h2>
+      <p class="auth-modal-sub">A full yearly forecast for your <span id="solarReturnYearLabel"></span> personal year.</p>
+
+      <div class="upgrade-features">
+        <div class="upgrade-feature">✦ The year ahead — your overarching theme and soul curriculum</div>
+        <div class="upgrade-feature">✦ Love &amp; relationships — what this year holds for your connections</div>
+        <div class="upgrade-feature">✦ Work &amp; purpose — where you're being called to grow</div>
+        <div class="upgrade-feature">✦ Inner work — the shadow and gifts ready to surface</div>
+        <div class="upgrade-feature">✦ Stored forever — come back to it anytime</div>
+      </div>
+
+      <button class="btn" id="solarUpgradeBtn" onclick="startSolarCheckout()" style="margin-top:24px;">
+        Unlock Solar Return <span id="solarReturnYearBtn"></span> — $29
+      </button>
+      <p class="auth-error" style="margin-top:12px; color:var(--silver); font-size:0.75rem;">One-time purchase. Valid for your full personal year.</p>
     </div>
   </div>
 

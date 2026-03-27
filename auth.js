@@ -11,10 +11,11 @@ const SUPABASE_KEY = 'sb_publishable_MUwjhSn76HY6ADWKeoMkrA_BuAMfrBI';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let currentUser      = null;
-let currentSubscribed = false;
-let currentHasNatal  = false;
-let activeTab        = 'signin';
+let currentUser          = null;
+let currentSubscribed    = false;
+let currentHasNatal      = false;
+let currentSolarReturnYear = null;
+let activeTab            = 'signin';
 
 // ------------------------------------------------------------
 // AUTH STATE — fires on page load and whenever user signs in/out
@@ -31,9 +32,8 @@ sb.auth.onAuthStateChange((_event, session) => {
 
 // Handle return from Stripe checkout
 const _qs = new URLSearchParams(window.location.search);
-if (_qs.get('subscribed') === 'true' || _qs.get('natal') === 'true') {
+if (_qs.get('subscribed') === 'true' || _qs.get('natal') === 'true' || _qs.get('solar') === 'true') {
   history.replaceState({}, '', '/');
-  // Poll briefly — webhook may not have fired yet
   setTimeout(async () => { await loadProfile(); }, 2000);
 }
 
@@ -215,6 +215,13 @@ function requireNatalChart() {
   return false;
 }
 
+function requireSolarReturn() {
+  if (!currentUser) { openAuthModal(); return false; }
+  if (currentSolarReturnYear === new Date().getFullYear()) return true;
+  openSolarUpgradeModal();
+  return false;
+}
+
 // ------------------------------------------------------------
 // UPGRADE — Stripe checkout
 // ------------------------------------------------------------
@@ -229,9 +236,35 @@ function closeUpgradeModal() {
 function openNatalUpgradeModal() {
   document.getElementById('natalUpgradeOverlay').classList.add('active');
 }
-
 function closeNatalUpgradeModal() {
   document.getElementById('natalUpgradeOverlay').classList.remove('active');
+}
+
+function openSolarUpgradeModal() {
+  document.getElementById('solarUpgradeOverlay').classList.add('active');
+}
+function closeSolarUpgradeModal() {
+  document.getElementById('solarUpgradeOverlay').classList.remove('active');
+}
+
+async function startSolarCheckout() {
+  const btn = document.getElementById('solarUpgradeBtn');
+  btn.disabled    = true;
+  btn.textContent = 'Redirecting…';
+
+  const res  = await fetch('/api/create-solar-checkout', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ userId: currentUser.id, email: currentUser.email }),
+  });
+  const data = await res.json();
+
+  if (!data.url) {
+    btn.disabled    = false;
+    btn.textContent = `Unlock Solar Return ${new Date().getFullYear()} — $29`;
+    return;
+  }
+  window.location.href = data.url;
 }
 
 async function startNatalCheckout() {
@@ -283,7 +316,7 @@ async function startCheckout() {
 async function loadProfile() {
   const { data } = await sb
     .from('profiles')
-    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, preferred_style')
+    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, solar_return_year, preferred_style')
     .eq('id', currentUser.id)
     .maybeSingle();
 
@@ -292,8 +325,9 @@ async function loadProfile() {
     return;
   }
 
-  currentSubscribed = data.subscribed    || false;
-  currentHasNatal  = data.has_natal_chart || false;
+  currentSubscribed      = data.subscribed       || false;
+  currentHasNatal        = data.has_natal_chart  || false;
+  currentSolarReturnYear = data.solar_return_year || null;
   document.body.classList.toggle('is-pro', currentSubscribed);
   const hint = document.getElementById('upgradeHint');
   if (hint) hint.style.display = currentSubscribed ? 'none' : 'block';

@@ -1492,6 +1492,16 @@ select option { background: var(--navy-2); }
 }
 .btn-map:hover { background: rgba(126,168,212,0.08); border-color: var(--accent); color: var(--light); }
 
+/* Solar Return button */
+.btn-solar {
+  background: transparent;
+  border: 1px solid rgba(255,210,120,0.3);
+  color: var(--silver);
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+.btn-solar:hover { background: rgba(255,210,120,0.06); border-color: rgba(255,210,120,0.6); color: var(--light); }
+
 @media (max-width: 520px) {
   #astroMapContainer { height: 380px; }
   #astroSection { padding: 14px; }

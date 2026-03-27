@@ -813,3 +813,85 @@ async function selectSign(sign) {
   textEl.textContent  = _freeHoroscopes[sign];
   readingEl.style.display = 'block';
 }
+
+// ============================================================
+// SOLAR RETURN
+// ============================================================
+function openSolarReturn() {
+  if (!requireAuth()) return;
+  if (!requireSolarReturn()) return;
+
+  const year = new Date().getFullYear();
+  document.getElementById('solarReturnYearTitle').textContent = year;
+  document.querySelector('.container').style.display = 'none';
+  document.getElementById('solarSection').style.display = 'block';
+  document.getElementById('solarLoading').style.display = 'block';
+  document.getElementById('solarReadingBody').style.display = 'none';
+
+  fetch('/api/solar-return', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ userId: currentUser.id }),
+  })
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('solarLoading').style.display = 'none';
+      if (data.reading) {
+        renderSolarReading(data.reading, year);
+      } else {
+        document.getElementById('solarReadingBody').innerHTML =
+          '<p style="color:#e74c3c;text-align:center;">Could not load your reading. Please try again.</p>';
+        document.getElementById('solarReadingBody').style.display = 'block';
+      }
+    })
+    .catch(() => {
+      document.getElementById('solarLoading').style.display = 'none';
+      document.getElementById('solarReadingBody').innerHTML =
+        '<p style="color:#e74c3c;text-align:center;">Something went wrong. Please try again.</p>';
+      document.getElementById('solarReadingBody').style.display = 'block';
+    });
+}
+
+function closeSolarReturn() {
+  document.getElementById('solarSection').style.display = 'none';
+  document.querySelector('.container').style.display = 'block';
+}
+
+const SOLAR_SECTIONS = ['THE YEAR AHEAD', 'LOVE & RELATIONSHIPS', 'WORK & PURPOSE', 'INNER WORK', 'A WORD TO CARRY'];
+
+function renderSolarReading(text, year) {
+  const body = document.getElementById('solarReadingBody');
+
+  // Split into labelled sections
+  let html = `<p style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);opacity:0.7;margin-bottom:24px;">${year} Personal Year</p>`;
+
+  let remaining = text.trim();
+  SOLAR_SECTIONS.forEach((section, i) => {
+    const next  = SOLAR_SECTIONS[i + 1];
+    const start = remaining.indexOf(section);
+    if (start === -1) return;
+    const end     = next ? remaining.indexOf(next, start + section.length) : remaining.length;
+    const content = remaining.slice(start + section.length, end).trim();
+
+    html += `<div style="margin-bottom:28px;">
+      <div style="font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px;">${section}</div>
+      <div style="font-size:0.95rem;color:var(--light);line-height:1.85;">
+        ${content.split('\n\n').filter(Boolean).map(p => `<p style="margin:0 0 14px 0;">${p.trim()}</p>`).join('')}
+      </div>
+    </div>`;
+  });
+
+  body.innerHTML = html;
+  body.style.display = 'block';
+}
+
+// Pre-fill year labels in the upgrade modal whenever it opens
+const _origOpenSolar = window.openSolarUpgradeModal;
+window.openSolarUpgradeModal = function() {
+  const y = new Date().getFullYear();
+  const lbl = document.getElementById('solarReturnYearLabel');
+  const btn = document.getElementById('solarReturnYearBtn');
+  if (lbl) lbl.textContent = y;
+  if (btn) btn.textContent = y;
+  document.getElementById('solarUpgradeOverlay').classList.add('active');
+};

@@ -45,6 +45,16 @@
   status = 200
 
 [[redirects]]
+  from = "/api/create-solar-checkout"
+  to = "/.netlify/functions/create-solar-checkout"
+  status = 200
+
+[[redirects]]
+  from = "/api/solar-return"
+  to = "/.netlify/functions/solar-return"
+  status = 200
+
+[[redirects]]
   from = "/api/create-natal-checkout"
   to = "/.netlify/functions/create-natal-checkout"
   status = 200
