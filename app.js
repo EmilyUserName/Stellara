@@ -761,3 +761,55 @@ async function submitFeedback() {
     status.textContent = 'Something went wrong. Please try again.';
   }
 }
+
+// ============================================================
+// FREE DAILY HOROSCOPES — landing page, no login required
+// ============================================================
+let _freeHoroscopes = null; // cached for the session
+
+const SIGN_NAMES = {
+  aries: 'Aries', taurus: 'Taurus', gemini: 'Gemini', cancer: 'Cancer',
+  leo: 'Leo', virgo: 'Virgo', libra: 'Libra', scorpio: 'Scorpio',
+  sagittarius: 'Sagittarius', capricorn: 'Capricorn', aquarius: 'Aquarius', pisces: 'Pisces',
+};
+
+const SIGN_SYMBOLS = {
+  aries: '♈', taurus: '♉', gemini: '♊', cancer: '♋', leo: '♌', virgo: '♍',
+  libra: '♎', scorpio: '♏', sagittarius: '♐', capricorn: '♑', aquarius: '♒', pisces: '♓',
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.sign-pill').forEach(btn => {
+    btn.addEventListener('click', () => selectSign(btn.dataset.sign));
+  });
+});
+
+async function selectSign(sign) {
+  document.querySelectorAll('.sign-pill').forEach(b => b.classList.toggle('active', b.dataset.sign === sign));
+
+  const readingEl = document.getElementById('freeHoroscopeReading');
+  const textEl    = document.getElementById('freeHoroscopeText');
+  const nameEl    = document.getElementById('freeHoroscopeSignName');
+  const loadingEl = document.getElementById('freeHoroscopeLoading');
+
+  readingEl.style.display  = 'none';
+  loadingEl.style.display  = 'block';
+
+  if (!_freeHoroscopes) {
+    try {
+      const res  = await fetch('/api/daily-horoscopes');
+      const data = await res.json();
+      if (data && data[sign]) _freeHoroscopes = data;
+    } catch (e) {
+      loadingEl.style.display = 'none';
+      return;
+    }
+  }
+
+  loadingEl.style.display = 'none';
+  if (!_freeHoroscopes?.[sign]) return;
+
+  nameEl.textContent  = `${SIGN_SYMBOLS[sign]} ${SIGN_NAMES[sign]}`;
+  textEl.textContent  = _freeHoroscopes[sign];
+  readingEl.style.display = 'block';
+}

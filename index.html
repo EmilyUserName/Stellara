@@ -89,6 +89,36 @@
         <div class="landing-topic">Spiritual Path</div>
       </div>
 
+      <!-- Free daily horoscopes — no login required -->
+      <div class="free-horoscopes" id="freeHoroscopes">
+        <div class="free-horoscopes-label">Today's Horoscopes</div>
+        <div class="free-horoscopes-signs" id="freeHoroscopeSigns">
+          <button class="sign-pill" data-sign="aries">♈ Aries</button>
+          <button class="sign-pill" data-sign="taurus">♉ Taurus</button>
+          <button class="sign-pill" data-sign="gemini">♊ Gemini</button>
+          <button class="sign-pill" data-sign="cancer">♋ Cancer</button>
+          <button class="sign-pill" data-sign="leo">♌ Leo</button>
+          <button class="sign-pill" data-sign="virgo">♍ Virgo</button>
+          <button class="sign-pill" data-sign="libra">♎ Libra</button>
+          <button class="sign-pill" data-sign="scorpio">♏ Scorpio</button>
+          <button class="sign-pill" data-sign="sagittarius">♐ Sagittarius</button>
+          <button class="sign-pill" data-sign="capricorn">♑ Capricorn</button>
+          <button class="sign-pill" data-sign="aquarius">♒ Aquarius</button>
+          <button class="sign-pill" data-sign="pisces">♓ Pisces</button>
+        </div>
+        <div class="free-horoscope-reading" id="freeHoroscopeReading" style="display:none;">
+          <div class="free-horoscope-sign-name" id="freeHoroscopeSignName"></div>
+          <div class="free-horoscope-text" id="freeHoroscopeText"></div>
+          <div class="free-horoscope-cta">
+            Want a reading based on your full birth chart?
+            <span onclick="openSignUp()" style="color:var(--accent);cursor:pointer;"> Create a free account →</span>
+          </div>
+        </div>
+        <div class="free-horoscope-loading" id="freeHoroscopeLoading" style="display:none;">
+          <div class="orbit" style="width:28px;height:28px;margin:0 auto;"></div>
+        </div>
+      </div>
+
       <div class="landing-value">
         <div class="landing-plan">
           <div class="landing-plan-name">Free</div>

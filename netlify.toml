@@ -40,6 +40,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/daily-horoscopes"
+  to = "/.netlify/functions/daily-horoscopes"
+  status = 200
+
+[[redirects]]
   from = "/api/create-natal-checkout"
   to = "/.netlify/functions/create-natal-checkout"
   status = 200
