@@ -38,8 +38,8 @@ exports.handler = async function (event) {
     return { statusCode: 403, body: JSON.stringify({ error: 'Solar Return not purchased for this year' }) };
   }
 
-  // Return cached reading if it exists
-  if (profile.solar_return_reading) {
+  // Return cached reading if it exists (guard against 'NULL' string stored by Supabase)
+  if (profile.solar_return_reading && profile.solar_return_reading !== 'NULL') {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
