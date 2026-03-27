@@ -373,14 +373,15 @@
     </div>
 
     <div class="astro-explainer" id="astroExplainer" style="display:none;">
-      <p class="astro-explainer-intro">Astrocartography maps the moment of your birth onto the entire Earth — showing where each planet was rising, setting, or at its peak. These lines mark places where that planet's energy is amplified in your life.</p>
+      <p class="astro-explainer-intro"><strong style="color:var(--light);">What is Astrocartography?</strong><br>
+      At the moment you were born, each planet occupied a specific position in the sky — and that position traces a line across the entire Earth. Astrocartography maps those lines, revealing the places on Earth where each planet's energy becomes amplified in your life. Where you live and travel matters: the same chart can express itself very differently depending on where you are in the world.</p>
       <div class="astro-explainer-lines">
-        <div class="astro-explainer-item"><span class="astro-exp-dot" style="background:var(--accent);"></span><strong>ASC</strong> — how you show up; identity &amp; vitality</div>
-        <div class="astro-explainer-item"><span class="astro-exp-dot astro-exp-dsc"></span><strong>DSC</strong> — relationships &amp; what you attract</div>
-        <div class="astro-explainer-item"><span class="astro-exp-dot" style="background:var(--accent);"></span><strong>MC</strong> — career, reputation &amp; life purpose</div>
-        <div class="astro-explainer-item"><span class="astro-exp-dot astro-exp-ic"></span><strong>IC</strong> — home, roots &amp; private life</div>
+        <div class="astro-explainer-item"><span class="astro-exp-dot" style="background:var(--accent);"></span><strong>ASC</strong> — Identity &amp; how the world sees you</div>
+        <div class="astro-explainer-item"><span class="astro-exp-dot astro-exp-dsc"></span><strong>DSC</strong> — Relationships &amp; what you attract</div>
+        <div class="astro-explainer-item"><span class="astro-exp-dot" style="background:var(--accent);"></span><strong>MC</strong> — Career, purpose &amp; reputation</div>
+        <div class="astro-explainer-item"><span class="astro-exp-dot astro-exp-ic"></span><strong>IC</strong> — Home, roots &amp; inner life</div>
       </div>
-      <p class="astro-explainer-hint">Tap any line on the map to receive your personalized interpretation.</p>
+      <p class="astro-explainer-hint">✦ Tap any line on the map to receive your personalized interpretation for that place.</p>
     </div>
 
     <div id="astroMapContainer"></div>
@@ -396,14 +397,14 @@
       </div>
     </div>
 
-    <div class="astro-interpret-panel" id="astroPanel" style="display:none;">
+    <div class="astro-panel-backdrop" id="astroPanelBackdrop" onclick="closeAstroPanel()"></div>
+    <div class="astro-interpret-panel" id="astroPanel">
+      <div class="astro-panel-drag-handle"></div>
       <div class="astro-panel-header">
         <span id="astroPanelTitle"></span>
         <button class="astro-panel-close" onclick="closeAstroPanel()">×</button>
       </div>
-      <div class="astro-panel-body" id="astroPanelBody">
-        <div class="orbit" id="astroPanelLoading"></div>
-      </div>
+      <div class="astro-panel-body" id="astroPanelBody"></div>
     </div>
   </div>
 

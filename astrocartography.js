@@ -49,7 +49,8 @@ function closeAstroMap() {
 }
 
 function closeAstroPanel() {
-  document.getElementById('astroPanel').style.display = 'none';
+  document.getElementById('astroPanel').classList.remove('open');
+  document.getElementById('astroPanelBackdrop').classList.remove('open');
 }
 
 // ------------------------------------------------------------
@@ -157,15 +158,19 @@ function drawPlanetLines(planet, userData) {
 // LINE CLICK — get AI interpretation
 // ------------------------------------------------------------
 async function onLineClick(e, planet, lineType, userData) {
-  const panel = document.getElementById('astroPanel');
-  const title = document.getElementById('astroPanelTitle');
-  const body  = document.getElementById('astroPanelBody');
+  const panel    = document.getElementById('astroPanel');
+  const backdrop = document.getElementById('astroPanelBackdrop');
+  const title    = document.getElementById('astroPanelTitle');
+  const body     = document.getElementById('astroPanelBody');
 
   title.innerHTML = `<span style="color:${planet.color}">●</span> ${planet.name} ${lineType} Line`;
   body.innerHTML  = '<div class="orbit" style="margin:20px auto;"></div>';
-  panel.style.display = 'block';
 
-  // Rough location name from clicked coordinates
+  // Slide panel up
+  panel.classList.add('open');
+  backdrop.classList.add('open');
+
+  // Rough location from clicked coordinates
   const lat = e.latlng.lat.toFixed(1);
   const lon = e.latlng.lng.toFixed(1);
   const location = `${Math.abs(lat)}°${lat >= 0 ? 'N' : 'S'}, ${Math.abs(lon)}°${lon >= 0 ? 'E' : 'W'}`;
@@ -186,13 +191,25 @@ async function onLineClick(e, planet, lineType, userData) {
       }),
     });
 
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error('[astrocartography-interpret] server error:', res.status, errText);
+      throw new Error(`Server error ${res.status}`);
+    }
+
     const data = await res.json();
-    const paragraphs = (data.text || '').split('\n\n').filter(Boolean);
+    if (!data.text) {
+      console.error('[astrocartography-interpret] empty response:', data);
+      throw new Error('Empty response');
+    }
+
+    const paragraphs = data.text.split('\n\n').filter(Boolean);
     body.innerHTML = paragraphs
       .map(p => `<p style="margin:0 0 16px 0;line-height:1.8;">${p.trim()}</p>`)
       .join('');
   } catch (err) {
-    body.innerHTML = `<p style="color:#e74c3c;">Error loading interpretation.</p>`;
+    console.error('[astrocartography-interpret] error:', err);
+    body.innerHTML = `<p style="color:#e74c3c;">Unable to load interpretation — please try again.</p>`;
   }
 }
 

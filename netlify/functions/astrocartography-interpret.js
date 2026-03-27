@@ -49,6 +49,8 @@ Write 2 short paragraphs:
 
 Be evocative and personal. No headers. No bullet points.`;
 
+  console.log('[astrocartography-interpret]', { planet, lineType, location, name, sun, moon, rising, style });
+
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method:  'POST',
     headers: {
@@ -64,7 +66,12 @@ Be evocative and personal. No headers. No bullet points.`;
   });
 
   const data = await res.json();
+  if (!res.ok) {
+    console.error('[astrocartography-interpret] Claude API error:', JSON.stringify(data));
+    return { statusCode: 502, body: JSON.stringify({ error: data.error?.message || 'Claude API error' }) };
+  }
   const text = data.content?.map(b => b.text || '').join('') || '';
+  console.log('[astrocartography-interpret] success, chars:', text.length);
 
   return {
     statusCode: 200,
