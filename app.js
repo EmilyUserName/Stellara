@@ -815,6 +815,17 @@ async function selectSign(sign) {
 }
 
 // ============================================================
+// NATAL CHART — dedicated button on home screen
+// ============================================================
+function openNatalChart() {
+  if (!requireAuth()) return;
+  if (!requireNatalChart()) return;
+  // Has natal access — set chart topic and generate reading
+  selectTopic(document.querySelector('[data-topic="chart"]'));
+  reveal();
+}
+
+// ============================================================
 // SOLAR RETURN
 // ============================================================
 function openSolarReturn() {

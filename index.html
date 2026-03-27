@@ -136,8 +136,10 @@
         </div>
       </div>
 
-      <button class="btn landing-cta" onclick="openSignUp()">✦ &nbsp;Begin Your Journey — Free</button>
-      <p class="landing-signin">Already a member? <a href="#" onclick="openAuthModal(); return false;">Sign in</a></p>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:8px;">
+        <button class="btn landing-cta" onclick="openSignUp()">✦ &nbsp;Begin Your Journey — Free</button>
+        <button class="btn landing-signin-btn" onclick="openAuthModal()">Sign In</button>
+      </div>
     </div>
 
 
@@ -215,8 +217,9 @@
           </div>
         </div>
         <button class="btn" onclick="reveal()">✦ &nbsp;Reveal My Reading</button>
+        <button class="btn btn-natal" onclick="openNatalChart()">✦ &nbsp;Natal Birth Chart <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">Full chart reading — $19</span></button>
+        <button class="btn btn-solar" onclick="openSolarReturn()">✦ &nbsp;Solar Return <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">Yearly forecast — $29</span></button>
         <button class="btn btn-map" onclick="openAstroMap()">✦ &nbsp;Astrocartography Map <span style="font-size:0.65rem;opacity:0.6;margin-left:4px;">Beta</span></button>
-        <button class="btn btn-solar" onclick="openSolarReturn()">✦ &nbsp;Solar Return <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">Yearly Forecast — $29</span></button>
         <div class="error" id="homeErrorMsg"></div>
         <div style="text-align:center; margin-top:16px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
           <a href="#" class="edit-link" onclick="showForm(); return false;">Edit birth info</a>
@@ -434,7 +437,10 @@
     <div class="card" style="margin-top:0;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
         <div class="card-title" style="margin:0;"><span>☀</span> Solar Return <span id="solarReturnYearTitle"></span></div>
-        <button class="edit-link" onclick="closeSolarReturn()" style="font-size:0.75rem;">← Home</button>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <button class="edit-link" onclick="window.print()" style="font-size:0.75rem;">⎙ Print</button>
+          <button class="edit-link" onclick="closeSolarReturn()" style="font-size:0.75rem;">← Home</button>
+        </div>
       </div>
       <div id="solarLoading" style="text-align:center;padding:40px 0;">
         <div class="orbit" style="margin:0 auto;"></div>

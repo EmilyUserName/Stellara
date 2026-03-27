@@ -448,18 +448,14 @@ select option { background: var(--navy-2); }
   margin: 0 auto;
 }
 
-.landing-signin {
-  margin-top: 20px;
-  font-size: 0.8rem;
+.landing-signin-btn {
+  max-width: 340px;
+  background: transparent;
+  border: 1px solid rgba(126,168,212,0.4);
   color: var(--silver);
+  font-size: 0.95rem;
 }
-.landing-signin a {
-  color: var(--accent);
-  text-decoration: none;
-}
-.landing-signin a:hover {
-  color: var(--white);
-}
+.landing-signin-btn:hover { background: rgba(126,168,212,0.08); border-color: var(--accent); color: var(--light); }
 
 
 /* ------------------------------------------------------------
@@ -1502,6 +1498,29 @@ select option { background: var(--navy-2); }
   font-size: 0.9rem;
 }
 .btn-solar:hover { background: rgba(255,210,120,0.06); border-color: rgba(255,210,120,0.6); color: var(--light); }
+
+/* Natal Chart button */
+.btn-natal {
+  background: transparent;
+  border: 1px solid rgba(180,140,220,0.35);
+  color: var(--silver);
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+.btn-natal:hover { background: rgba(180,140,220,0.07); border-color: rgba(180,140,220,0.65); color: var(--light); }
+
+/* Print styles */
+@media print {
+  body { background: white !important; color: black !important; }
+  canvas, nav, .top-nav, #homeSection, .container, #astroSection { display: none !important; }
+  #solarSection { display: block !important; background: white !important; padding: 0 !important; }
+  #solarSection .card { background: white !important; border: none !important; box-shadow: none !important; }
+  #solarSection .edit-link { display: none !important; }
+  #solarSection .card-title { color: black !important; }
+  #solarReadingBody { color: black !important; display: block !important; }
+  #solarReadingBody * { color: black !important; }
+  #solarLoading { display: none !important; }
+}
 
 @media (max-width: 520px) {
   #astroMapContainer { height: 380px; }
