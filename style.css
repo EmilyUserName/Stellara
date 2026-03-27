@@ -1509,6 +1509,26 @@ select option { background: var(--navy-2); }
 }
 .btn-natal:hover { background: rgba(180,140,220,0.07); border-color: rgba(180,140,220,0.65); color: var(--light); }
 
+/* Bundle button */
+.btn-bundle {
+  background: linear-gradient(135deg, rgba(126,168,212,0.1), rgba(255,210,120,0.1));
+  border: 1px solid rgba(255,210,120,0.4);
+  color: var(--light);
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+.btn-bundle:hover { background: linear-gradient(135deg, rgba(126,168,212,0.15), rgba(255,210,120,0.15)); border-color: rgba(255,210,120,0.7); }
+
+/* Bundle plan highlight on landing */
+.landing-plan-bundle {
+  background: rgba(255,210,120,0.05);
+  border: 1px solid rgba(255,210,120,0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 4px;
+}
+.landing-plan-bundle .landing-plan-name { color: rgba(255,210,120,0.9); }
+
 /* Print styles */
 @media print {
   body { background: white !important; color: black !important; }

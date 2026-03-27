@@ -11,7 +11,7 @@ let astroVisible  = {};   // planet name → boolean
 // OPEN / CLOSE
 // ------------------------------------------------------------
 function openAstroMap() {
-  if (!requireSubscription()) return;
+  if (!requireAstrocartography()) return;
   if (!currentUser) return;
 
   document.querySelector('.container').style.display         = 'none';

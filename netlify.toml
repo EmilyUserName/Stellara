@@ -71,3 +71,13 @@
   from = "/api/astrocartography-interpret"
   to = "/.netlify/functions/astrocartography-interpret"
   status = 200
+
+[[redirects]]
+  from = "/api/create-astro-checkout"
+  to = "/.netlify/functions/create-astro-checkout"
+  status = 200
+
+[[redirects]]
+  from = "/api/create-bundle-checkout"
+  to = "/.netlify/functions/create-bundle-checkout"
+  status = 200

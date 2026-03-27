@@ -15,6 +15,7 @@ let currentUser          = null;
 let currentSubscribed    = false;
 let currentHasNatal      = false;
 let currentSolarReturnYear = null;
+let currentHasAstro      = false;
 let activeTab            = 'signin';
 
 // ------------------------------------------------------------
@@ -32,7 +33,7 @@ sb.auth.onAuthStateChange((_event, session) => {
 
 // Handle return from Stripe checkout
 const _qs = new URLSearchParams(window.location.search);
-if (_qs.get('subscribed') === 'true' || _qs.get('natal') === 'true' || _qs.get('solar') === 'true') {
+if (_qs.get('subscribed') === 'true' || _qs.get('natal') === 'true' || _qs.get('solar') === 'true' || _qs.get('astro') === 'true' || _qs.get('bundle') === 'true') {
   history.replaceState({}, '', '/');
   setTimeout(async () => { await loadProfile(); }, 2000);
 }
@@ -222,6 +223,13 @@ function requireSolarReturn() {
   return false;
 }
 
+function requireAstrocartography() {
+  if (!currentUser) { openAuthModal(); return false; }
+  if (currentHasAstro) return true;
+  openAstroUpgradeModal();
+  return false;
+}
+
 // ------------------------------------------------------------
 // UPGRADE — Stripe checkout
 // ------------------------------------------------------------
@@ -245,6 +253,47 @@ function openSolarUpgradeModal() {
 }
 function closeSolarUpgradeModal() {
   document.getElementById('solarUpgradeOverlay').classList.remove('active');
+}
+
+function openAstroUpgradeModal() {
+  document.getElementById('astroUpgradeOverlay').classList.add('active');
+}
+function closeAstroUpgradeModal() {
+  document.getElementById('astroUpgradeOverlay').classList.remove('active');
+}
+async function startAstroCheckout() {
+  const btn = document.getElementById('astroUpgradeBtn');
+  btn.disabled    = true;
+  btn.textContent = 'Redirecting…';
+  const res  = await fetch('/api/create-astro-checkout', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ userId: currentUser.id, email: currentUser.email }),
+  });
+  const data = await res.json();
+  if (!data.url) {
+    btn.disabled    = false;
+    btn.textContent = 'Unlock Astrocartography — $9';
+    return;
+  }
+  window.location.href = data.url;
+}
+async function startBundleCheckout() {
+  const btn = document.getElementById('bundleUpgradeBtn');
+  btn.disabled    = true;
+  btn.textContent = 'Redirecting…';
+  const res  = await fetch('/api/create-bundle-checkout', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ userId: currentUser.id, email: currentUser.email }),
+  });
+  const data = await res.json();
+  if (!data.url) {
+    btn.disabled    = false;
+    btn.textContent = 'Get Stellara Full Access — $45';
+    return;
+  }
+  window.location.href = data.url;
 }
 
 async function startSolarCheckout() {
@@ -316,7 +365,7 @@ async function startCheckout() {
 async function loadProfile() {
   let result = await sb
     .from('profiles')
-    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, solar_return_year, preferred_style')
+    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, solar_return_year, has_astrocartography, preferred_style')
     .eq('id', currentUser.id)
     .maybeSingle();
 
@@ -339,6 +388,7 @@ async function loadProfile() {
   currentSubscribed      = data.subscribed       || false;
   currentHasNatal        = data.has_natal_chart  || false;
   currentSolarReturnYear = data.solar_return_year || null;
+  currentHasAstro        = data.has_astrocartography || false;
   document.body.classList.toggle('is-pro', currentSubscribed);
   const hint = document.getElementById('upgradeHint');
   if (hint) hint.style.display = currentSubscribed ? 'none' : 'block';

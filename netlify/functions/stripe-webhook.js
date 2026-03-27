@@ -62,6 +62,22 @@ exports.handler = async function (event) {
         email,
         stripe_customer_id:   session.customer,
       });
+    } else if (product === 'astrocartography') {
+      await updateProfile(userId, {
+        has_astrocartography: true,
+        email,
+        stripe_customer_id: session.customer,
+      });
+    } else if (product === 'bundle') {
+      const year = new Date().getFullYear();
+      await updateProfile(userId, {
+        has_natal_chart:      true,
+        solar_return_year:    year,
+        solar_return_reading: null,
+        has_astrocartography: true,
+        email,
+        stripe_customer_id:   session.customer,
+      });
     } else {
       // Recurring subscription
       await updateProfile(userId, {

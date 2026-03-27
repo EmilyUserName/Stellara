@@ -266,8 +266,8 @@ async function reveal() {
   }
 
   // --- 3b. Gate topic-specific readings ---
-  // Natal chart: $19 one-time purchase
-  // All other topics (except birthday): Pro subscription
+  // Full Chart = $19 natal chart purchase
+  // All other topics (except birthday) = $12/mo Pro subscription
   if (selectedTopic === 'chart' && !requireNatalChart()) return;
   if (!['chart', 'birthday'].includes(selectedTopic) && !requireSubscription()) return;
 
@@ -780,20 +780,26 @@ const SIGN_SYMBOLS = {
 
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.sign-pill').forEach(btn => {
-    btn.addEventListener('click', () => selectSign(btn.dataset.sign));
+    btn.addEventListener('click', () => selectSign(btn.dataset.sign, btn.dataset.target));
   });
 });
 
-async function selectSign(sign) {
-  document.querySelectorAll('.sign-pill').forEach(b => b.classList.toggle('active', b.dataset.sign === sign));
+async function selectSign(sign, target) {
+  // target = 'home' for logged-in section, undefined/null for landing
+  const suffix    = target === 'home' ? 'Home' : '';
+  const readingEl = document.getElementById('freeHoroscopeReading' + suffix);
+  const textEl    = document.getElementById('freeHoroscopeText' + suffix);
+  const nameEl    = document.getElementById('freeHoroscopeSignName' + suffix);
+  const loadingEl = document.getElementById('freeHoroscopeLoading' + suffix);
 
-  const readingEl = document.getElementById('freeHoroscopeReading');
-  const textEl    = document.getElementById('freeHoroscopeText');
-  const nameEl    = document.getElementById('freeHoroscopeSignName');
-  const loadingEl = document.getElementById('freeHoroscopeLoading');
+  // Highlight active pill within the same group
+  const container = target === 'home'
+    ? document.getElementById('freeHoroscopeSignsHome')
+    : document.getElementById('freeHoroscopeSigns');
+  container.querySelectorAll('.sign-pill').forEach(b => b.classList.toggle('active', b.dataset.sign === sign));
 
-  readingEl.style.display  = 'none';
-  loadingEl.style.display  = 'block';
+  readingEl.style.display = 'none';
+  loadingEl.style.display = 'block';
 
   if (!_freeHoroscopes) {
     try {
@@ -809,9 +815,20 @@ async function selectSign(sign) {
   loadingEl.style.display = 'none';
   if (!_freeHoroscopes?.[sign]) return;
 
-  nameEl.textContent  = `${SIGN_SYMBOLS[sign]} ${SIGN_NAMES[sign]}`;
-  textEl.textContent  = _freeHoroscopes[sign];
+  nameEl.textContent      = `${SIGN_SYMBOLS[sign]} ${SIGN_NAMES[sign]}`;
+  textEl.textContent      = _freeHoroscopes[sign];
   readingEl.style.display = 'block';
+}
+
+// ============================================================
+// BUNDLE MODAL
+// ============================================================
+function openBundleModal() {
+  if (!requireAuth()) return;
+  document.getElementById('bundleUpgradeOverlay').classList.add('active');
+}
+function closeBundleUpgradeModal() {
+  document.getElementById('bundleUpgradeOverlay').classList.remove('active');
 }
 
 // ============================================================
@@ -819,10 +836,13 @@ async function selectSign(sign) {
 // ============================================================
 function openNatalChart() {
   if (!requireAuth()) return;
-  if (!requireNatalChart()) return;
-  // Has natal access — set chart topic and generate reading
-  selectTopic(document.querySelector('[data-topic="chart"]'));
-  reveal();
+  if (currentHasNatal) {
+    // Already purchased — generate their chart reading
+    selectTopic(document.querySelector('[data-topic="chart"]'));
+    reveal();
+  } else {
+    openNatalUpgradeModal();
+  }
 }
 
 // ============================================================
