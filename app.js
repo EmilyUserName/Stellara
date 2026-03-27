@@ -100,10 +100,18 @@ function selectStyle(el) {
 // ------------------------------------------------------------
 let selectedTopic = 'daily';
 
+const FREE_TOPICS = ['birthday'];
+
 function selectTopic(el) {
+  const topic = el.dataset.topic;
+  // If it's a Pro topic and user isn't subscribed, open upgrade flow immediately
+  if (!FREE_TOPICS.includes(topic) && topic !== 'chart') {
+    if (!currentUser) { openAuthModal(); return; }
+    if (!currentSubscribed) { openUpgradeModal(); return; }
+  }
   document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
-  selectedTopic = el.dataset.topic;
+  selectedTopic = topic;
   // Show partner input only for compatibility
   document.querySelectorAll('.partner-input').forEach(d => {
     d.style.display = selectedTopic === 'compatibility' ? 'block' : 'none';

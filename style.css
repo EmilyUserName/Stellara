@@ -135,6 +135,18 @@ body {
   70%       { opacity: 0.4; }
 }
 
+/* Big slowly-pulsing background stars */
+.star-big {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: bigStarPulse ease-in-out infinite;
+}
+@keyframes bigStarPulse {
+  0%, 100% { opacity: 0.1;  transform: scale(0.85); }
+  50%       { opacity: 0.85; transform: scale(1);    }
+}
+
 
 /* ------------------------------------------------------------
    LAYOUT
