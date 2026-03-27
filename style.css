@@ -423,13 +423,8 @@ select option { background: var(--navy-2); }
   letter-spacing: 0.1em;
   text-decoration: none;
   text-transform: uppercase;
-  background: transparent;
-  border: none;
   cursor: pointer;
   padding: 10px 6px;
-  font-family: inherit;
-  -webkit-appearance: none;
-  appearance: none;
   display: inline-block;
 }
 .edit-link:hover { color: var(--accent); }
