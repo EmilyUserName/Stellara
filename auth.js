@@ -396,6 +396,11 @@ async function loadProfile() {
     el.style.display = currentSubscribed ? 'inline' : 'none';
   });
 
+  // Show upgrade prompt to users who haven't paid for anything
+  const hasAnyPaid = currentSubscribed || currentHasNatal || currentHasAstro || currentSolarReturnYear;
+  const upgradePrompt = document.getElementById('upgradePrompt');
+  if (upgradePrompt) upgradePrompt.style.display = hasAnyPaid ? 'none' : 'block';
+
   document.getElementById('name').value        = data.name;
   const savedDate = data.birth_date || '';
   if (savedDate) {

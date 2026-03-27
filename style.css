@@ -1519,6 +1519,16 @@ select option { background: var(--navy-2); }
 }
 .btn-bundle:hover { background: linear-gradient(135deg, rgba(126,168,212,0.15), rgba(255,210,120,0.15)); border-color: rgba(255,210,120,0.7); }
 
+/* Pro plan highlight on landing */
+.landing-plan-pro {
+  background: rgba(126,168,212,0.07);
+  border: 1px solid rgba(126,168,212,0.25);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 4px;
+}
+.landing-plan-pro .landing-plan-name { color: var(--accent); }
+
 /* Bundle plan highlight on landing */
 .landing-plan-bundle {
   background: rgba(255,210,120,0.05);

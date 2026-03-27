@@ -89,40 +89,16 @@
         <div class="landing-topic">Spiritual Path</div>
       </div>
 
-      <!-- Free daily horoscopes — no login required -->
-      <div class="free-horoscopes" id="freeHoroscopes">
-        <div class="free-horoscopes-label">Today's Horoscopes</div>
-        <div class="free-horoscopes-signs" id="freeHoroscopeSigns">
-          <button class="sign-pill" data-sign="aries">♈ Aries</button>
-          <button class="sign-pill" data-sign="taurus">♉ Taurus</button>
-          <button class="sign-pill" data-sign="gemini">♊ Gemini</button>
-          <button class="sign-pill" data-sign="cancer">♋ Cancer</button>
-          <button class="sign-pill" data-sign="leo">♌ Leo</button>
-          <button class="sign-pill" data-sign="virgo">♍ Virgo</button>
-          <button class="sign-pill" data-sign="libra">♎ Libra</button>
-          <button class="sign-pill" data-sign="scorpio">♏ Scorpio</button>
-          <button class="sign-pill" data-sign="sagittarius">♐ Sagittarius</button>
-          <button class="sign-pill" data-sign="capricorn">♑ Capricorn</button>
-          <button class="sign-pill" data-sign="aquarius">♒ Aquarius</button>
-          <button class="sign-pill" data-sign="pisces">♓ Pisces</button>
-        </div>
-        <div class="free-horoscope-reading" id="freeHoroscopeReading" style="display:none;">
-          <div class="free-horoscope-sign-name" id="freeHoroscopeSignName"></div>
-          <div class="free-horoscope-text" id="freeHoroscopeText"></div>
-          <div class="free-horoscope-cta">
-            Want a reading based on your full birth chart?
-            <span onclick="openSignUp()" style="color:var(--accent);cursor:pointer;"> Create a free account →</span>
-          </div>
-        </div>
-        <div class="free-horoscope-loading" id="freeHoroscopeLoading" style="display:none;">
-          <div class="orbit" style="width:28px;height:28px;margin:0 auto;"></div>
-        </div>
-      </div>
 
       <div class="landing-value">
         <div class="landing-plan">
           <div class="landing-plan-name">Free</div>
           <div class="landing-plan-desc">The cosmos speaks every day. Get your free daily horoscope for all 12 signs — a glimpse into the energy, opportunities, and challenges the universe has lined up for you today. No account needed. Just your sign.</div>
+        </div>
+        <div class="landing-plan-divider"></div>
+        <div class="landing-plan landing-plan-pro">
+          <div class="landing-plan-name">✦ Pro — $12 / month</div>
+          <div class="landing-plan-desc">Generic horoscopes tell you what the stars say to everyone born in your month. Pro tells you what they're saying to <em>you</em> — based on your exact natal chart. Every morning, a personalized horoscope lands in your inbox, written by AI trained in your unique planetary blueprint. The difference is extraordinary.</div>
         </div>
         <div class="landing-plan-divider"></div>
         <div class="landing-plan">
@@ -138,11 +114,6 @@
         <div class="landing-plan">
           <div class="landing-plan-name">Astrocartography Map — $9 one-time</div>
           <div class="landing-plan-desc">The stars don't just know who you are — they know where you belong. Your Astrocartography Map plots your planetary lines across the entire globe, showing you exactly where love, luck, career, and growth are amplified for you. Move there. Visit there. Or simply know. Interactive, personalized, and yours to keep.</div>
-        </div>
-        <div class="landing-plan-divider"></div>
-        <div class="landing-plan">
-          <div class="landing-plan-name">Pro — $12 / month</div>
-          <div class="landing-plan-desc">Generic horoscopes tell you what the stars say to everyone born in your month. Pro tells you what they're saying to you — based on your exact natal chart. Every morning, a personalized horoscope lands in your inbox, written by AI trained in your unique planetary blueprint. The difference is extraordinary.</div>
         </div>
         <div class="landing-plan-divider"></div>
         <div class="landing-plan landing-plan-bundle">
@@ -167,6 +138,44 @@
       <div id="birthdayBanner" style="display:none;">
         <p class="birthday-headline">✦ Happy Birthday, <span id="birthdayName"></span> ✦</p>
         <p class="birthday-sub">Today the Sun returns to the exact degree it held the moment you were born. This is your Solar Return — a new chapter begins.</p>
+      </div>
+
+      <!-- Free daily horoscopes — always visible at top -->
+      <div class="free-horoscopes" id="freeHoroscopesHome">
+        <div class="free-horoscopes-label">Today's Horoscopes</div>
+        <div class="free-horoscopes-signs" id="freeHoroscopeSignsHome">
+          <button class="sign-pill" data-sign="aries" data-target="home">♈ Aries</button>
+          <button class="sign-pill" data-sign="taurus" data-target="home">♉ Taurus</button>
+          <button class="sign-pill" data-sign="gemini" data-target="home">♊ Gemini</button>
+          <button class="sign-pill" data-sign="cancer" data-target="home">♋ Cancer</button>
+          <button class="sign-pill" data-sign="leo" data-target="home">♌ Leo</button>
+          <button class="sign-pill" data-sign="virgo" data-target="home">♍ Virgo</button>
+          <button class="sign-pill" data-sign="libra" data-target="home">♎ Libra</button>
+          <button class="sign-pill" data-sign="scorpio" data-target="home">♏ Scorpio</button>
+          <button class="sign-pill" data-sign="sagittarius" data-target="home">♐ Sagittarius</button>
+          <button class="sign-pill" data-sign="capricorn" data-target="home">♑ Capricorn</button>
+          <button class="sign-pill" data-sign="aquarius" data-target="home">♒ Aquarius</button>
+          <button class="sign-pill" data-sign="pisces" data-target="home">♓ Pisces</button>
+        </div>
+        <div class="free-horoscope-reading" id="freeHoroscopeReadingHome" style="display:none;">
+          <div class="free-horoscope-sign-name" id="freeHoroscopeSignNameHome"></div>
+          <div class="free-horoscope-text" id="freeHoroscopeTextHome"></div>
+        </div>
+        <div class="free-horoscope-loading" id="freeHoroscopeLoadingHome" style="display:none;">
+          <div class="orbit" style="width:28px;height:28px;margin:0 auto;"></div>
+        </div>
+      </div>
+
+      <!-- Upgrade prompt — shown to non-paying users -->
+      <div id="upgradePrompt" style="display:none;" class="card" style="margin-top:16px;text-align:center;padding:20px 24px;">
+        <p style="font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Unlock More</p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="btn btn-natal" onclick="openNatalChart()" style="margin-top:0;">✦ &nbsp;Natal Birth Chart <span style="font-size:0.7rem;opacity:0.7;margin-left:6px;">$19 one-time</span></button>
+          <button class="btn btn-solar" onclick="openSolarReturn()" style="margin-top:0;">✦ &nbsp;Solar Return <span style="font-size:0.7rem;opacity:0.7;margin-left:6px;">$29 / year</span></button>
+          <button class="btn btn-map" onclick="openAstroMap()" style="margin-top:0;">✦ &nbsp;Astrocartography <span style="font-size:0.7rem;opacity:0.7;margin-left:6px;">$9 one-time</span></button>
+          <button class="btn" onclick="openUpgradeModal()" style="margin-top:0;">✦ &nbsp;Pro — All Topics + Daily Email <span style="font-size:0.7rem;opacity:0.7;margin-left:6px;">$12 / month</span></button>
+          <button class="btn btn-bundle" onclick="openBundleModal()" style="margin-top:0;">✦ &nbsp;Full Access Bundle <span style="font-size:0.7rem;opacity:0.7;margin-left:6px;">Natal + Solar + Astro — $45</span></button>
+        </div>
       </div>
 
       <div class="card">
@@ -232,9 +241,9 @@
           </div>
         </div>
         <button class="btn" onclick="reveal()">✦ &nbsp;Reveal My Reading</button>
-        <button class="btn btn-natal" onclick="openNatalChart()">✦ &nbsp;Natal Birth Chart <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">Full chart reading — $19 one-time</span></button>
-        <button class="btn btn-solar" onclick="openSolarReturn()">✦ &nbsp;Solar Return <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">Yearly forecast — $29 / year</span></button>
-        <button class="btn btn-map" onclick="openAstroMap()">✦ &nbsp;Astrocartography <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">Planetary map — $9 one-time</span></button>
+        <button class="btn btn-natal" onclick="openNatalChart()" id="homeNatalBtn">✦ &nbsp;Natal Birth Chart <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">$19 one-time</span></button>
+        <button class="btn btn-solar" onclick="openSolarReturn()">✦ &nbsp;Solar Return <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">$29 / year</span></button>
+        <button class="btn btn-map" onclick="openAstroMap()">✦ &nbsp;Astrocartography <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">$9 one-time</span></button>
         <button class="btn btn-bundle" onclick="openBundleModal()">✦ &nbsp;Full Access Bundle <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">Natal + Solar + Astro — $45</span></button>
         <div class="error" id="homeErrorMsg"></div>
         <div style="text-align:center; margin-top:16px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
@@ -244,31 +253,6 @@
         </div>
       </div>
 
-      <!-- Free daily horoscopes — visible to all signed-in users -->
-      <div class="free-horoscopes" id="freeHoroscopesHome" style="margin-top:16px;">
-        <div class="free-horoscopes-label">Today's Horoscopes</div>
-        <div class="free-horoscopes-signs" id="freeHoroscopeSignsHome">
-          <button class="sign-pill" data-sign="aries" data-target="home">♈ Aries</button>
-          <button class="sign-pill" data-sign="taurus" data-target="home">♉ Taurus</button>
-          <button class="sign-pill" data-sign="gemini" data-target="home">♊ Gemini</button>
-          <button class="sign-pill" data-sign="cancer" data-target="home">♋ Cancer</button>
-          <button class="sign-pill" data-sign="leo" data-target="home">♌ Leo</button>
-          <button class="sign-pill" data-sign="virgo" data-target="home">♍ Virgo</button>
-          <button class="sign-pill" data-sign="libra" data-target="home">♎ Libra</button>
-          <button class="sign-pill" data-sign="scorpio" data-target="home">♏ Scorpio</button>
-          <button class="sign-pill" data-sign="sagittarius" data-target="home">♐ Sagittarius</button>
-          <button class="sign-pill" data-sign="capricorn" data-target="home">♑ Capricorn</button>
-          <button class="sign-pill" data-sign="aquarius" data-target="home">♒ Aquarius</button>
-          <button class="sign-pill" data-sign="pisces" data-target="home">♓ Pisces</button>
-        </div>
-        <div class="free-horoscope-reading" id="freeHoroscopeReadingHome" style="display:none;">
-          <div class="free-horoscope-sign-name" id="freeHoroscopeSignNameHome"></div>
-          <div class="free-horoscope-text" id="freeHoroscopeTextHome"></div>
-        </div>
-        <div class="free-horoscope-loading" id="freeHoroscopeLoadingHome" style="display:none;">
-          <div class="orbit" style="width:28px;height:28px;margin:0 auto;"></div>
-        </div>
-      </div>
     </div>
 
 
