@@ -1065,3 +1065,192 @@ select option { background: var(--navy-2); }
   .placements { grid-template-columns: 1fr; }
   .card { padding: 28px 20px; }
 }
+
+
+/* ============================================================
+   ASTROCARTOGRAPHY MAP
+   ============================================================ */
+
+#astroSection {
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.astro-header {
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.astro-back {
+  background: none;
+  border: 1px solid rgba(126,168,212,0.3);
+  border-radius: 10px;
+  color: var(--silver);
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+  transition: border-color 0.2s, color 0.2s;
+}
+.astro-back:hover { border-color: var(--accent); color: var(--accent); }
+
+.astro-title {
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--light);
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+}
+.astro-title-symbol { color: var(--accent); margin-right: 8px; }
+
+.astro-subtitle {
+  font-size: 0.82rem;
+  color: var(--silver);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.astro-loading {
+  text-align: center;
+  padding: 60px 20px;
+}
+.astro-loading p { color: var(--silver); margin-top: 20px; }
+
+#astroMapContainer {
+  height: 520px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(126,168,212,0.2);
+  margin-bottom: 16px;
+}
+
+/* Override Leaflet defaults to match dark theme */
+.leaflet-container { background: #0a1628; }
+.leaflet-control-attribution { background: rgba(10,22,40,0.7) !important; color: rgba(255,255,255,0.3) !important; font-size: 9px !important; }
+.leaflet-control-attribution a { color: rgba(255,255,255,0.4) !important; }
+.leaflet-control-zoom a { background: rgba(19,36,64,0.9) !important; color: var(--accent) !important; border-color: rgba(126,168,212,0.2) !important; }
+
+/* Planet toggle controls */
+.astro-controls {
+  background: rgba(19,36,64,0.6);
+  border: 1px solid rgba(126,168,212,0.15);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+.astro-controls-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--silver);
+  opacity: 0.6;
+  margin-bottom: 12px;
+}
+.astro-planet-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.astro-planet-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--silver);
+  cursor: pointer;
+  padding: 4px 10px 4px 6px;
+  border-radius: 20px;
+  border: 1px solid rgba(126,168,212,0.15);
+  background: rgba(10,22,40,0.4);
+  transition: background 0.2s;
+  user-select: none;
+}
+.astro-planet-toggle:hover { background: rgba(126,168,212,0.08); }
+.astro-planet-toggle input { display: none; }
+.astro-toggle-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.astro-planet-toggle input:not(:checked) ~ .astro-toggle-dot { opacity: 0.25; }
+.astro-planet-toggle input:not(:checked) ~ span:last-child { opacity: 0.35; }
+
+/* Line type legend */
+.astro-line-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.astro-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--silver);
+  opacity: 0.6;
+}
+.astro-legend-line {
+  display: inline-block;
+  width: 22px;
+  height: 2px;
+  background: var(--silver);
+  opacity: 0.6;
+}
+.astro-legend-dsc { background: repeating-linear-gradient(90deg, var(--silver) 0 5px, transparent 5px 9px); }
+.astro-legend-ic  { background: repeating-linear-gradient(90deg, var(--silver) 0 2px, transparent 2px 6px); }
+
+/* Interpretation panel */
+.astro-interpret-panel {
+  background: rgba(11,22,48,0.95);
+  border: 1px solid rgba(126,168,212,0.2);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-top: 8px;
+}
+.astro-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--light);
+  letter-spacing: 0.04em;
+}
+.astro-panel-close {
+  background: none;
+  border: none;
+  color: var(--silver);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.astro-panel-close:hover { opacity: 1; }
+.astro-panel-body {
+  font-size: 0.95rem;
+  color: var(--silver);
+  line-height: 1.8;
+}
+.astro-panel-body p:last-child { margin-bottom: 0; }
+
+/* Astro Map button */
+.btn-map {
+  background: transparent;
+  border: 1px solid rgba(126,168,212,0.35);
+  color: var(--silver);
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+.btn-map:hover { background: rgba(126,168,212,0.08); border-color: var(--accent); color: var(--light); }
+
+@media (max-width: 520px) {
+  #astroMapContainer { height: 380px; }
+  #astroSection { padding: 14px; }
+}

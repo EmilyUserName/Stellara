@@ -8,6 +8,12 @@
   timeout = 120
   schedule = "0 7 * * *"
 
+[functions."astrocartography"]
+  timeout = 15
+
+[functions."astrocartography-interpret"]
+  timeout = 20
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
@@ -31,4 +37,14 @@
 [[redirects]]
   from = "/api/customer-portal"
   to = "/.netlify/functions/customer-portal"
+  status = 200
+
+[[redirects]]
+  from = "/api/astrocartography"
+  to = "/.netlify/functions/astrocartography"
+  status = 200
+
+[[redirects]]
+  from = "/api/astrocartography-interpret"
+  to = "/.netlify/functions/astrocartography-interpret"
   status = 200

@@ -22,6 +22,9 @@
   <!-- All styling lives in style.css -->
   <link rel="stylesheet" href="style.css" />
 
+  <!-- Leaflet (astrocartography map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
   <!-- Supabase JS (auth) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
@@ -162,6 +165,7 @@
           <input class="partner-input-field" type="text" placeholder="e.g. Alex, Scorpio" />
         </div>
         <button class="btn" onclick="reveal()">✦ &nbsp;Reveal My Reading</button>
+        <button class="btn btn-map" onclick="openAstroMap()">✦ &nbsp;Astrocartography Map <span class="pill-pro">Pro</span></button>
         <div class="error" id="homeErrorMsg"></div>
         <div style="text-align:center; margin-top:16px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
           <a href="#" class="edit-link" onclick="showForm(); return false;">Edit birth info</a>
@@ -350,6 +354,49 @@
 
 
   <!-- =====================================================
+       ASTROCARTOGRAPHY — full-screen map view
+       ===================================================== -->
+  <div id="astroSection" style="display:none;">
+    <div class="astro-header">
+      <button class="astro-back" onclick="closeAstroMap()">← Back</button>
+      <div class="astro-title">
+        <span class="astro-title-symbol">✦</span>
+        <span>Your Astrocartography Map</span>
+      </div>
+      <div class="astro-subtitle" id="astroSubtitle"></div>
+    </div>
+
+    <div id="astroLoading" class="astro-loading">
+      <div class="orbit"></div>
+      <p>Mapping your planetary lines…</p>
+    </div>
+
+    <div id="astroMapContainer"></div>
+
+    <div class="astro-controls" id="astroControls" style="display:none;">
+      <div class="astro-controls-label">Planets</div>
+      <div class="astro-planet-toggles" id="astroPlanetToggles"></div>
+      <div class="astro-line-legend">
+        <span class="astro-legend-item"><span class="astro-legend-line astro-legend-asc"></span> ASC</span>
+        <span class="astro-legend-item"><span class="astro-legend-line astro-legend-dsc"></span> DSC</span>
+        <span class="astro-legend-item"><span class="astro-legend-line astro-legend-mc"></span> MC</span>
+        <span class="astro-legend-item"><span class="astro-legend-line astro-legend-ic"></span> IC</span>
+      </div>
+    </div>
+
+    <div class="astro-interpret-panel" id="astroPanel" style="display:none;">
+      <div class="astro-panel-header">
+        <span id="astroPanelTitle"></span>
+        <button class="astro-panel-close" onclick="closeAstroPanel()">×</button>
+      </div>
+      <div class="astro-panel-body" id="astroPanelBody">
+        <div class="orbit" id="astroPanelLoading"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
        UPGRADE MODAL — shown when a free user hits a pro feature
        ===================================================== -->
   <div class="auth-overlay" id="upgradeOverlay" onclick="closeUpgradeModal()">
@@ -423,9 +470,11 @@
        auth.js       = supabase authentication
        app.js        = button clicks & API calls
        ===================================================== -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="astrology.js"></script>
   <script src="auth.js"></script>
   <script src="app.js"></script>
+  <script src="astrocartography.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
