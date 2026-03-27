@@ -449,6 +449,31 @@
 
 
   <!-- =====================================================
+       NATAL CHART UPGRADE MODAL
+       ===================================================== -->
+  <div class="auth-overlay" id="natalUpgradeOverlay" onclick="closeNatalUpgradeModal()">
+    <div class="auth-modal" onclick="event.stopPropagation()">
+      <button class="auth-close" onclick="closeNatalUpgradeModal()">×</button>
+      <div class="auth-logo">✦</div>
+      <h2 class="auth-modal-title">Your Natal Birth Chart</h2>
+      <p class="auth-modal-sub">A one-time reading — yours forever.</p>
+
+      <div class="upgrade-features">
+        <div class="upgrade-feature">✦ Full personalized natal chart reading — Sun, Moon &amp; Rising</div>
+        <div class="upgrade-feature">✦ Powered by your exact birth data — not just your sun sign</div>
+        <div class="upgrade-feature">✦ One-time purchase — no subscription required</div>
+        <div class="upgrade-feature">✦ Access your reading anytime from your account</div>
+      </div>
+
+      <button class="btn" id="natalUpgradeBtn" onclick="startNatalCheckout()" style="margin-top:24px;">
+        Unlock Natal Chart — $19
+      </button>
+      <p class="auth-error" style="margin-top:12px; color:var(--silver); font-size:0.75rem;">One-time payment. No recurring charges.</p>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
        AUTH MODAL — sign in / sign up overlay
        ===================================================== -->
   <div class="auth-overlay" id="authOverlay" onclick="closeAuthModal()">

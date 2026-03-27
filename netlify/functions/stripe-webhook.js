@@ -45,12 +45,25 @@ exports.handler = async function (event) {
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
     const userId  = session.client_reference_id;
-    await updateProfile(userId, {
-      subscribed:             true,
-      email:                  session.customer_details?.email || session.customer_email || null,
-      stripe_customer_id:     session.customer,
-      stripe_subscription_id: session.subscription,
-    });
+    const product = session.metadata?.product;
+    const email   = session.customer_details?.email || session.customer_email || null;
+
+    if (product === 'natal_chart') {
+      // One-time natal chart purchase
+      await updateProfile(userId, {
+        has_natal_chart:    true,
+        email,
+        stripe_customer_id: session.customer,
+      });
+    } else {
+      // Recurring subscription
+      await updateProfile(userId, {
+        subscribed:             true,
+        email,
+        stripe_customer_id:     session.customer,
+        stripe_subscription_id: session.subscription,
+      });
+    }
   }
 
   if (stripeEvent.type === 'customer.subscription.deleted') {

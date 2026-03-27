@@ -40,6 +40,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/create-natal-checkout"
+  to = "/.netlify/functions/create-natal-checkout"
+  status = 200
+
+[[redirects]]
   from = "/api/astrocartography"
   to = "/.netlify/functions/astrocartography"
   status = 200

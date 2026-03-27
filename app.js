@@ -265,8 +265,10 @@ async function reveal() {
     return;
   }
 
-  // --- 3b. Gate topic-specific readings behind subscription ---
-  // Full Chart and Birthday are free; all other topics (including Today's Sky) require Pro
+  // --- 3b. Gate topic-specific readings ---
+  // Natal chart: $19 one-time purchase
+  // All other topics (except birthday): Pro subscription
+  if (selectedTopic === 'chart' && !requireNatalChart()) return;
   if (!['chart', 'birthday'].includes(selectedTopic) && !requireSubscription()) return;
 
   // --- 4. Calculate the three placements from astrology.js ---

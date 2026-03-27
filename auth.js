@@ -13,6 +13,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser      = null;
 let currentSubscribed = false;
+let currentHasNatal  = false;
 let activeTab        = 'signin';
 
 // ------------------------------------------------------------
@@ -29,12 +30,11 @@ sb.auth.onAuthStateChange((_event, session) => {
 });
 
 // Handle return from Stripe checkout
-if (new URLSearchParams(window.location.search).get('subscribed') === 'true') {
+const _qs = new URLSearchParams(window.location.search);
+if (_qs.get('subscribed') === 'true' || _qs.get('natal') === 'true') {
   history.replaceState({}, '', '/');
   // Poll briefly — webhook may not have fired yet
-  setTimeout(async () => {
-    await loadProfile();
-  }, 2000);
+  setTimeout(async () => { await loadProfile(); }, 2000);
 }
 
 function updateAuthUI() {
@@ -208,6 +208,13 @@ function requireSubscription() {
   // return false;
 }
 
+function requireNatalChart() {
+  if (!currentUser) { openAuthModal(); return false; }
+  if (currentHasNatal) return true;
+  openNatalUpgradeModal();
+  return false;
+}
+
 // ------------------------------------------------------------
 // UPGRADE — Stripe checkout
 // ------------------------------------------------------------
@@ -217,6 +224,34 @@ function openUpgradeModal() {
 
 function closeUpgradeModal() {
   document.getElementById('upgradeOverlay').classList.remove('active');
+}
+
+function openNatalUpgradeModal() {
+  document.getElementById('natalUpgradeOverlay').classList.add('active');
+}
+
+function closeNatalUpgradeModal() {
+  document.getElementById('natalUpgradeOverlay').classList.remove('active');
+}
+
+async function startNatalCheckout() {
+  const btn = document.getElementById('natalUpgradeBtn');
+  btn.disabled    = true;
+  btn.textContent = 'Redirecting…';
+
+  const res  = await fetch('/api/create-natal-checkout', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ userId: currentUser.id, email: currentUser.email }),
+  });
+  const data = await res.json();
+
+  if (!data.url) {
+    btn.disabled    = false;
+    btn.textContent = 'Unlock Natal Chart — $19';
+    return;
+  }
+  window.location.href = data.url;
 }
 
 async function startCheckout() {
@@ -248,7 +283,7 @@ async function startCheckout() {
 async function loadProfile() {
   const { data } = await sb
     .from('profiles')
-    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, preferred_style')
+    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, preferred_style')
     .eq('id', currentUser.id)
     .maybeSingle();
 
@@ -257,7 +292,8 @@ async function loadProfile() {
     return;
   }
 
-  currentSubscribed = data.subscribed || false;
+  currentSubscribed = data.subscribed    || false;
+  currentHasNatal  = data.has_natal_chart || false;
   document.body.classList.toggle('is-pro', currentSubscribed);
   const hint = document.getElementById('upgradeHint');
   if (hint) hint.style.display = currentSubscribed ? 'none' : 'block';
