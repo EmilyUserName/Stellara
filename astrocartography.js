@@ -129,20 +129,26 @@ function drawPlanetLines(planet, userData) {
     segments.forEach(seg => {
       if (seg.length < 2) return;
       const latlngs = seg.map(([lat, lon]) => [lat, lon]);
-      L.polyline(latlngs, lineStyles[type])
-        .on('click', (e) => onLineClick(e, planet, type, userData))
-        .on('mouseover', function () { this.setStyle({ weight: 3, opacity: 1 }); })
-        .on('mouseout',  function () { this.setStyle({ weight: 1.5, opacity: 0.85 }); })
+      // Visible line
+      const visible = L.polyline(latlngs, lineStyles[type]).addTo(group);
+      // Invisible wide hit-target on top for easy clicking
+      L.polyline(latlngs, { color: 'transparent', weight: 16, opacity: 0 })
+        .on('click', (e) => { L.DomEvent.stopPropagation(e); onLineClick(e, planet, type, userData); })
+        .on('mouseover', function () { visible.setStyle({ weight: 3, opacity: 1 }); this._map.getContainer().style.cursor = 'pointer'; })
+        .on('mouseout',  function () { visible.setStyle({ weight: 1.5, opacity: 0.85 }); this._map.getContainer().style.cursor = ''; })
         .addTo(group);
     });
   };
 
   const addVertical = (lon, type) => {
     const latlngs = [[-85, lon], [85, lon]];
-    L.polyline(latlngs, lineStyles[type])
-      .on('click', (e) => onLineClick(e, planet, type, userData))
-      .on('mouseover', function () { this.setStyle({ weight: 3, opacity: 1 }); })
-      .on('mouseout',  function () { this.setStyle({ weight: 1.5, opacity: 0.85 }); })
+    // Visible line
+    const visible = L.polyline(latlngs, lineStyles[type]).addTo(group);
+    // Invisible wide hit-target
+    L.polyline(latlngs, { color: 'transparent', weight: 16, opacity: 0 })
+      .on('click', (e) => { L.DomEvent.stopPropagation(e); onLineClick(e, planet, type, userData); })
+      .on('mouseover', function () { visible.setStyle({ weight: 3, opacity: 1 }); this._map.getContainer().style.cursor = 'pointer'; })
+      .on('mouseout',  function () { visible.setStyle({ weight: 1.5, opacity: 0.85 }); this._map.getContainer().style.cursor = ''; })
       .addTo(group);
   };
 
