@@ -131,11 +131,11 @@ function drawPlanetLines(planet, userData) {
       const latlngs = seg.map(([lat, lon]) => [lat, lon]);
       // Visible line
       const visible = L.polyline(latlngs, lineStyles[type]).addTo(group);
-      // Invisible wide hit-target on top for easy clicking
-      L.polyline(latlngs, { color: 'transparent', weight: 16, opacity: 0 })
-        .on('click', (e) => { L.DomEvent.stopPropagation(e); onLineClick(e, planet, type, userData); })
-        .on('mouseover', function () { visible.setStyle({ weight: 3, opacity: 1 }); this._map.getContainer().style.cursor = 'pointer'; })
-        .on('mouseout',  function () { visible.setStyle({ weight: 1.5, opacity: 0.85 }); this._map.getContainer().style.cursor = ''; })
+      // Wide hit-target on top for easy clicking (opacity near-zero but not 0 — SVG needs visible stroke to be hit-testable)
+      L.polyline(latlngs, { color: col, weight: 16, opacity: 0.001, interactive: true })
+        .on('click', (e) => onLineClick(e, planet, type, userData))
+        .on('mouseover', function () { visible.setStyle({ weight: 3, opacity: 1 }); })
+        .on('mouseout',  function () { visible.setStyle({ weight: 1.5, opacity: 0.85 }); })
         .addTo(group);
     });
   };
@@ -144,11 +144,11 @@ function drawPlanetLines(planet, userData) {
     const latlngs = [[-85, lon], [85, lon]];
     // Visible line
     const visible = L.polyline(latlngs, lineStyles[type]).addTo(group);
-    // Invisible wide hit-target
-    L.polyline(latlngs, { color: 'transparent', weight: 16, opacity: 0 })
-      .on('click', (e) => { L.DomEvent.stopPropagation(e); onLineClick(e, planet, type, userData); })
-      .on('mouseover', function () { visible.setStyle({ weight: 3, opacity: 1 }); this._map.getContainer().style.cursor = 'pointer'; })
-      .on('mouseout',  function () { visible.setStyle({ weight: 1.5, opacity: 0.85 }); this._map.getContainer().style.cursor = ''; })
+    // Wide hit-target
+    L.polyline(latlngs, { color: col, weight: 16, opacity: 0.001, interactive: true })
+      .on('click', (e) => onLineClick(e, planet, type, userData))
+      .on('mouseover', function () { visible.setStyle({ weight: 3, opacity: 1 }); })
+      .on('mouseout',  function () { visible.setStyle({ weight: 1.5, opacity: 0.85 }); })
       .addTo(group);
   };
 
