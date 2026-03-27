@@ -711,3 +711,47 @@ function triggerBirthdayExperience(name) {
     burst({ particleCount: 50, spread: 100, origin: { x: 0.5, y: 0.5 }, startVelocity: 20, gravity: 0.5, scalar: 0.8, ticks: 300 });
   }, 1400);
 }
+
+// ============================================================
+// FEEDBACK
+// ============================================================
+function openFeedback() {
+  document.getElementById('feedbackText').value = '';
+  document.getElementById('feedbackStatus').textContent = '';
+  document.getElementById('feedbackBackdrop').style.display = 'block';
+  document.getElementById('feedbackModal').style.display = 'block';
+  setTimeout(() => document.getElementById('feedbackText').focus(), 50);
+}
+
+function closeFeedback() {
+  document.getElementById('feedbackBackdrop').style.display = 'none';
+  document.getElementById('feedbackModal').style.display = 'none';
+}
+
+async function submitFeedback() {
+  const text = document.getElementById('feedbackText').value.trim();
+  const status = document.getElementById('feedbackStatus');
+  if (!text) { status.style.color = '#e74c3c'; status.textContent = 'Please write something first.'; return; }
+
+  status.style.color = 'var(--silver)';
+  status.textContent = 'Sending…';
+
+  const name  = document.getElementById('name')?.value?.trim() || '';
+  const email = currentUser?.email || '';
+
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, text }),
+    });
+    if (!res.ok) throw new Error(`${res.status}`);
+    status.style.color = '#2ecc71';
+    status.textContent = 'Thank you! We really appreciate it. ✦';
+    document.getElementById('feedbackText').value = '';
+    setTimeout(closeFeedback, 2200);
+  } catch (err) {
+    status.style.color = '#e74c3c';
+    status.textContent = 'Something went wrong. Please try again.';
+  }
+}

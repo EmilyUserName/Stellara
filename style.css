@@ -1309,3 +1309,40 @@ select option { background: var(--navy-2); }
   #astroMapContainer { height: 380px; }
   #astroSection { padding: 14px; }
 }
+
+/* ============================================================
+   FEEDBACK MODAL
+   ============================================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 900;
+  backdrop-filter: blur(2px);
+}
+.modal-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 901;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 30px;
+  width: min(480px, calc(100vw - 40px));
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: var(--silver);
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.modal-close:hover { opacity: 1; }
