@@ -75,7 +75,6 @@
       </div>
 
       <div class="landing-topics">
-        <div class="landing-topic">Full Chart</div>
         <div class="landing-topic">Today's Sky</div>
         <div class="landing-topic">Love</div>
         <div class="landing-topic">Career</div>
@@ -210,8 +209,7 @@
         </div>
 
         <div class="topic-pills home-topic-pills">
-          <button class="topic-pill topic-pill-featured active" data-topic="chart" onclick="selectTopic(this)">Full Chart</button>
-          <button class="topic-pill topic-pill-featured" data-topic="daily" onclick="selectTopic(this)">Today's Sky <span class="pill-pro">Pro</span></button>
+          <button class="topic-pill topic-pill-featured active" data-topic="daily" onclick="selectTopic(this)">Today's Sky <span class="pill-pro">Pro</span></button>
           <button class="topic-pill"        data-topic="love"          onclick="selectTopic(this)">Love <span class="pill-pro">Pro</span></button>
           <button class="topic-pill"        data-topic="career"        onclick="selectTopic(this)">Career <span class="pill-pro">Pro</span></button>
           <button class="topic-pill"        data-topic="finances"      onclick="selectTopic(this)">Finances <span class="pill-pro">Pro</span></button>
@@ -367,8 +365,7 @@
       <div class="topic-selector">
         <label>Focus</label>
         <div class="topic-pills">
-          <button class="topic-pill topic-pill-featured active" data-topic="chart" onclick="selectTopic(this)">Full Chart</button>
-          <button class="topic-pill topic-pill-featured" data-topic="daily" onclick="selectTopic(this)">Today's Sky <span class="pill-pro">Pro</span></button>
+          <button class="topic-pill topic-pill-featured active" data-topic="daily" onclick="selectTopic(this)">Today's Sky <span class="pill-pro">Pro</span></button>
           <button class="topic-pill"        data-topic="love"          onclick="selectTopic(this)">Love <span class="pill-pro">Pro</span></button>
           <button class="topic-pill"        data-topic="career"        onclick="selectTopic(this)">Career <span class="pill-pro">Pro</span></button>
           <button class="topic-pill"        data-topic="finances"      onclick="selectTopic(this)">Finances <span class="pill-pro">Pro</span></button>
@@ -728,19 +725,22 @@
     // Individual twinkling stars — each fades in/out independently
     (function () {
       const starfield = document.querySelector('.starfield');
-      const COUNT = 60;
+      const COUNT = 160;
       for (let i = 0; i < COUNT; i++) {
         const s = document.createElement('div');
         s.className = 'star-sparkle';
-        const size = Math.random() < 0.25 ? 2 : 1; // mostly 1px, occasional 2px
+        const r = Math.random();
+        const size = r < 0.05 ? 4 : r < 0.2 ? 3 : r < 0.45 ? 2 : 1; // mix of sizes, mostly small
+        const bright = size >= 3 ? 'rgba(220,230,255,1)' : '#fff';
         s.style.cssText = [
           `left:${(Math.random() * 100).toFixed(2)}%`,
           `top:${(Math.random() * 100).toFixed(2)}%`,
           `width:${size}px`,
           `height:${size}px`,
+          `background:${bright}`,
           `opacity:0`,
-          `animation-duration:${(3 + Math.random() * 5).toFixed(2)}s`,
-          `animation-delay:${(Math.random() * 8).toFixed(2)}s`,
+          `animation-duration:${(2 + Math.random() * 7).toFixed(2)}s`,
+          `animation-delay:${(Math.random() * 12).toFixed(2)}s`,
         ].join(';');
         starfield.appendChild(s);
       }

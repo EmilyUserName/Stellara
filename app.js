@@ -98,7 +98,7 @@ function selectStyle(el) {
 // ------------------------------------------------------------
 // TOPIC SELECTION — tracks which focus pill is active
 // ------------------------------------------------------------
-let selectedTopic = 'chart';
+let selectedTopic = 'daily';
 
 function selectTopic(el) {
   document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
