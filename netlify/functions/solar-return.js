@@ -33,8 +33,8 @@ exports.handler = async function (event) {
 
   if (!profile) return { statusCode: 404, body: 'Profile not found' };
 
-  // Check they've paid for the current year
-  if (profile.solar_return_year !== currentYear) {
+  // Check they've paid for the current year (compare as numbers, Supabase may return string)
+  if (parseInt(profile.solar_return_year) !== currentYear) {
     return { statusCode: 403, body: JSON.stringify({ error: 'Solar Return not purchased for this year' }) };
   }
 

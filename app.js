@@ -818,10 +818,12 @@ async function selectSign(sign) {
 // SOLAR RETURN
 // ============================================================
 function openSolarReturn() {
-  if (!requireAuth()) return;
-  if (!requireSolarReturn()) return;
+  console.log('[Solar] openSolarReturn called, currentSolarReturnYear=', currentSolarReturnYear);
+  if (!requireAuth()) { console.log('[Solar] failed requireAuth'); return; }
+  if (!requireSolarReturn()) { console.log('[Solar] failed requireSolarReturn'); return; }
 
   const year = new Date().getFullYear();
+  console.log('[Solar] proceeding to show solar section, year=', year);
   document.getElementById('solarReturnYearTitle').textContent = year;
   document.querySelector('.container').style.display = 'none';
   document.getElementById('solarSection').style.display = 'block';
@@ -833,8 +835,9 @@ function openSolarReturn() {
     headers: { 'Content-Type': 'application/json' },
     body:    JSON.stringify({ userId: currentUser.id }),
   })
-    .then(r => r.json())
+    .then(r => { console.log('[Solar] API response status:', r.status); return r.json(); })
     .then(data => {
+      console.log('[Solar] API response data:', data);
       document.getElementById('solarLoading').style.display = 'none';
       if (data.reading) {
         renderSolarReading(data.reading, year);
@@ -844,7 +847,8 @@ function openSolarReturn() {
         document.getElementById('solarReadingBody').style.display = 'block';
       }
     })
-    .catch(() => {
+    .catch(err => {
+      console.error('[Solar] fetch error:', err);
       document.getElementById('solarLoading').style.display = 'none';
       document.getElementById('solarReadingBody').innerHTML =
         '<p style="color:#e74c3c;text-align:center;">Something went wrong. Please try again.</p>';
