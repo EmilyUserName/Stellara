@@ -381,7 +381,10 @@ async function loadProfile() {
   const { data } = result;
 
   if (!data || !data.name) {
-    showForm();
+    // New user — show home with free horoscopes, prompt to set up chart
+    const setupPrompt = document.getElementById('setupPrompt');
+    if (setupPrompt) setupPrompt.style.display = 'block';
+    showHome();
     return;
   }
 
@@ -443,6 +446,9 @@ function showHome() {
   document.getElementById('homeSection').style.display  = 'block';
   document.getElementById('inputCard').style.display    = 'none';
   document.getElementById('results').className          = 'results card';
+  // Hide setup prompt once profile is saved
+  const setupPrompt = document.getElementById('setupPrompt');
+  if (setupPrompt) setupPrompt.style.display = 'none';
 }
 
 function showForm() {

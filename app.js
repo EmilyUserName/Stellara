@@ -260,8 +260,8 @@ async function reveal() {
 
   // --- 3. Make sure required fields are filled in ---
   if (!name || !birthDate || !birthCity) {
-    err.textContent = 'Please fill in your name, birth date, and birth city.';
-    err.className = 'error active';
+    // No birth details saved yet — send them to the form
+    showForm();
     return;
   }
 
