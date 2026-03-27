@@ -1,7 +1,9 @@
 // ============================================================
 // calculate-chart.js — Server-side astronomical chart calculation
-// Uses Jean Meeus "Astronomical Algorithms" for accuracy.
+// Uses Jean Meeus "Astronomical Algorithms" for sun/moon,
+// and astronomy-engine (NASA JPL accuracy) for the Ascendant.
 // ============================================================
+const Astronomy = require('astronomy-engine');
 
 const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo',
                'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
@@ -70,24 +72,28 @@ function moonLongitude(jd) {
 }
 
 // ------------------------------------------------------------
-// ASCENDANT — Local Sidereal Time method (Meeus Ch. 14)
-//
-// The raw atan2 formula yields the Descendant (western horizon).
-// Adding 180° converts it to the Ascendant (eastern horizon).
+// ASCENDANT — uses astronomy-engine for accurate sidereal time
+// (accounts for nutation/aberration; same precision as Astro.com)
 // ------------------------------------------------------------
-function ascendant(jd, lat, lon) {
-  const T      = (jd - 2451545.0) / 36525;
-  const d2r    = Math.PI / 180;
-  const gmst   = ((280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * T * T) % 360 + 360) % 360;
-  const lst    = ((gmst + lon) % 360 + 360) % 360;
+function ascendant(date, lat, lon) {
+  const d2r  = Math.PI / 180;
+  const time = Astronomy.MakeTime(date);
+  const T    = time.tt / 36525; // Julian centuries from J2000.0
+
+  // Greenwich Apparent Sidereal Time (hours) — accurate, includes nutation
+  const gast   = Astronomy.SiderealTime(time);
+  const lst    = ((gast * 15 + lon) % 360 + 360) % 360; // convert hours→degrees, add lon
   const lstRad = lst * d2r;
+
+  // Obliquity of ecliptic
   const eps    = (23.439291111 - 0.013004167 * T) * d2r;
   const latRad = lat * d2r;
-  const y      = -Math.cos(lstRad);
-  const x      =  Math.sin(lstRad) * Math.cos(eps) + Math.tan(latRad) * Math.sin(eps);
-  // atan2(y,x) gives the Descendant; +180° flips to the Ascendant
-  const asc    = Math.atan2(y, x) / d2r + 180;
-  return ((asc % 360) + 360) % 360;
+
+  const y   = -Math.cos(lstRad);
+  const x   =  Math.sin(lstRad) * Math.cos(eps) + Math.tan(latRad) * Math.sin(eps);
+  let   asc = Math.atan2(y, x) / d2r;
+  if (asc < 0) asc += 360;
+  return asc;
 }
 
 // ------------------------------------------------------------
@@ -173,7 +179,7 @@ exports.handler = async function (event) {
   const jd      = toJD(birthUTC);
   const sunLon  = sunLongitude(jd);
   const moonLon = moonLongitude(jd);
-  const ascLon  = birthTime ? ascendant(jd, lat, lon) : null;
+  const ascLon  = birthTime ? ascendant(birthUTC, lat, lon) : null;
 
   const result = {
     sun:    SIGNS[Math.floor(sunLon  / 30)],
