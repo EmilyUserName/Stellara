@@ -358,7 +358,7 @@
        ===================================================== -->
   <div id="astroSection" style="display:none;">
     <div class="astro-header">
-      <button class="astro-back" onclick="closeAstroMap()">← Back</button>
+      <button class="astro-back" onclick="closeAstroMap()">← Home</button>
       <div class="astro-title">
         <span class="astro-title-symbol">✦</span>
         <span>Your Astrocartography Map</span>
@@ -369,6 +369,17 @@
     <div id="astroLoading" class="astro-loading">
       <div class="orbit"></div>
       <p>Mapping your planetary lines…</p>
+    </div>
+
+    <div class="astro-explainer" id="astroExplainer" style="display:none;">
+      <p class="astro-explainer-intro">Astrocartography maps the moment of your birth onto the entire Earth — showing where each planet was rising, setting, or at its peak. These lines mark places where that planet's energy is amplified in your life.</p>
+      <div class="astro-explainer-lines">
+        <div class="astro-explainer-item"><span class="astro-exp-dot" style="background:var(--accent);"></span><strong>ASC</strong> — how you show up; identity &amp; vitality</div>
+        <div class="astro-explainer-item"><span class="astro-exp-dot astro-exp-dsc"></span><strong>DSC</strong> — relationships &amp; what you attract</div>
+        <div class="astro-explainer-item"><span class="astro-exp-dot" style="background:var(--accent);"></span><strong>MC</strong> — career, reputation &amp; life purpose</div>
+        <div class="astro-explainer-item"><span class="astro-exp-dot astro-exp-ic"></span><strong>IC</strong> — home, roots &amp; private life</div>
+      </div>
+      <p class="astro-explainer-hint">Tap any line on the map to receive your personalized interpretation.</p>
     </div>
 
     <div id="astroMapContainer"></div>

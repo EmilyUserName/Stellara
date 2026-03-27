@@ -76,24 +76,42 @@ function moonLongitude(jd) {
 // (accounts for nutation/aberration; same precision as Astro.com)
 // ------------------------------------------------------------
 function ascendant(date, lat, lon) {
-  const d2r  = Math.PI / 180;
-  const time = Astronomy.MakeTime(date);
-  const T    = time.tt / 36525; // Julian centuries from J2000.0
+  const d2r    = Math.PI / 180;
+  const time   = Astronomy.MakeTime(date);
+  const eps    = Astronomy.e_tilt(time).tobl;                       // obliquity, degrees
+  const gast   = Astronomy.SiderealTime(time);                      // GAST, hours
+  const lst    = ((gast * 15 + lon) % 360 + 360) % 360;            // LST, degrees
+  const epsR   = eps * d2r;
+  const latR   = lat * d2r;
 
-  // Greenwich Apparent Sidereal Time (hours) — accurate, includes nutation
-  const gast   = Astronomy.SiderealTime(time);
-  const lst    = ((gast * 15 + lon) % 360 + 360) % 360; // convert hours→degrees, add lon
-  const lstRad = lst * d2r;
+  // sin(altitude) for a point on the ecliptic at longitude lambda (degrees)
+  function sinAlt(lambda) {
+    const lamR   = lambda * d2r;
+    const sinDec = Math.sin(epsR) * Math.sin(lamR);
+    const cosDec = Math.sqrt(1 - sinDec * sinDec);
+    const ra     = ((Math.atan2(Math.cos(epsR) * Math.sin(lamR), Math.cos(lamR)) / d2r) + 360) % 360;
+    const H      = (lst - ra + 360) % 360; // hour angle 0–360°
+    return Math.sin(latR) * sinDec + Math.cos(latR) * cosDec * Math.cos(H * d2r);
+  }
 
-  // Obliquity of ecliptic
-  const eps    = (23.439291111 - 0.013004167 * T) * d2r;
-  const latRad = lat * d2r;
-
-  const y   = -Math.cos(lstRad);
-  const x   =  Math.sin(lstRad) * Math.cos(eps) + Math.tan(latRad) * Math.sin(eps);
-  let   asc = Math.atan2(y, x) / d2r;
-  if (asc < 0) asc += 360;
-  return asc;
+  // Scan the ecliptic in 1° steps for a rising crossing (sinAlt: negative → positive).
+  // The Ascendant is where the ecliptic crosses the eastern horizon (H > 180°).
+  for (let i = 0; i < 360; i++) {
+    if (sinAlt(i) <= 0 && sinAlt(i + 1) > 0) {
+      // Binary-refine to ~0.0003° accuracy
+      let lo = i, hi = i + 1;
+      for (let k = 0; k < 20; k++) {
+        const mid = (lo + hi) / 2;
+        (sinAlt(lo) * sinAlt(mid) <= 0) ? (hi = mid) : (lo = mid);
+      }
+      const asc    = (lo + hi) / 2;
+      const ascR   = asc * d2r;
+      const ra     = ((Math.atan2(Math.cos(epsR) * Math.sin(ascR), Math.cos(ascR)) / d2r) + 360) % 360;
+      const H      = (lst - ra + 360) % 360;
+      if (H > 180) return asc;  // confirmed eastern horizon
+    }
+  }
+  return 0;
 }
 
 // ------------------------------------------------------------

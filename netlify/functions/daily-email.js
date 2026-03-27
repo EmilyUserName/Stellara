@@ -97,7 +97,7 @@ async function sendDailyEmail(user, today) {
   let moon   = moon_sign;
   let rising = rising_sign;
 
-  if (!sun || !moon) {
+  if (!sun || !moon || !rising) {
     try {
       const chartRes = await fetch(`${process.env.URL}/.netlify/functions/calculate-chart`, {
         method:  'POST',
@@ -166,7 +166,7 @@ Write exactly 4 paragraphs with no headers or labels:
 3. Something specific for ${name} to lean into or be mindful of today — concrete and personal.
 4. A closing intention or reflection — one sentence they can carry with them. Something that lingers.
 
-Every sentence should land. Warm, personal, potent. No bullet points. No filler.`;
+Every sentence should land. Warm, personal, potent. No bullet points. No headers. No markdown. No hashtags. Plain paragraphs only.`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method:  'POST',
@@ -190,7 +190,12 @@ Every sentence should land. Warm, personal, potent. No bullet points. No filler.
 // RESEND — send the HTML email
 // ------------------------------------------------------------
 async function sendEmail({ user, name, email, sun, moon, rising, reading, today }) {
-  const paragraphs = reading.split('\n\n').filter(Boolean);
+  // Strip any markdown headers/bold/italic that Claude might sneak in
+  const cleanReading = reading
+    .replace(/^#{1,6}\s+/gm, '')   // remove # headers
+    .replace(/\*\*(.*?)\*\*/g, '$1') // remove **bold**
+    .replace(/\*(.*?)\*/g, '$1');    // remove *italic*
+  const paragraphs = cleanReading.split('\n\n').filter(Boolean);
   const bodyHtml = paragraphs.map(p => `<p style="margin:0 0 20px 0;line-height:1.8;">${p.trim()}</p>`).join('');
 
   const html = `<!DOCTYPE html>

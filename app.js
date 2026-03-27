@@ -602,13 +602,21 @@ async function shareStellara() {
 // MANAGE SUBSCRIPTION — Stripe customer portal
 // ------------------------------------------------------------
 async function manageSubscription() {
-  const res  = await fetch('/api/customer-portal', {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ userId: currentUser.id }),
-  });
-  const data = await res.json();
-  if (data.url) window.location.href = data.url;
+  try {
+    const res  = await fetch('/api/customer-portal', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ userId: currentUser.id }),
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert(data.error || 'Unable to open subscription portal. Please contact support.');
+    }
+  } catch (err) {
+    alert('Unable to reach the subscription portal. Please try again.');
+  }
 }
 
 

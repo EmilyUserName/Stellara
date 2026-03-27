@@ -68,6 +68,7 @@ async function fetchAstroLines(birthDate, birthTime, birthCity, userData) {
     astroData = data.planets;
 
     document.getElementById('astroLoading').style.display       = 'none';
+    document.getElementById('astroExplainer').style.display     = 'block';
     document.getElementById('astroMapContainer').style.display  = 'block';
     document.getElementById('astroControls').style.display      = 'block';
 

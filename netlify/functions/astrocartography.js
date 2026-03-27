@@ -63,11 +63,14 @@ function normalizeLon(deg) {
 }
 
 // Compute the Ascendant ecliptic longitude from Local Sidereal Time
-function ascFromLST(lst_rad, eps, phi_rad) {
-  const y = -Math.cos(lst_rad);
-  const x =  Math.sin(lst_rad) * Math.cos(eps) + Math.tan(phi_rad) * Math.sin(eps);
-  let asc = Math.atan2(y, x) * 180 / Math.PI;
-  return asc < 0 ? asc + 360 : asc;
+// Returns true if the planet (ecliptic longitude eclLon_deg) is RISING at this LST/latitude.
+// Uses hour angle: H > 180° (in 0–360 range) = eastern sky = ascending.
+function isRising(lst_rad, eps, eclLon_deg) {
+  const lst_deg = lst_rad * 180 / Math.PI;
+  const lamR    = eclLon_deg * Math.PI / 180;
+  const ra      = ((Math.atan2(Math.cos(eps) * Math.sin(lamR), Math.cos(lamR)) * 180 / Math.PI) + 360) % 360;
+  const H       = (lst_deg - ra + 360) % 360;
+  return H > 180;
 }
 
 function angleDiff(a, b) {
@@ -137,9 +140,8 @@ function computeLines(eclLon, ra, gast_deg, eps_deg) {
       const lst1_rad = theta0 + delta;
       const lst2_rad = theta0 - delta;
 
-      // Verify which solution is ASC by plugging back in
-      const asc1 = ascFromLST(lst1_rad, eps, phi);
-      const isSol1Asc = angleDiff(asc1, eclLon) < 90;
+      // Verify which solution is ASC via hour angle
+      const isSol1Asc = isRising(lst1_rad, eps, eclLon);
 
       lst_asc_deg = (isSol1Asc ? lst1_rad : lst2_rad) * 180 / Math.PI;
       lst_dsc_deg = (isSol1Asc ? lst2_rad : lst1_rad) * 180 / Math.PI;
