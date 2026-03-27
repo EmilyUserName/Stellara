@@ -94,20 +94,21 @@ function ascendant(date, lat, lon) {
     return Math.sin(latR) * sinDec + Math.cos(latR) * cosDec * Math.cos(H * d2r);
   }
 
-  // Scan the ecliptic in 1° steps for a rising crossing (sinAlt: negative → positive).
-  // The Ascendant is where the ecliptic crosses the eastern horizon (H > 180°).
+  // Scan the ecliptic in 1° steps for the Ascendant: where sinAlt goes POSITIVE → NEGATIVE
+  // as lambda increases, AND the crossing is on the eastern horizon (H > 180° in 0–360).
+  // (The Descendant crossing is the opposite: negative → positive, H < 180°.)
   for (let i = 0; i < 360; i++) {
-    if (sinAlt(i) <= 0 && sinAlt(i + 1) > 0) {
+    if (sinAlt(i) >= 0 && sinAlt(i + 1) < 0) {
       // Binary-refine to ~0.0003° accuracy
       let lo = i, hi = i + 1;
       for (let k = 0; k < 20; k++) {
         const mid = (lo + hi) / 2;
         (sinAlt(lo) * sinAlt(mid) <= 0) ? (hi = mid) : (lo = mid);
       }
-      const asc    = (lo + hi) / 2;
-      const ascR   = asc * d2r;
-      const ra     = ((Math.atan2(Math.cos(epsR) * Math.sin(ascR), Math.cos(ascR)) / d2r) + 360) % 360;
-      const H      = (lst - ra + 360) % 360;
+      const asc  = (lo + hi) / 2;
+      const ascR = asc * d2r;
+      const ra   = ((Math.atan2(Math.cos(epsR) * Math.sin(ascR), Math.cos(ascR)) / d2r) + 360) % 360;
+      const H    = (lst - ra + 360) % 360;
       if (H > 180) return asc;  // confirmed eastern horizon
     }
   }
