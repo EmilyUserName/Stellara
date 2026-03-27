@@ -160,9 +160,24 @@
         <p id="upgradeHint" style="display:none; text-align:center; font-size:0.78rem; color:var(--silver); opacity:0.6; margin-top:12px;">
           Full Chart is free &nbsp;·&nbsp; <a href="#" onclick="openUpgradeModal(); return false;" style="color:var(--accent); opacity:0.9;">Upgrade to Pro</a> to unlock all topics
         </p>
-        <div class="partner-input" style="display:none;">
-          <label>Partner's name &amp; sun sign</label>
-          <input class="partner-input-field" type="text" placeholder="e.g. Alex, Scorpio" />
+        <div class="partner-input" id="partnerInputHome" style="display:none;">
+          <div class="partner-input-heading">♡ &nbsp;Who are you reading with?</div>
+          <div class="partner-input-row">
+            <div class="partner-field">
+              <label class="partner-label">Their name</label>
+              <input id="partnerNameHome" class="partner-name-field" type="text" placeholder="e.g. Alex" autocomplete="off" />
+            </div>
+            <div class="partner-field">
+              <label class="partner-label">Their sun sign</label>
+              <select id="partnerSignHome" class="partner-sign-field">
+                <option value="">Select sign…</option>
+                <option>Aries</option><option>Taurus</option><option>Gemini</option>
+                <option>Cancer</option><option>Leo</option><option>Virgo</option>
+                <option>Libra</option><option>Scorpio</option><option>Sagittarius</option>
+                <option>Capricorn</option><option>Aquarius</option><option>Pisces</option>
+              </select>
+            </div>
+          </div>
         </div>
         <button class="btn" onclick="reveal()">✦ &nbsp;Reveal My Reading</button>
         <button class="btn btn-map" onclick="openAstroMap()">✦ &nbsp;Astrocartography Map <span style="font-size:0.65rem;opacity:0.6;margin-left:4px;">Beta</span></button>
@@ -295,9 +310,24 @@
           <button class="topic-pill"        data-topic="compatibility" onclick="selectTopic(this)">Compatibility <span class="pill-pro">Pro</span></button>
           <button class="topic-pill"        data-topic="shadow"        onclick="selectTopic(this)">Shadow Work <span class="pill-pro">Pro</span></button>
         </div>
-        <div class="partner-input" style="display:none; margin-top:16px;">
-          <label>Partner's name &amp; sun sign</label>
-          <input class="partner-input-field" type="text" placeholder="e.g. Alex, Scorpio" />
+        <div class="partner-input" id="partnerInputCard" style="display:none;">
+          <div class="partner-input-heading">♡ &nbsp;Who are you reading with?</div>
+          <div class="partner-input-row">
+            <div class="partner-field">
+              <label class="partner-label">Their name</label>
+              <input id="partnerNameCard" class="partner-name-field" type="text" placeholder="e.g. Alex" autocomplete="off" />
+            </div>
+            <div class="partner-field">
+              <label class="partner-label">Their sun sign</label>
+              <select id="partnerSignCard" class="partner-sign-field">
+                <option value="">Select sign…</option>
+                <option>Aries</option><option>Taurus</option><option>Gemini</option>
+                <option>Cancer</option><option>Leo</option><option>Virgo</option>
+                <option>Libra</option><option>Scorpio</option><option>Sagittarius</option>
+                <option>Capricorn</option><option>Aquarius</option><option>Pisces</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 

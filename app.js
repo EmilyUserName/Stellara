@@ -355,8 +355,12 @@ async function reveal() {
   const style = STYLE_CONFIG[selectedStyle];
 
   // Read partner info for compatibility topic
-  const partnerEl = [...document.querySelectorAll('.partner-input-field')].find(el => el.offsetParent !== null);
-  const partnerInfo = partnerEl ? partnerEl.value.trim() : '';
+  const homeVisible = document.getElementById('partnerInputHome')?.style.display !== 'none';
+  const nameId  = homeVisible ? 'partnerNameHome'  : 'partnerNameCard';
+  const signId  = homeVisible ? 'partnerSignHome'  : 'partnerSignCard';
+  const partnerName = (document.getElementById(nameId)?.value || '').trim();
+  const partnerSign = (document.getElementById(signId)?.value || '').trim();
+  const partnerInfo = [partnerName, partnerSign].filter(Boolean).join(', ');
 
   const userContext = `The user's name is ${name}.
 Sun sign: ${sun}
