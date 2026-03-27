@@ -14,9 +14,7 @@ function openAstroMap() {
   if (!requireSubscription()) return;
   if (!currentUser) return;
 
-  document.getElementById('homeSection').style.display       = 'none';
-  document.getElementById('inputCard').style.display         = 'none';
-  document.getElementById('results').style.display           = 'none';
+  document.querySelector('.container').style.display         = 'none';
   document.getElementById('astroSection').style.display      = 'block';
   document.getElementById('astroLoading').style.display      = 'block';
   document.getElementById('astroExplainer').style.display    = 'none';
@@ -45,8 +43,8 @@ function openAstroMap() {
 
 function closeAstroMap() {
   closePanelImmediate();
-  document.getElementById('astroSection').style.display = 'none';
-  document.getElementById('homeSection').style.display  = 'block';
+  document.getElementById('astroSection').style.display  = 'none';
+  document.querySelector('.container').style.display     = 'block';
 }
 
 function closePanelImmediate() {
@@ -74,9 +72,43 @@ async function fetchAstroLines(birthDate, birthTime, birthCity, userData) {
     astroData = data.planets;
 
     document.getElementById('astroLoading').style.display       = 'none';
-    document.getElementById('astroExplainer').style.display     = 'block';
     document.getElementById('astroMapContainer').style.display  = 'block';
     document.getElementById('astroControls').style.display      = 'block';
+
+    const explainer = document.getElementById('astroExplainer');
+    explainer.innerHTML = [
+      '<div style="background:rgba(19,36,64,0.85);border:1px solid rgba(126,168,212,0.25);border-radius:14px;padding:24px 22px;margin-bottom:16px;">',
+
+      // What is astrocartography
+      '<div style="margin-bottom:22px;">',
+        '<div style="font-size:0.7rem;letter-spacing:0.13em;text-transform:uppercase;color:#7ea8d4;font-weight:600;margin-bottom:10px;">What is Astrocartography?</div>',
+        '<p style="font-size:0.9rem;color:#dce4f0;line-height:1.8;margin:0;">At the exact moment you were born, each planet occupied a precise position in the sky. Astrocartography projects those positions onto a world map — showing where each planet\'s energy is most powerfully activated in your life. Some places make you feel seen and successful. Others pull you toward love, deep inner work, or transformation. This map shows you where.</p>',
+      '</div>',
+
+      // Line types
+      '<div style="margin-bottom:22px;">',
+        '<div style="font-size:0.7rem;letter-spacing:0.13em;text-transform:uppercase;color:#7ea8d4;font-weight:600;margin-bottom:14px;">What the Lines Mean</div>',
+        '<div style="display:flex;flex-direction:column;gap:14px;">',
+          '<div style="display:flex;align-items:flex-start;gap:14px;"><span style="flex-shrink:0;display:block;width:26px;height:2px;background:#7ea8d4;margin-top:8px;"></span><div style="color:#dce4f0;font-size:0.88rem;line-height:1.5;"><span style="color:#ffffff;font-weight:600;">ASC — Ascendant</span><br><span style="color:rgba(220,228,240,0.75);font-size:0.82rem;">The planet was rising at the eastern horizon. Places on this line shape your identity — you feel most like yourself here.</span></div></div>',
+          '<div style="display:flex;align-items:flex-start;gap:14px;"><span style="flex-shrink:0;display:block;width:26px;height:2px;background:repeating-linear-gradient(90deg,#7ea8d4 0 5px,transparent 5px 9px);margin-top:8px;"></span><div style="color:#dce4f0;font-size:0.88rem;line-height:1.5;"><span style="color:#ffffff;font-weight:600;">DSC — Descendant</span><br><span style="color:rgba(220,228,240,0.75);font-size:0.82rem;">The planet was setting on the western horizon. This line governs relationships and who you attract.</span></div></div>',
+          '<div style="display:flex;align-items:flex-start;gap:14px;"><span style="flex-shrink:0;display:block;width:26px;height:2px;background:#7ea8d4;margin-top:8px;"></span><div style="color:#dce4f0;font-size:0.88rem;line-height:1.5;"><span style="color:#ffffff;font-weight:600;">MC — Midheaven</span><br><span style="color:rgba(220,228,240,0.75);font-size:0.82rem;">The planet was at its peak in the sky. Vertical line. Relates to career, reputation, and how the world sees you.</span></div></div>',
+          '<div style="display:flex;align-items:flex-start;gap:14px;"><span style="flex-shrink:0;display:block;width:26px;height:2px;background:repeating-linear-gradient(90deg,#7ea8d4 0 2px,transparent 2px 6px);margin-top:8px;"></span><div style="color:#dce4f0;font-size:0.88rem;line-height:1.5;"><span style="color:#ffffff;font-weight:600;">IC — Imum Coeli</span><br><span style="color:rgba(220,228,240,0.75);font-size:0.82rem;">The planet was at its lowest point. Speaks to home, roots, and inner life. Can feel deeply nourishing.</span></div></div>',
+        '</div>',
+      '</div>',
+
+      // How to use
+      '<div>',
+        '<div style="font-size:0.7rem;letter-spacing:0.13em;text-transform:uppercase;color:#7ea8d4;font-weight:600;margin-bottom:14px;">How to Use</div>',
+        '<div style="display:flex;flex-direction:column;gap:12px;">',
+          '<div style="display:flex;align-items:flex-start;gap:12px;"><span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(126,168,212,0.15);border:1px solid rgba(126,168,212,0.4);color:#7ea8d4;font-size:0.74rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;">1</span><span style="font-size:0.88rem;color:#dce4f0;line-height:1.65;">Use the <span style="color:#ffffff;font-weight:600;">planet toggles</span> below the map to show or hide individual planets. Sun, Moon, Venus, and Jupiter are great starting points.</span></div>',
+          '<div style="display:flex;align-items:flex-start;gap:12px;"><span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(126,168,212,0.15);border:1px solid rgba(126,168,212,0.4);color:#7ea8d4;font-size:0.74rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;">2</span><span style="font-size:0.88rem;color:#dce4f0;line-height:1.65;"><span style="color:#ffffff;font-weight:600;">Tap any line</span> on the map for a personalized interpretation of what that planet and angle means for you in that part of the world.</span></div>',
+          '<div style="display:flex;align-items:flex-start;gap:12px;"><span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(126,168,212,0.15);border:1px solid rgba(126,168,212,0.4);color:#7ea8d4;font-size:0.74rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;">3</span><span style="font-size:0.88rem;color:#dce4f0;line-height:1.65;">Notice places you\'ve lived or feel drawn to — they often sit near significant lines in your chart.</span></div>',
+        '</div>',
+      '</div>',
+
+      '</div>',
+    ].join('');
+    explainer.style.display = 'block';
 
     initMap(data.planets, userData);
     buildPlanetToggles(data.planets);

@@ -165,7 +165,7 @@
           <input class="partner-input-field" type="text" placeholder="e.g. Alex, Scorpio" />
         </div>
         <button class="btn" onclick="reveal()">✦ &nbsp;Reveal My Reading</button>
-        <button class="btn btn-map" onclick="openAstroMap()">✦ &nbsp;Astrocartography Map <span class="pill-pro">Pro</span></button>
+        <button class="btn btn-map" onclick="openAstroMap()">✦ &nbsp;Astrocartography Map <span style="font-size:0.65rem;opacity:0.6;margin-left:4px;">Beta</span></button>
         <div class="error" id="homeErrorMsg"></div>
         <div style="text-align:center; margin-top:16px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
           <a href="#" class="edit-link" onclick="showForm(); return false;">Edit birth info</a>
@@ -375,54 +375,7 @@
       <p>Mapping your planetary lines…</p>
     </div>
 
-    <div id="astroExplainer" style="display:none; background:rgba(19,36,64,0.8); border:1px solid rgba(126,168,212,0.25); border-radius:14px; padding:24px 28px; margin-bottom:16px; color:#dce4f0;">
-
-      <div style="margin-bottom:20px;">
-        <div style="font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:#7ea8d4; font-weight:600; margin-bottom:10px;">What is Astrocartography?</div>
-        <p style="font-size:0.9rem; color:#dce4f0; line-height:1.8; margin:0;">At the exact moment you were born, each planet in the solar system occupied a precise position in the sky. Astrocartography projects those positions onto a world map — drawing lines across the Earth that show where each planet's energy is most powerfully activated in your life. The place you were born is not the only place that shapes you. Every city, every country has a different relationship with your chart. Some places make you feel seen and successful. Others pull you toward love, or deep inner work, or transformation. This map shows you where.</p>
-      </div>
-
-      <div style="margin-bottom:20px;">
-        <div style="font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:#7ea8d4; font-weight:600; margin-bottom:12px;">What the Lines Mean</div>
-        <div style="display:flex; flex-direction:column; gap:12px;">
-          <div style="display:flex; align-items:flex-start; gap:14px;">
-            <span style="flex-shrink:0; display:block; width:28px; height:2px; background:#7ea8d4; margin-top:9px;"></span>
-            <div style="flex:1; color:#dce4f0; font-size:0.88rem; line-height:1.5;"><strong style="color:#fff; font-weight:600;">ASC — Ascendant</strong><br><span style="color:rgba(220,228,240,0.75); font-size:0.82rem;">The planet was rising on the eastern horizon at your birth. These places shape your identity and how you show up — you tend to feel most like yourself here.</span></div>
-          </div>
-          <div style="display:flex; align-items:flex-start; gap:14px;">
-            <span style="flex-shrink:0; display:block; width:28px; height:2px; background:repeating-linear-gradient(90deg,#7ea8d4 0 5px,transparent 5px 9px); margin-top:9px;"></span>
-            <div style="flex:1; color:#dce4f0; font-size:0.88rem; line-height:1.5;"><strong style="color:#fff; font-weight:600;">DSC — Descendant</strong><br><span style="color:rgba(220,228,240,0.75); font-size:0.82rem;">The planet was setting on the western horizon. This line governs relationships and what you attract. Places here can bring significant people into your life.</span></div>
-          </div>
-          <div style="display:flex; align-items:flex-start; gap:14px;">
-            <span style="flex-shrink:0; display:block; width:28px; height:2px; background:#7ea8d4; margin-top:9px;"></span>
-            <div style="flex:1; color:#dce4f0; font-size:0.88rem; line-height:1.5;"><strong style="color:#fff; font-weight:600;">MC — Midheaven</strong><br><span style="color:rgba(220,228,240,0.75); font-size:0.82rem;">The planet was at its highest point — a vertical line on the map. This line relates to career, reputation, and how the world recognizes you publicly.</span></div>
-          </div>
-          <div style="display:flex; align-items:flex-start; gap:14px;">
-            <span style="flex-shrink:0; display:block; width:28px; height:2px; background:repeating-linear-gradient(90deg,#7ea8d4 0 2px,transparent 2px 6px); margin-top:9px;"></span>
-            <div style="flex:1; color:#dce4f0; font-size:0.88rem; line-height:1.5;"><strong style="color:#fff; font-weight:600;">IC — Imum Coeli</strong><br><span style="color:rgba(220,228,240,0.75); font-size:0.82rem;">The planet was at its lowest point. This line speaks to home, roots, and your inner world. Places here can feel deeply nourishing or bring buried things to the surface.</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div style="font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:#7ea8d4; font-weight:600; margin-bottom:12px;">How to Use This Map</div>
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <div style="display:flex; align-items:flex-start; gap:12px; font-size:0.88rem; color:#dce4f0; line-height:1.65;">
-            <span style="flex-shrink:0; width:22px; height:22px; border-radius:50%; background:rgba(126,168,212,0.15); border:1px solid rgba(126,168,212,0.4); color:#7ea8d4; font-size:0.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:2px;">1</span>
-            <span>Use the <strong style="color:#fff;">planet toggles</strong> below the map to show or hide individual planets. Sun, Moon, Venus, and Jupiter are great starting points.</span>
-          </div>
-          <div style="display:flex; align-items:flex-start; gap:12px; font-size:0.88rem; color:#dce4f0; line-height:1.65;">
-            <span style="flex-shrink:0; width:22px; height:22px; border-radius:50%; background:rgba(126,168,212,0.15); border:1px solid rgba(126,168,212,0.4); color:#7ea8d4; font-size:0.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:2px;">2</span>
-            <span><strong style="color:#fff;">Click or tap any line</strong> on the map for a personalized interpretation of what that planet and angle means for you in that part of the world.</span>
-          </div>
-          <div style="display:flex; align-items:flex-start; gap:12px; font-size:0.88rem; color:#dce4f0; line-height:1.65;">
-            <span style="flex-shrink:0; width:22px; height:22px; border-radius:50%; background:rgba(126,168,212,0.15); border:1px solid rgba(126,168,212,0.4); color:#7ea8d4; font-size:0.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:2px;">3</span>
-            <span>Notice places you've lived, feel called to visit, or where important things have happened — they often sit near significant lines in your chart.</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div id="astroExplainer" style="display:none;"></div>
 
     <div id="astroMapContainer"></div>
 
