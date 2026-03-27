@@ -3,7 +3,7 @@
 // ============================================================
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL     = 'Stellara <daily@stellara-horoscope.com>';
-const TO_EMAIL       = 'emilydavidson@gmail.com'; // feedback recipient
+const TO_EMAIL       = 'emilyabigaildavidson@gmail.com'; // feedback recipient
 
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
