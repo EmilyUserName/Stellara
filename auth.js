@@ -314,11 +314,22 @@ async function startCheckout() {
 // PROFILE — save and load birth info from Supabase
 // ------------------------------------------------------------
 async function loadProfile() {
-  const { data } = await sb
+  let result = await sb
     .from('profiles')
     .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, solar_return_year, preferred_style')
     .eq('id', currentUser.id)
     .maybeSingle();
+
+  // If query fails (e.g. new columns not yet added), retry without them
+  if (result.error) {
+    result = await sb
+      .from('profiles')
+      .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, preferred_style')
+      .eq('id', currentUser.id)
+      .maybeSingle();
+  }
+
+  const { data } = result;
 
   if (!data || !data.name) {
     showForm();

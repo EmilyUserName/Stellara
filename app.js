@@ -817,9 +817,8 @@ async function selectSign(sign) {
 // ============================================================
 // SOLAR RETURN
 // ============================================================
-async function openSolarReturn() {
+function openSolarReturn() {
   if (!requireAuth()) return;
-  await loadProfile(); // ensure solar_return_year is current
   if (!requireSolarReturn()) return;
 
   const year = new Date().getFullYear();
