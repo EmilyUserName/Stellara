@@ -1072,9 +1072,12 @@ select option { background: var(--navy-2); }
    ============================================================ */
 
 #astroSection {
+  position: relative;
+  z-index: 2;
   min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
+  background: var(--navy);
 }
 
 .astro-header {
