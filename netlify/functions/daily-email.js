@@ -198,49 +198,55 @@ async function sendEmail({ user, name, email, sun, moon, rising, reading, today 
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="color-scheme" content="dark"/>
+  <meta name="supported-color-schemes" content="dark"/>
   <title>Your Daily Reading — Stellara</title>
+  <style>
+    :root { color-scheme: dark; }
+    body, table, td { background-color: #0d1b32 !important; }
+  </style>
 </head>
-<body style="margin:0;padding:0;background:#0d1b32;font-family:'Georgia',serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d1b32;padding:40px 20px;">
-    <tr><td align="center">
+<body style="margin:0;padding:0;background:#0d1b32;font-family:'Georgia',serif;" bgcolor="#0d1b32">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d1b32;padding:40px 20px;" bgcolor="#0d1b32">
+    <tr><td align="center" bgcolor="#0d1b32">
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
 
         <!-- Header -->
-        <tr><td style="text-align:center;padding-bottom:32px;">
+        <tr><td style="text-align:center;padding-bottom:32px;" bgcolor="#0d1b32">
           <div style="font-size:24px;color:#7ea8d4;margin-bottom:8px;">✦</div>
           <div style="font-size:11px;letter-spacing:0.25em;text-transform:uppercase;color:#7ea8d4;font-family:'Helvetica Neue',sans-serif;">Stellara</div>
         </td></tr>
 
         <!-- Date -->
-        <tr><td style="text-align:center;padding-bottom:8px;">
+        <tr><td style="text-align:center;padding-bottom:8px;" bgcolor="#0d1b32">
           <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#7ea8d4;font-family:'Helvetica Neue',sans-serif;">${today}</div>
         </td></tr>
 
         <!-- Title -->
-        <tr><td style="text-align:center;padding-bottom:32px;">
+        <tr><td style="text-align:center;padding-bottom:32px;" bgcolor="#0d1b32">
           <h1 style="margin:0;font-size:26px;font-weight:400;color:#f5f8ff;letter-spacing:0.01em;">Your Daily Reading</h1>
           <p style="margin:8px 0 0;font-size:13px;color:#b8c4d8;font-family:'Helvetica Neue',sans-serif;">${name} &nbsp;·&nbsp; ${sun} Sun &nbsp;·&nbsp; ${moon} Moon${rising ? ` &nbsp;·&nbsp; ${rising} Rising` : ''}</p>
         </td></tr>
 
         <!-- Divider -->
-        <tr><td style="padding-bottom:32px;">
+        <tr><td style="padding-bottom:32px;" bgcolor="#0d1b32">
           <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(126,168,212,0.3),transparent);"></div>
         </td></tr>
 
         <!-- Reading -->
-        <tr><td style="background:rgba(19,36,64,0.8);border:1px solid rgba(126,168,212,0.15);border-radius:12px;padding:32px 36px;">
+        <tr><td style="background:#132440;border:1px solid rgba(126,168,212,0.15);border-radius:12px;padding:32px 36px;" bgcolor="#132440">
           <div style="font-size:16px;color:#dce4f0;font-family:'Georgia',serif;">
             ${bodyHtml}
           </div>
         </td></tr>
 
         <!-- CTA -->
-        <tr><td style="text-align:center;padding-top:32px;">
-          <a href="https://stellara-horoscope.com" style="display:inline-block;padding:12px 32px;background:rgba(126,168,212,0.12);border:1px solid rgba(126,168,212,0.35);border-radius:10px;color:#dce4f0;font-family:'Helvetica Neue',sans-serif;font-size:13px;letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;">Open Stellara</a>
+        <tr><td style="text-align:center;padding-top:32px;" bgcolor="#0d1b32">
+          <a href="https://stellara-horoscope.com" style="display:inline-block;padding:12px 32px;background:#1a3256;border:1px solid rgba(126,168,212,0.35);border-radius:10px;color:#dce4f0;font-family:'Helvetica Neue',sans-serif;font-size:13px;letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;">Open Stellara</a>
         </td></tr>
 
         <!-- Footer -->
-        <tr><td style="text-align:center;padding-top:32px;">
+        <tr><td style="text-align:center;padding-top:32px;" bgcolor="#0d1b32">
           <p style="margin:0;font-size:11px;color:#b8c4d8;opacity:0.5;font-family:'Helvetica Neue',sans-serif;line-height:1.8;">
             You're receiving this because you're a Stellara Pro subscriber.<br/>
             <a href="https://stellara-horoscope.com" style="color:#7ea8d4;opacity:0.8;">Open Stellara</a>
