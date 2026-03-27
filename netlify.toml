@@ -8,6 +8,9 @@
   timeout = 120
   schedule = "0 7 * * *"
 
+[functions."solar-return"]
+  timeout = 30
+
 [functions."astrocartography"]
   timeout = 15
 
