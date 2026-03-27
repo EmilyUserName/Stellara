@@ -1120,90 +1120,96 @@ select option { background: var(--navy-2); }
 .astro-loading p { color: var(--silver); margin-top: 20px; }
 
 .astro-explainer {
-  background: rgba(19,36,64,0.7);
+  background: rgba(19,36,64,0.75);
   border: 1px solid rgba(126,168,212,0.25);
   border-radius: 14px;
   padding: 24px 28px;
   margin-bottom: 16px;
+  color: #dce4f0;
 }
 .astro-exp-section {
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 .astro-exp-section:last-child { margin-bottom: 0; }
 .astro-exp-heading {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--accent);
-  font-weight: 500;
-  margin-bottom: 12px;
+  color: #7ea8d4;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 .astro-explainer-intro {
   font-size: 0.9rem;
-  color: var(--light);
+  color: #dce4f0;
   line-height: 1.8;
   margin: 0;
-  opacity: 0.9;
 }
 .astro-explainer-lines {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 .astro-explainer-item {
-  font-size: 0.88rem;
-  color: var(--light);
   display: flex;
   align-items: flex-start;
   gap: 14px;
 }
-.astro-explainer-item strong { color: var(--light); font-weight: 600; }
+.astro-explainer-item > div {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.88rem;
+  color: #dce4f0;
+  line-height: 1.5;
+}
+.astro-explainer-item strong {
+  color: #ffffff;
+  font-weight: 600;
+}
 .astro-exp-sub {
-  color: var(--silver);
-  font-size: 0.83rem;
+  color: rgba(220,228,240,0.7);
+  font-size: 0.82rem;
   line-height: 1.6;
   display: block;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 .astro-exp-linetype {
   flex-shrink: 0;
   display: block;
   width: 28px;
   height: 2px;
-  margin-top: 8px;
-  background: var(--accent);
-  opacity: 0.8;
+  margin-top: 9px;
+  background: #7ea8d4;
 }
-.astro-exp-dashed { background: repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px 9px); }
-.astro-exp-dotted { background: repeating-linear-gradient(90deg, var(--accent) 0 2px, transparent 2px 6px); }
+.astro-exp-dashed { background: repeating-linear-gradient(90deg, #7ea8d4 0 5px, transparent 5px 9px); }
+.astro-exp-dotted { background: repeating-linear-gradient(90deg, #7ea8d4 0 2px, transparent 2px 6px); }
 .astro-exp-steps {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 .astro-exp-step {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   font-size: 0.88rem;
-  color: var(--light);
+  color: #dce4f0;
   line-height: 1.65;
-  opacity: 0.9;
 }
 .astro-exp-num {
   flex-shrink: 0;
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: rgba(126,168,212,0.18);
-  border: 1px solid rgba(126,168,212,0.35);
-  color: var(--accent);
+  background: rgba(126,168,212,0.15);
+  border: 1px solid rgba(126,168,212,0.4);
+  color: #7ea8d4;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 #astroMapContainer {
