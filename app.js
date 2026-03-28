@@ -918,7 +918,7 @@ function openNatalChart() {
   if (!requireAuth()) return;
   if (currentHasNatal) {
     // Already purchased — generate their chart reading
-    selectTopic(document.querySelector('[data-topic="chart"]'));
+    selectedTopic = 'chart';
     reveal();
   } else {
     openNatalUpgradeModal();
