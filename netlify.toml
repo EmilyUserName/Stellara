@@ -81,3 +81,8 @@
   from = "/api/create-bundle-checkout"
   to = "/.netlify/functions/create-bundle-checkout"
   status = 200
+
+[[redirects]]
+  from = "/api/email-reading"
+  to = "/.netlify/functions/email-reading"
+  status = 200

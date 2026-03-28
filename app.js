@@ -512,6 +512,7 @@ Be concise and potent — every sentence should land. No filler. No bullet point
       });
 
       readingEl.innerHTML = foundAny ? parsedHTML : `<p>${remaining}</p>`;
+      window._lastChartReading = text;
     } else if (mode === 'daily') {
       chartSection.style.display = 'none';
       divider.style.display      = 'none';
@@ -1027,6 +1028,7 @@ function loadSolarReturn(year, location) {
     .then(data => {
       document.getElementById('solarLoading').style.display = 'none';
       if (data.reading) {
+        window._lastSolarReading = { text: data.reading, year };
         renderSolarReading(data.reading, year);
       } else {
         document.getElementById('solarReadingBody').innerHTML =
@@ -1086,3 +1088,46 @@ window.openSolarUpgradeModal = function() {
   if (btn) btn.textContent = y;
   document.getElementById('solarUpgradeOverlay').classList.add('active');
 };
+
+// ------------------------------------------------------------
+// EMAIL THIS READING
+// ------------------------------------------------------------
+async function emailReading(type) {
+  const isSolar = type === 'solar';
+  const btnId   = isSolar ? 'emailSolarBtn' : 'emailChartBtn';
+  const btn     = document.getElementById(btnId);
+
+  const readingData = isSolar ? window._lastSolarReading : { text: window._lastChartReading };
+  if (!readingData?.text) {
+    alert('No reading found to send. Please generate a reading first.');
+    return;
+  }
+
+  const original = btn.textContent;
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/email-reading', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        userId:      currentUser.id,
+        readingType: type,
+        readingText: readingData.text,
+        year:        readingData.year || null,
+      }),
+    });
+    const data = await res.json();
+    if (data.sent) {
+      btn.textContent = '✓ Sent to your email';
+      setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 3000);
+    } else {
+      throw new Error(data.error || 'Failed');
+    }
+  } catch (e) {
+    btn.textContent = 'Failed — try again';
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = original; }, 3000);
+  }
+}

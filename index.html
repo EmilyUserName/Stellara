@@ -486,6 +486,7 @@
       <div style="text-align:center; margin-top:28px;">
         <button class="reset-btn" onclick="goHome()">← Home</button>
         <button class="share-btn" onclick="shareStellara()">Share Stellara ✦</button>
+        <button class="btn-solar-action" id="emailChartBtn" onclick="emailReading('chart')" style="margin-top:12px;display:block;width:fit-content;margin-left:auto;margin-right:auto;">✉ Email this reading</button>
       </div>
 
     </div>
@@ -529,6 +530,7 @@
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
         <div class="card-title" style="margin:0;"><span>☀</span> Solar Return <span id="solarReturnYearTitle"></span></div>
         <div style="display:flex;gap:12px;align-items:center;">
+          <button class="btn-solar-action" id="emailSolarBtn" onclick="emailReading('solar')">✉ Email this reading</button>
           <button class="btn-solar-action" onclick="window.print()">⎙ Print / Save PDF</button>
           <button class="btn-solar-action" onclick="closeSolarReturn()">← Home</button>
         </div>
@@ -780,7 +782,7 @@
 
   <script src="astrology.js"></script>
   <script src="auth.js?v=8"></script>
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
   <script src="astrocartography.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
