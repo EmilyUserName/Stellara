@@ -74,7 +74,7 @@ exports.handler = async function (event) {
 // ------------------------------------------------------------
 async function getSubscribers() {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&name=not.is.null&birth_date=not.is.null&birth_city=not.is.null&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`,
+    `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&name=neq.null&birth_date=neq.null&birth_city=neq.null&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`,
     {
       headers: {
         'apikey': SUPABASE_SERVICE_KEY,
@@ -83,6 +83,7 @@ async function getSubscribers() {
     }
   );
   const data = await res.json();
+  console.log('[daily-email] getSubscribers raw count:', Array.isArray(data) ? data.length : JSON.stringify(data));
   return Array.isArray(data) ? data.filter(u => u.email && !u.email_opt_out) : [];
 }
 
