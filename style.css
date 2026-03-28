@@ -221,6 +221,22 @@ header p {
 }
 .card-title > span:first-child { color: var(--accent); font-size: 1rem; }
 
+.flow-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(126,168,212,0.2);
+  border: 1px solid rgba(126,168,212,0.45);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
 
 /* ------------------------------------------------------------
    FORM — inputs and labels
