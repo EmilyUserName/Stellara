@@ -187,27 +187,6 @@
 
       <div class="card">
         <div class="card-title"><span>✦</span> Get Your Reading</div>
-        <div class="style-selector">
-          <label><span class="flow-step">1</span> Choose your reading style</label>
-          <div class="style-cards">
-            <button class="style-card active" data-style="psychological" onclick="selectStyle(this)">
-              <div class="style-card-name">Psychological</div>
-              <div class="style-card-desc">Jungian depth, archetypes, shadow work</div>
-            </button>
-            <button class="style-card" data-style="spiritual" onclick="selectStyle(this)">
-              <div class="style-card-name">Spiritual</div>
-              <div class="style-card-desc">Soul-centered, mystical, cosmic connection</div>
-            </button>
-            <button class="style-card" data-style="modern" onclick="selectStyle(this)">
-              <div class="style-card-name">Modern & Direct</div>
-              <div class="style-card-desc">Clear, grounded, practical insights</div>
-            </button>
-            <button class="style-card" data-style="classical" onclick="selectStyle(this)">
-              <div class="style-card-name">Classical</div>
-              <div class="style-card-desc">Traditional astrology, mythological planets</div>
-            </button>
-          </div>
-        </div>
 
         <!-- Shown to non-Pro users -->
         <div id="proUpsellCard" class="pro-upsell-card">
@@ -222,7 +201,28 @@
 
         <!-- Shown to Pro users -->
         <div id="proTopicsCard" style="display:none;">
-          <label style="display:block; margin-bottom:10px;"><span class="flow-step">2</span> What would you like to explore?</label>
+          <div class="style-selector">
+            <label><span class="flow-step">1</span> Choose your reading style</label>
+            <div class="style-cards">
+              <button class="style-card active" data-style="psychological" onclick="selectStyle(this)">
+                <div class="style-card-name">Psychological</div>
+                <div class="style-card-desc">Jungian depth, archetypes, shadow work</div>
+              </button>
+              <button class="style-card" data-style="spiritual" onclick="selectStyle(this)">
+                <div class="style-card-name">Spiritual</div>
+                <div class="style-card-desc">Soul-centered, mystical, cosmic connection</div>
+              </button>
+              <button class="style-card" data-style="modern" onclick="selectStyle(this)">
+                <div class="style-card-name">Modern & Direct</div>
+                <div class="style-card-desc">Clear, grounded, practical insights</div>
+              </button>
+              <button class="style-card" data-style="classical" onclick="selectStyle(this)">
+                <div class="style-card-name">Classical</div>
+                <div class="style-card-desc">Traditional astrology, mythological planets</div>
+              </button>
+            </div>
+          </div>
+          <label style="display:block; margin-bottom:10px; margin-top:20px;"><span class="flow-step">2</span> What would you like to explore?</label>
           <div class="topic-pills home-topic-pills">
             <button class="topic-pill topic-pill-featured active" data-topic="daily" onclick="selectTopic(this)">Today's Sky</button>
             <button class="topic-pill" data-topic="love"          onclick="selectTopic(this)">Love</button>
