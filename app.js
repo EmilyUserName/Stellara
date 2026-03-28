@@ -591,6 +591,77 @@ function goHome() {
 
 
 // ------------------------------------------------------------
+// SOLAR RETURN LOCATION AUTOCOMPLETE
+// Same debounced geocode behaviour as birthCity, but for the
+// setup modal's solarLocation field.
+// ------------------------------------------------------------
+(function () {
+  let debounceTimer = null;
+  let skipNext = false;
+
+  const input    = document.getElementById('solarLocation');
+  const dropdown = document.getElementById('solarLocationSuggestions');
+  if (!input || !dropdown) return;
+
+  input.addEventListener('input', () => {
+    if (skipNext) { skipNext = false; return; }
+    clearTimeout(debounceTimer);
+    const q = input.value.trim();
+    if (q.length < 2) { closeDropdown(); return; }
+    debounceTimer = setTimeout(() => fetchSuggestions(q), 350);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target !== input && !dropdown.contains(e.target)) closeDropdown();
+  });
+
+  async function fetchSuggestions(q) {
+    try {
+      const res = await fetch(`/api/geocode?city=${encodeURIComponent(q)}&autocomplete=true`);
+      if (!res.ok) { closeDropdown(); return; }
+      const results = await res.json();
+      renderDropdown(results);
+    } catch (_) { closeDropdown(); }
+  }
+
+  function formatPlace(addr) {
+    const city    = addr.city || addr.town || addr.village || addr.municipality || addr.county || '';
+    const state   = addr.state || addr.region || '';
+    const country = addr.country || '';
+    return [city, state, country].filter(Boolean).join(', ');
+  }
+
+  function renderDropdown(results) {
+    dropdown.innerHTML = '';
+    const seen = new Set();
+    results.forEach(r => {
+      const label = formatPlace(r.address);
+      if (!label || seen.has(label)) return;
+      seen.add(label);
+      const item = document.createElement('div');
+      item.className = 'city-dropdown-item';
+      item.textContent = label;
+      item.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        skipNext = true;
+        input.value = label;
+        input.dataset.lat = r.lat;
+        input.dataset.lon = r.lon;
+        closeDropdown();
+      });
+      dropdown.appendChild(item);
+    });
+    dropdown.classList.toggle('active', dropdown.children.length > 0);
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove('active');
+    dropdown.innerHTML = '';
+  }
+})();
+
+
+// ------------------------------------------------------------
 // SHARE — native share sheet on mobile, clipboard fallback on desktop
 // ------------------------------------------------------------
 async function shareStellara() {
@@ -858,12 +929,37 @@ function openNatalChart() {
 // SOLAR RETURN
 // ============================================================
 function openSolarReturn() {
-  console.log('[Solar] openSolarReturn called, currentSolarReturnYear=', currentSolarReturnYear);
-  if (!requireAuth()) { console.log('[Solar] failed requireAuth'); return; }
-  if (!requireSolarReturn()) { console.log('[Solar] failed requireSolarReturn'); return; }
+  if (!requireAuth()) return;
+  if (!requireSolarReturn()) return;
 
-  const year = new Date().getFullYear();
-  console.log('[Solar] proceeding to show solar section, year=', year);
+  // Pre-fill year with current year
+  document.getElementById('solarYear').value = new Date().getFullYear();
+  document.getElementById('solarLocation').value = '';
+  document.getElementById('solarSetupOverlay').style.display = 'flex';
+}
+
+function closeSolarSetup() {
+  document.getElementById('solarSetupOverlay').style.display = 'none';
+}
+
+function submitSolarSetup() {
+  const year     = parseInt(document.getElementById('solarYear').value);
+  const location = document.getElementById('solarLocation').value.trim();
+
+  if (!year || year < 1950 || year > 2050) {
+    alert('Please enter a valid year.');
+    return;
+  }
+  if (!location) {
+    alert('Please enter the city where you were (or will be) on your birthday.');
+    return;
+  }
+
+  closeSolarSetup();
+  loadSolarReturn(year, location);
+}
+
+function loadSolarReturn(year, location) {
   document.getElementById('solarReturnYearTitle').textContent = year;
   document.querySelector('.container').style.display = 'none';
   document.getElementById('solarSection').style.display = 'block';
@@ -873,11 +969,10 @@ function openSolarReturn() {
   fetch('/api/solar-return', {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ userId: currentUser.id }),
+    body:    JSON.stringify({ userId: currentUser.id, year, returnLocation: location }),
   })
-    .then(r => { console.log('[Solar] API response status:', r.status); return r.json(); })
+    .then(r => r.json())
     .then(data => {
-      console.log('[Solar] API response data:', data);
       document.getElementById('solarLoading').style.display = 'none';
       if (data.reading) {
         renderSolarReading(data.reading, year);

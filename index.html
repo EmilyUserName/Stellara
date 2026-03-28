@@ -144,18 +144,18 @@
         <div class="free-horoscopes-label">Today's Horoscopes</div>
         <p class="free-horoscopes-desc">A daily reading for every sign, every day — always free. No birth details needed.</p>
         <div class="free-horoscopes-signs" id="freeHoroscopeSignsHome">
-          <button class="sign-pill" data-sign="aries" data-target="home">♈ Aries</button>
-          <button class="sign-pill" data-sign="taurus" data-target="home">♉ Taurus</button>
-          <button class="sign-pill" data-sign="gemini" data-target="home">♊ Gemini</button>
-          <button class="sign-pill" data-sign="cancer" data-target="home">♋ Cancer</button>
-          <button class="sign-pill" data-sign="leo" data-target="home">♌ Leo</button>
-          <button class="sign-pill" data-sign="virgo" data-target="home">♍ Virgo</button>
-          <button class="sign-pill" data-sign="libra" data-target="home">♎ Libra</button>
-          <button class="sign-pill" data-sign="scorpio" data-target="home">♏ Scorpio</button>
-          <button class="sign-pill" data-sign="sagittarius" data-target="home">♐ Sagittarius</button>
-          <button class="sign-pill" data-sign="capricorn" data-target="home">♑ Capricorn</button>
-          <button class="sign-pill" data-sign="aquarius" data-target="home">♒ Aquarius</button>
-          <button class="sign-pill" data-sign="pisces" data-target="home">♓ Pisces</button>
+          <button class="sign-pill" data-sign="aries" data-target="home"><span class="sign-icon">♈︎</span> Aries</button>
+          <button class="sign-pill" data-sign="taurus" data-target="home"><span class="sign-icon">♉︎</span> Taurus</button>
+          <button class="sign-pill" data-sign="gemini" data-target="home"><span class="sign-icon">♊︎</span> Gemini</button>
+          <button class="sign-pill" data-sign="cancer" data-target="home"><span class="sign-icon">♋︎</span> Cancer</button>
+          <button class="sign-pill" data-sign="leo" data-target="home"><span class="sign-icon">♌︎</span> Leo</button>
+          <button class="sign-pill" data-sign="virgo" data-target="home"><span class="sign-icon">♍︎</span> Virgo</button>
+          <button class="sign-pill" data-sign="libra" data-target="home"><span class="sign-icon">♎︎</span> Libra</button>
+          <button class="sign-pill" data-sign="scorpio" data-target="home"><span class="sign-icon">♏︎</span> Scorpio</button>
+          <button class="sign-pill" data-sign="sagittarius" data-target="home"><span class="sign-icon">♐︎</span> Sagittarius</button>
+          <button class="sign-pill" data-sign="capricorn" data-target="home"><span class="sign-icon">♑︎</span> Capricorn</button>
+          <button class="sign-pill" data-sign="aquarius" data-target="home"><span class="sign-icon">♒︎</span> Aquarius</button>
+          <button class="sign-pill" data-sign="pisces" data-target="home"><span class="sign-icon">♓︎</span> Pisces</button>
         </div>
         <div class="free-horoscope-reading" id="freeHoroscopeReadingHome" style="display:none;">
           <div class="free-horoscope-sign-name" id="freeHoroscopeSignNameHome"></div>
@@ -477,6 +477,30 @@
   <!-- =====================================================
        SOLAR RETURN — full reading view
        ===================================================== -->
+  <!-- Solar Return Setup Modal -->
+  <div id="solarSetupOverlay" class="overlay" style="display:none;">
+    <div class="modal">
+      <button class="modal-close" onclick="closeSolarSetup()">✕</button>
+      <div class="modal-icon">☀</div>
+      <h2 class="modal-title">Your Solar Return</h2>
+      <p class="modal-subtitle">The Sun returns to its exact natal degree once a year — your personal new year. Cast for where you are on that day.</p>
+
+      <div class="form-field" style="margin-top:20px;">
+        <label class="form-label">Which year?</label>
+        <input id="solarYear" class="form-input" type="number" min="1950" max="2050" placeholder="e.g. 2025" />
+      </div>
+
+      <div class="form-field" style="margin-top:14px;">
+        <label class="form-label">Where were / will you be on your birthday?</label>
+        <input id="solarLocation" class="form-input" type="text" placeholder="City, Country" autocomplete="off" />
+        <div id="solarLocationSuggestions" class="city-dropdown"></div>
+        <p style="font-size:0.75rem;color:var(--silver);opacity:0.55;margin-top:6px;">The Solar Return chart shifts based on your location — even a short trip can change it significantly.</p>
+      </div>
+
+      <button class="btn" style="margin-top:24px;" onclick="submitSolarSetup()">Generate My Solar Return ☀</button>
+    </div>
+  </div>
+
   <div id="solarSection" style="display:none;">
     <div class="card" style="margin-top:0;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
