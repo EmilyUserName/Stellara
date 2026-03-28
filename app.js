@@ -104,6 +104,7 @@ let selectedTopic = 'daily';
 const FREE_TOPICS = ['birthday'];
 
 function selectTopic(el) {
+  if (!el) return;
   const topic = el.dataset.topic;
   // If it's a Pro topic and user isn't subscribed, open upgrade flow immediately
   if (!FREE_TOPICS.includes(topic) && topic !== 'chart') {
