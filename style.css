@@ -1742,6 +1742,29 @@ select option { background: var(--navy-2); }
 .btn-solar:hover { background: rgba(255,210,120,0.06); border-color: rgba(255,210,120,0.6); color: var(--light); }
 
 /* Natal Chart button */
+.deep-readings-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 32px 0 8px;
+}
+.deep-readings-divider::before,
+.deep-readings-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(126,168,212,0.2), transparent);
+}
+.deep-readings-divider span {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--silver);
+  opacity: 0.45;
+  white-space: nowrap;
+  font-family: 'Barlow', sans-serif;
+}
+
 .btn-natal {
   background: transparent;
   border: 1px solid rgba(180,140,220,0.35);
