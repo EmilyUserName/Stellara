@@ -76,24 +76,33 @@ Birth city: ${birth_city || 'unknown'}
 ${locationLine}
 ${ageContext}
 
-A Solar Return marks the Sun's return to its exact natal degree — a new personal year begins. The location where a person is on their birthday shapes the Solar Return chart significantly. Write a rich, personal annual forecast in 5 sections. Use the section titles below exactly as written, each on its own line followed by the text. No bullet points. No extra headers inside sections.
+A Solar Return marks the Sun's return to its exact natal degree — a new personal year begins. The location where a person celebrates their birthday shifts the Solar Return chart, often dramatically. This is a comprehensive annual forecast — make it feel like a real reading, not a summary. Write 8 sections using the titles below exactly as written, each on its own line, followed by the text. No bullet points. No markdown. Plain paragraphs only. Every sentence should land.
 
 THE YEAR AHEAD
-What is the overarching theme of this Solar Return year? What chapter is ${name} entering? Speak to the big picture — the soul's curriculum for this year. 2–3 paragraphs.
+The overarching theme and energy of ${name}'s ${year} Solar Return year. What chapter is beginning? What is the soul's curriculum — the central question or invitation this year is organized around? Be bold and specific. 3 paragraphs.
+
+THE SKY THIS YEAR
+The most significant planetary themes active in ${year} that shape ${name}'s Solar Return. What is the broader cosmic weather — the major outer planet energies, eclipses, or collective shifts — and how do they land personally for someone with ${name}'s chart? 2 paragraphs.
 
 LOVE & RELATIONSHIPS
-What is the year's energy around connection, intimacy, and partnership for ${name}? What do the planets invite them to cultivate, release, or explore in their closest bonds? 1–2 paragraphs.
+The year's energy around connection, intimacy, and partnership. What patterns are up for ${name} in their closest bonds? What is being asked of them — to open more, to set a boundary, to attract something new, to release something old? 2 paragraphs.
 
 WORK & PURPOSE
-What does this year hold for ${name}'s career, creative work, and sense of purpose? Where are they being called to step up, redirect, or deepen? 1–2 paragraphs.
+What this year holds for ${name}'s career, creative work, vocation, and sense of direction. Where is the momentum? Where is the friction? What kind of work or contribution is this year built for? 2 paragraphs.
+
+MONEY & RESOURCES
+The year's energy around finances, security, and material life. Is this a year to invest, consolidate, expand, or simplify? What is ${name}'s relationship to abundance and stability being asked to become? 1–2 paragraphs.
+
+BODY & WELLBEING
+What this Solar Return year asks of ${name} physically and energetically. What rhythms, practices, or areas of the body deserve attention? What does rest look like this year — and what does depletion look like if they ignore it? 1–2 paragraphs.
 
 INNER WORK
-What psychological or spiritual territory does this year ask ${name} to move through? What shadow, pattern, or gift is ready to surface? 1–2 paragraphs.
+The psychological and spiritual territory this year is asking ${name} to move through. What pattern is ready to be seen? What shadow is surfacing? What gift is waiting on the other side of that work? 2 paragraphs.
 
 A WORD TO CARRY
-A closing reflection — one or two sentences ${name} can return to throughout the year. Something true, specific, and lasting.
+A closing reflection — 2 to 3 sentences ${name} can return to throughout the year. Something that captures the essence of what ${year} is asking of them. Make it true, specific, and lasting.
 
-Be evocative, personal, and honest. Every sentence should land.`;
+Be evocative, personal, and honest. Every sentence should earn its place.`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method:  'POST',
@@ -104,7 +113,7 @@ Be evocative, personal, and honest. Every sentence should land.`;
     },
     body: JSON.stringify({
       model:      'claude-sonnet-4-6',
-      max_tokens: 1800,
+      max_tokens: 2800,
       messages:   [{ role: 'user', content: prompt }],
     }),
   });

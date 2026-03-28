@@ -1048,7 +1048,7 @@ function closeSolarReturn() {
   document.querySelector('.container').style.display = 'block';
 }
 
-const SOLAR_SECTIONS = ['THE YEAR AHEAD', 'LOVE & RELATIONSHIPS', 'WORK & PURPOSE', 'INNER WORK', 'A WORD TO CARRY'];
+const SOLAR_SECTIONS = ['THE YEAR AHEAD', 'THE SKY THIS YEAR', 'LOVE & RELATIONSHIPS', 'WORK & PURPOSE', 'MONEY & RESOURCES', 'BODY & WELLBEING', 'INNER WORK', 'A WORD TO CARRY'];
 
 function renderSolarReading(text, year) {
   const body = document.getElementById('solarReadingBody');
