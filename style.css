@@ -1000,6 +1000,33 @@ select option { background: var(--navy-2); }
   gap: 12px;
   margin-bottom: 28px;
 }
+.chart-section {
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(126,168,212,0.1);
+}
+.chart-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.chart-section-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.chart-section-body p {
+  font-size: 0.95rem;
+  color: var(--light);
+  line-height: 1.85;
+  margin: 0 0 14px 0;
+}
+.chart-section-body p:last-child { margin-bottom: 0; }
+
 .placement-card {
   background: rgba(6,13,31,0.5);
   border: 1px solid rgba(126,168,212,0.12);

@@ -125,8 +125,34 @@ const TOPIC_CONFIG = {
     mode: 'chart',
     displayName: 'Birth Chart',
     section1Label: 'Your Cosmic Blueprint',
+    maxTokens: 2200,
     prompt1: (name, sun, moon, rising) =>
-      `Give a personal, psychologically rich reading of ${name}'s ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''} combination. Highlight the interplay between their placements. Be specific and insightful, not generic. Avoid clichés. Reveal something they might not have heard before.`,
+      `Write ${name}'s full Natal Birth Chart reading. This is a paid, comprehensive reading — it should feel thorough, personal, and genuinely revelatory. Not a sun-sign horoscope. A real chart interpretation.
+
+${name}'s placements:
+Sun: ${sun}
+Moon: ${moon}
+${rising ? `Rising: ${rising}` : 'Rising: unknown (no birth time provided)'}
+
+Write exactly 6 sections using the titles below, each on its own line in ALL CAPS, followed immediately by the reading text. No bullet points. No markdown. Plain paragraphs only. Every sentence should earn its place.
+
+CORE IDENTITY
+Who is ${name} at their essence? Synthesize the Sun${rising ? ', Rising' : ''}, and Moon into a coherent portrait of their character — how they move through the world, what drives them at their core, how they experience themselves. 2–3 paragraphs.
+
+EMOTIONAL WORLD
+${name}'s inner life, instincts, and emotional needs as revealed by their ${moon} Moon. How do they process feeling? What makes them feel safe, nourished, and at home? What does their inner world actually look like — the private self almost no one sees? 2 paragraphs.
+
+LOVE & RELATIONSHIPS
+What does ${name} bring to love, and what do they need in return? How does their chart shape their relational style — the way they attach, the patterns they fall into, what they're drawn to and why? Be honest and specific. 2 paragraphs.
+
+WORK & PURPOSE
+What does ${name}'s chart reveal about their vocation, creative drive, and sense of purpose? Where do they thrive? What kind of work lights them up? What are they here to build or contribute? 2 paragraphs.
+
+GIFTS & EDGES
+What are ${name}'s greatest strengths — the qualities written into their chart that are genuinely exceptional? And what are the edges — the patterns or tendencies that might hold them back if left unconscious? Be direct and compassionate. 2 paragraphs.
+
+A WORD TO CARRY
+A closing reflection — 2 to 3 sentences ${name} can return to. Something that captures the essence of what their chart is asking of them in this life. Make it land.`,
   },
   birthday: {
     mode: 'chart',
@@ -427,7 +453,8 @@ Be concise and potent — every sentence should land. No filler. No bullet point
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        messages: [{ role: "user", content: prompt }]
+        messages: [{ role: "user", content: prompt }],
+        maxTokens: topic.maxTokens || 900,
       })
     });
 
@@ -461,9 +488,30 @@ Be concise and potent — every sentence should land. No filler. No bullet point
     if (mode === 'chart') {
       chartSection.style.display = 'block';
       chartSection.querySelector('.section-label').textContent = topic.section1Label;
-      document.getElementById('chartReading').textContent = text.trim();
       divider.style.display   = 'none';
       todayCard.style.display = 'none';
+
+      const CHART_SECTIONS = ['CORE IDENTITY', 'EMOTIONAL WORLD', 'LOVE & RELATIONSHIPS', 'WORK & PURPOSE', 'GIFTS & EDGES', 'A WORD TO CARRY'];
+      const readingEl = document.getElementById('chartReading');
+
+      // Try to parse sections; fall back to plain text if format is unexpected
+      let parsedHTML = '';
+      let remaining = text.trim();
+      let foundAny = false;
+      CHART_SECTIONS.forEach((section, i) => {
+        const next = CHART_SECTIONS[i + 1];
+        const start = remaining.indexOf(section);
+        if (start === -1) return;
+        foundAny = true;
+        const end = next ? remaining.indexOf(next, start + section.length) : remaining.length;
+        const content = remaining.slice(start + section.length, end).trim();
+        parsedHTML += `<div class="chart-section">
+          <div class="chart-section-label">${section}</div>
+          <div class="chart-section-body">${content.split('\n\n').filter(Boolean).map(p => `<p>${p.trim()}</p>`).join('')}</div>
+        </div>`;
+      });
+
+      readingEl.innerHTML = foundAny ? parsedHTML : `<p>${remaining}</p>`;
     } else if (mode === 'daily') {
       chartSection.style.display = 'none';
       divider.style.display      = 'none';
