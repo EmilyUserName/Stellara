@@ -913,7 +913,11 @@ const SIGN_SYMBOLS = {
 
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.sign-pill').forEach(btn => {
-    btn.addEventListener('click', () => selectSign(btn.dataset.sign, btn.dataset.target));
+    const sign = btn.dataset.sign;
+    if (sign && SIGN_SYMBOLS[sign]) {
+      btn.innerHTML = `<span class="sign-icon">${SIGN_SYMBOLS[sign]}</span>${btn.textContent.trim()}`;
+    }
+    btn.addEventListener('click', () => selectSign(sign, btn.dataset.target));
   });
 });
 
