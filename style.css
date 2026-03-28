@@ -1793,6 +1793,15 @@ select option { background: var(--navy-2); }
   margin: 8px 0;
 }
 .landing-plan-pro .landing-plan-name { color: var(--accent); font-size: 1rem; }
+.landing-pro-section-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  margin: 18px 0 8px;
+}
 .landing-plan-features {
   list-style: none;
   padding: 0;
