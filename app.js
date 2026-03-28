@@ -88,7 +88,8 @@ const STYLE_CONFIG = {
 const FREE_STYLES = ['psychological'];
 
 function selectStyle(el) {
-  if (!FREE_STYLES.includes(el.dataset.style) && !requireSubscription()) return;
+  const hasAnyPaid = currentSubscribed || currentHasNatal || currentHasAstro || currentSolarReturnYear;
+  if (!FREE_STYLES.includes(el.dataset.style) && !hasAnyPaid) { openUpgradeModal(); return; }
   document.querySelectorAll(`[data-style="${el.dataset.style}"]`).forEach(c => c.classList.add('active'));
   document.querySelectorAll(`.style-card:not([data-style="${el.dataset.style}"])`).forEach(c => c.classList.remove('active'));
   selectedStyle = el.dataset.style;
