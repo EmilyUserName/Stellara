@@ -935,11 +935,11 @@ function openSolarReturn() {
   // Pre-fill year with current year
   document.getElementById('solarYear').value = new Date().getFullYear();
   document.getElementById('solarLocation').value = '';
-  document.getElementById('solarSetupOverlay').style.display = 'flex';
+  document.getElementById('solarSetupOverlay').classList.add('active');
 }
 
 function closeSolarSetup() {
-  document.getElementById('solarSetupOverlay').style.display = 'none';
+  document.getElementById('solarSetupOverlay').classList.remove('active');
 }
 
 function submitSolarSetup() {
