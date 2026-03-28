@@ -142,6 +142,7 @@
       <!-- Free daily horoscopes — always visible at top -->
       <div class="free-horoscopes" id="freeHoroscopesHome">
         <div class="free-horoscopes-label">Today's Horoscopes</div>
+        <p class="free-horoscopes-desc">Pick your sun sign for a free daily reading based on today's planetary transits — no birth details needed.</p>
         <div class="free-horoscopes-signs" id="freeHoroscopeSignsHome">
           <button class="sign-pill" data-sign="aries" data-target="home">♈ Aries</button>
           <button class="sign-pill" data-sign="taurus" data-target="home">♉ Taurus</button>
@@ -758,13 +759,14 @@
         b.className = 'star-big';
         const size = 8 + Math.floor(Math.random() * 8); // 8–15px
         const color = BIG_COLORS[Math.floor(Math.random() * BIG_COLORS.length)];
+        const glow = color.replace(',1)', ',0.35)');
         b.style.cssText = [
           `left:${lp + (Math.random() * 3 - 1.5).toFixed(2)}%`,
           `top:${tp  + (Math.random() * 3 - 1.5).toFixed(2)}%`,
           `width:${size}px`,
           `height:${size}px`,
           `background:${color}`,
-          `box-shadow:0 0 ${size * 3}px ${size * 2}px ${color.replace('1)', '0.3)')}`,
+          `box-shadow:0 0 ${size * 4}px ${size * 2}px ${glow}`,
           `animation-duration:${(6 + Math.random() * 8).toFixed(2)}s`,
           `animation-delay:${(Math.random() * 10).toFixed(2)}s`,
         ].join(';');
