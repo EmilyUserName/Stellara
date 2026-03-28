@@ -125,7 +125,7 @@ const TOPIC_CONFIG = {
     mode: 'chart',
     displayName: 'Birth Chart',
     section1Label: 'Your Cosmic Blueprint',
-    maxTokens: 2200,
+    maxTokens: 1000,
     prompt1: (name, sun, moon, rising) =>
       `Write ${name}'s full Natal Birth Chart reading. This is a paid, comprehensive reading — it should feel thorough, personal, and genuinely revelatory. Not a sun-sign horoscope. A real chart interpretation.
 
