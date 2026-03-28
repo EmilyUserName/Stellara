@@ -1411,6 +1411,9 @@ select option { background: var(--navy-2); }
   padding: 22px 24px;
   margin-bottom: 20px;
   text-align: center;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .astro-intro-headline {
   font-size: 1.05rem;
@@ -1420,10 +1423,10 @@ select option { background: var(--navy-2); }
   letter-spacing: 0.02em;
 }
 .astro-intro-body {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   color: var(--silver);
-  line-height: 1.75;
-  margin-bottom: 14px;
+  line-height: 1.7;
+  margin-bottom: 12px;
 }
 .astro-intro-note {
   font-size: 0.76rem;
