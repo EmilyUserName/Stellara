@@ -604,6 +604,9 @@ function goHome() {
   const dropdown = document.getElementById('solarLocationSuggestions');
   if (!input || !dropdown) return;
 
+  // dropdown is position:absolute — needs a positioned ancestor
+  input.parentNode.style.position = 'relative';
+
   input.addEventListener('input', () => {
     if (skipNext) { skipNext = false; return; }
     clearTimeout(debounceTimer);
