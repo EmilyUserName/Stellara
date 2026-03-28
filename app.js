@@ -935,7 +935,12 @@ function openSolarReturn() {
   // Pre-fill year with current year
   document.getElementById('solarYear').value = new Date().getFullYear();
   document.getElementById('solarLocation').value = '';
-  document.getElementById('solarSetupOverlay').style.display = 'flex';
+  const overlay = document.getElementById('solarSetupOverlay');
+  Object.assign(overlay.style, {
+    display: 'flex', position: 'fixed', inset: '0',
+    background: 'rgba(6,13,31,0.85)', backdropFilter: 'blur(6px)',
+    zIndex: '200', alignItems: 'center', justifyContent: 'center',
+  });
 }
 
 function closeSolarSetup() {
