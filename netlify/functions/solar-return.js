@@ -21,9 +21,10 @@ const STYLE_PROMPTS = {
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
-  const { userId, year, returnLocation } = JSON.parse(event.body || '{}');
-  if (!userId) return { statusCode: 400, body: 'userId required' };
-  if (!year)   return { statusCode: 400, body: 'year required' };
+  const body = JSON.parse(event.body || '{}');
+  const { userId, returnLocation } = body;
+  const year = body.year || new Date().getFullYear();
+  if (!userId) return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'userId required' }) };
 
   // Fetch profile
   const profileRes = await fetch(
@@ -37,7 +38,7 @@ exports.handler = async function (event) {
 
   // Check they've purchased Solar Return (any year value = purchased)
   if (!profile.solar_return_year) {
-    return { statusCode: 403, body: JSON.stringify({ error: 'Solar Return not purchased' }) };
+    return { statusCode: 403, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Solar Return not purchased' }) };
   }
 
   // Generate reading fresh each time (year and location can vary)
