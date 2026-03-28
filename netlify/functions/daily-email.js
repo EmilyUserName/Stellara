@@ -73,18 +73,21 @@ exports.handler = async function (event) {
 // FETCH PRO SUBSCRIBERS WITH SAVED BIRTH INFO
 // ------------------------------------------------------------
 async function getSubscribers() {
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&name=neq.null&birth_date=neq.null&birth_city=neq.null&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`,
-    {
+  console.log('[daily-email] SUPABASE_URL set:', !!SUPABASE_URL);
+  console.log('[daily-email] SUPABASE_SERVICE_KEY set:', !!SUPABASE_SERVICE_KEY);
+  const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`;
+  console.log('[daily-email] fetching:', url);
+  const res = await fetch(url, {
       headers: {
         'apikey': SUPABASE_SERVICE_KEY,
         'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
       },
     }
   );
+  console.log('[daily-email] Supabase status:', res.status);
   const data = await res.json();
-  console.log('[daily-email] getSubscribers raw count:', Array.isArray(data) ? data.length : JSON.stringify(data));
-  return Array.isArray(data) ? data.filter(u => u.email && !u.email_opt_out) : [];
+  console.log('[daily-email] raw response:', JSON.stringify(data).slice(0, 200));
+  return Array.isArray(data) ? data.filter(u => u.email && !u.email_opt_out && u.name && u.birth_date && u.birth_city) : [];
 }
 
 // ------------------------------------------------------------
