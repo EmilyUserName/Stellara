@@ -560,6 +560,8 @@ select option { background: var(--navy-2); }
   color: #5bb8ff;
   text-shadow: 0 0 6px rgba(91,184,255,0.9), 0 0 14px rgba(91,184,255,0.5);
   display: inline-block;
+  font-size: 1.2em;
+  vertical-align: middle;
 }
 .free-horoscope-reading {
   margin-top: 20px;
