@@ -1786,13 +1786,44 @@ select option { background: var(--navy-2); }
 
 /* Pro plan highlight on landing */
 .landing-plan-pro {
-  background: rgba(126,168,212,0.07);
-  border: 1px solid rgba(126,168,212,0.25);
-  border-radius: 12px;
-  padding: 16px;
-  margin-top: 4px;
+  background: rgba(126,168,212,0.09);
+  border: 1px solid rgba(126,168,212,0.35);
+  border-radius: 16px;
+  padding: 24px 22px;
+  margin: 8px 0;
 }
-.landing-plan-pro .landing-plan-name { color: var(--accent); }
+.landing-plan-pro .landing-plan-name { color: var(--accent); font-size: 1rem; }
+.landing-plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.landing-plan-features li {
+  font-size: 0.85rem;
+  color: var(--light);
+  line-height: 1.5;
+  padding-left: 4px;
+}
+.landing-plan-cta {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: rgba(126,168,212,0.15);
+  border: 1px solid rgba(126,168,212,0.5);
+  border-radius: 10px;
+  color: var(--white);
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.landing-plan-cta:hover { background: rgba(126,168,212,0.25); border-color: rgba(126,168,212,0.8); }
 
 /* Bundle plan highlight on landing */
 .landing-plan-bundle {
