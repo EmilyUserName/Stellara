@@ -225,9 +225,15 @@
           <button class="topic-pill"        data-topic="compatibility" onclick="selectTopic(this)">Compatibility <span class="pill-pro">Pro</span></button>
           <button class="topic-pill"        data-topic="shadow"        onclick="selectTopic(this)">Shadow Work <span class="pill-pro">Pro</span></button>
         </div>
-        <p id="upgradeHint" style="display:none; text-align:center; font-size:0.78rem; color:var(--silver); opacity:0.6; margin-top:12px;">
-          Natal Chart is $19 one-time &nbsp;·&nbsp; <a href="#" onclick="openUpgradeModal(); return false;" style="color:var(--accent); opacity:0.9;">Upgrade to Pro</a> for all topics
-        </p>
+        <div id="upgradeHint" style="display:none;" class="pro-upgrade-banner">
+          <div class="pro-upgrade-banner-title">✦ Unlock Everything with Pro</div>
+          <div class="pro-upgrade-banner-perks">
+            <span>✓ All 12 reading topics</span>
+            <span>✓ 3 reading styles</span>
+            <span>✓ Daily personalized email</span>
+          </div>
+          <button class="pro-upgrade-banner-btn" onclick="openUpgradeModal()">Upgrade to Pro — $12 / month</button>
+        </div>
         <div class="partner-input" id="partnerInputHome" style="display:none;">
           <div class="partner-input-heading">♡ &nbsp;Who are you reading with?</div>
           <div class="partner-input-row">

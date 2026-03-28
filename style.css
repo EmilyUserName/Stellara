@@ -221,6 +221,55 @@ header p {
 }
 .card-title > span:first-child { color: var(--accent); font-size: 1rem; }
 
+.pro-upgrade-banner {
+  margin-top: 20px;
+  background: linear-gradient(135deg, rgba(126,168,212,0.12), rgba(126,168,212,0.06));
+  border: 1px solid rgba(126,168,212,0.4);
+  border-radius: 14px;
+  padding: 20px 22px;
+  text-align: center;
+}
+.pro-upgrade-banner-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+}
+.pro-upgrade-banner-perks {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-bottom: 16px;
+}
+.pro-upgrade-banner-perks span {
+  font-size: 0.82rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+.pro-upgrade-banner-btn {
+  background: linear-gradient(135deg, rgba(126,168,212,0.3), rgba(126,168,212,0.15));
+  border: 1px solid rgba(126,168,212,0.7);
+  border-radius: 10px;
+  color: var(--white);
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 12px 28px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+.pro-upgrade-banner-btn:hover {
+  background: linear-gradient(135deg, rgba(126,168,212,0.45), rgba(126,168,212,0.25));
+  border-color: rgba(126,168,212,0.9);
+  box-shadow: 0 0 24px rgba(126,168,212,0.2);
+  transform: translateY(-1px);
+}
+
 .flow-step {
   display: inline-flex;
   align-items: center;
