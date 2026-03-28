@@ -17,9 +17,9 @@
   --navy:         #0d1b32;   /* darkest background */
   --navy-2:       #132440;   /* card backgrounds */
   --navy-3:       #192e50;   /* slightly lighter navy */
-  --silver:       #b8c4d8;   /* muted text */
-  --silver-light: #dce4f0;   /* body text */
-  --silver-bright:#eef2f9;   /* bright text */
+  --silver:       #cdd6e8;   /* muted text */
+  --silver-light: #e8eef8;   /* body text */
+  --silver-bright:#f4f7fd;   /* bright text */
   --accent:       #7ea8d4;   /* blue accent — labels, borders */
   --accent-glow:  rgba(126,168,212,0.18);
   --gold:         #c8a96e;   /* gold accent — section labels */
@@ -536,6 +536,11 @@ select option { background: var(--navy-2); }
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: auto;
   gap: 10px;
+}
+@media (max-width: 500px) {
+  .free-horoscopes-signs {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 .sign-pill {
   background: rgba(6,13,31,0.6);
