@@ -142,7 +142,7 @@
       <!-- Free daily horoscopes — always visible at top -->
       <div class="free-horoscopes" id="freeHoroscopesHome">
         <div class="free-horoscopes-label">Today's Horoscopes</div>
-        <p class="free-horoscopes-desc">Pick your sun sign for a free daily reading based on today's planetary transits — no birth details needed.</p>
+        <p class="free-horoscopes-desc">A daily reading for every sign, every day — always free. No birth details needed.</p>
         <div class="free-horoscopes-signs" id="freeHoroscopeSignsHome">
           <button class="sign-pill" data-sign="aries" data-target="home">♈ Aries</button>
           <button class="sign-pill" data-sign="taurus" data-target="home">♉ Taurus</button>
@@ -195,45 +195,51 @@
               <div class="style-card-desc">Jungian depth, archetypes, shadow work</div>
             </button>
             <button class="style-card" data-style="spiritual" onclick="selectStyle(this)">
-              <div class="style-card-name">Spiritual <span class="pill-pro">Pro</span></div>
+              <div class="style-card-name">Spiritual</div>
               <div class="style-card-desc">Soul-centered, mystical, cosmic connection</div>
             </button>
             <button class="style-card" data-style="modern" onclick="selectStyle(this)">
-              <div class="style-card-name">Modern & Direct <span class="pill-pro">Pro</span></div>
+              <div class="style-card-name">Modern & Direct</div>
               <div class="style-card-desc">Clear, grounded, practical insights</div>
             </button>
             <button class="style-card" data-style="classical" onclick="selectStyle(this)">
-              <div class="style-card-name">Classical <span class="pill-pro">Pro</span></div>
+              <div class="style-card-name">Classical</div>
               <div class="style-card-desc">Traditional astrology, mythological planets</div>
             </button>
           </div>
         </div>
 
-        <label style="display:block; margin-bottom:10px;"><span class="flow-step">2</span> What would you like to explore?</label>
-        <div class="topic-pills home-topic-pills">
-          <button class="topic-pill topic-pill-featured active" data-topic="daily" onclick="selectTopic(this)">Today's Sky <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="love"          onclick="selectTopic(this)">Love <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="career"        onclick="selectTopic(this)">Career <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="finances"      onclick="selectTopic(this)">Finances <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="health"        onclick="selectTopic(this)">Health <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="thisMonth"     onclick="selectTopic(this)">This Month <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="communication" onclick="selectTopic(this)">Communication <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="innerWorld"    onclick="selectTopic(this)">Inner World <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="energy"        onclick="selectTopic(this)">Energy & Timing <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="travel"        onclick="selectTopic(this)">Travel <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="spiritual"     onclick="selectTopic(this)">Spiritual Path <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="compatibility" onclick="selectTopic(this)">Compatibility <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="shadow"        onclick="selectTopic(this)">Shadow Work <span class="pill-pro">Pro</span></button>
-        </div>
-        <div id="upgradeHint" style="display:none;" class="pro-upgrade-banner">
-          <div class="pro-upgrade-banner-title">✦ Unlock Everything with Pro</div>
-          <div class="pro-upgrade-banner-perks">
-            <span>✓ All 12 reading topics</span>
-            <span>✓ 3 reading styles</span>
-            <span>✓ Daily personalized email</span>
+        <!-- Shown to non-Pro users -->
+        <div id="proUpsellCard" class="pro-upsell-card">
+          <div class="pro-upsell-title">✦ Personalized Readings</div>
+          <div class="pro-upsell-desc">Go beyond your sun sign. Pro connects your exact birth chart to what's happening in the sky right now — a reading written for you, not your sign.</div>
+          <div class="pro-upsell-topics">
+            <span>Today's Sky</span><span>Love</span><span>Career</span><span>Finances</span><span>Health</span><span>This Month</span><span>Inner World</span><span>Spiritual Path</span><span>Shadow Work</span><span>Travel</span><span>Compatibility</span><span>Energy & Timing</span>
           </div>
-          <button class="pro-upgrade-banner-btn" onclick="openUpgradeModal()">Upgrade to Pro — $12 / month</button>
+          <div class="pro-upsell-note">All topics. All reading styles. Daily email digest.</div>
+          <button class="pro-upsell-btn" onclick="openUpgradeModal()">Upgrade to Pro — $12 / month</button>
         </div>
+
+        <!-- Shown to Pro users -->
+        <div id="proTopicsCard" style="display:none;">
+          <label style="display:block; margin-bottom:10px;"><span class="flow-step">2</span> What would you like to explore?</label>
+          <div class="topic-pills home-topic-pills">
+            <button class="topic-pill topic-pill-featured active" data-topic="daily" onclick="selectTopic(this)">Today's Sky</button>
+            <button class="topic-pill" data-topic="love"          onclick="selectTopic(this)">Love</button>
+            <button class="topic-pill" data-topic="career"        onclick="selectTopic(this)">Career</button>
+            <button class="topic-pill" data-topic="finances"      onclick="selectTopic(this)">Finances</button>
+            <button class="topic-pill" data-topic="health"        onclick="selectTopic(this)">Health</button>
+            <button class="topic-pill" data-topic="thisMonth"     onclick="selectTopic(this)">This Month</button>
+            <button class="topic-pill" data-topic="communication" onclick="selectTopic(this)">Communication</button>
+            <button class="topic-pill" data-topic="innerWorld"    onclick="selectTopic(this)">Inner World</button>
+            <button class="topic-pill" data-topic="energy"        onclick="selectTopic(this)">Energy & Timing</button>
+            <button class="topic-pill" data-topic="travel"        onclick="selectTopic(this)">Travel</button>
+            <button class="topic-pill" data-topic="spiritual"     onclick="selectTopic(this)">Spiritual Path</button>
+            <button class="topic-pill" data-topic="compatibility" onclick="selectTopic(this)">Compatibility</button>
+            <button class="topic-pill" data-topic="shadow"        onclick="selectTopic(this)">Shadow Work</button>
+          </div>
+        </div>
+        <div id="upgradeHint" style="display:none;"></div>
         <div class="partner-input" id="partnerInputHome" style="display:none;">
           <div class="partner-input-heading">♡ &nbsp;Who are you reading with?</div>
           <div class="partner-input-row">

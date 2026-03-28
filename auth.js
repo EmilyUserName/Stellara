@@ -405,8 +405,10 @@ async function loadProfile() {
   currentSolarReturnYear = data.solar_return_year || null;
   currentHasAstro        = data.has_astrocartography || false;
   document.body.classList.toggle('is-pro', currentSubscribed);
-  const hint = document.getElementById('upgradeHint');
-  if (hint) hint.style.display = currentSubscribed ? 'none' : 'block';
+  const upsell = document.getElementById('proUpsellCard');
+  const topics = document.getElementById('proTopicsCard');
+  if (upsell) upsell.style.display = currentSubscribed ? 'none' : 'block';
+  if (topics) topics.style.display = currentSubscribed ? 'block' : 'none';
   document.querySelectorAll('.is-pro-only').forEach(el => {
     el.style.display = currentSubscribed ? 'inline' : 'none';
   });
