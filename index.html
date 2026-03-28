@@ -260,10 +260,10 @@
             </div>
           </div>
         </div>
-        <button class="btn btn-natal" onclick="openNatalChart()" id="homeNatalBtn">✦ &nbsp;Natal Birth Chart <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">$19 one-time</span></button>
-        <button class="btn btn-solar" onclick="openSolarReturn()">✦ &nbsp;Solar Return <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">$29 / year</span></button>
-        <button class="btn btn-map" onclick="openAstroMap()">✦ &nbsp;Astrocartography <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">$9 one-time</span></button>
-        <button class="btn btn-bundle" onclick="openBundleModal()">✦ &nbsp;Full Access Bundle <span style="font-size:0.72rem;opacity:0.75;margin-left:6px;">Natal + Solar + Astro — $45</span></button>
+        <button class="btn btn-natal" onclick="openNatalChart()" id="homeNatalBtn">✦ &nbsp;Natal Birth Chart <span id="natalPrice" style="font-size:0.72rem;opacity:0.75;margin-left:6px;">$19 one-time</span></button>
+        <button class="btn btn-solar" onclick="openSolarReturn()" id="homeSolarBtn">✦ &nbsp;Solar Return <span id="solarPrice" style="font-size:0.72rem;opacity:0.75;margin-left:6px;">$29 / year</span></button>
+        <button class="btn btn-map" onclick="openAstroMap()" id="homeAstroBtn">✦ &nbsp;Astrocartography <span id="astroPrice" style="font-size:0.72rem;opacity:0.75;margin-left:6px;">$9 one-time</span></button>
+        <button class="btn btn-bundle" onclick="openBundleModal()" id="homeBundleBtn">✦ &nbsp;Full Access Bundle <span id="bundlePrice" style="font-size:0.72rem;opacity:0.75;margin-left:6px;">Natal + Solar + Astro — $45</span></button>
         <div class="error" id="homeErrorMsg"></div>
         <div style="text-align:center; margin-top:16px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
           <a href="#" class="edit-link" onclick="showForm(); return false;">Edit birth info</a>
@@ -482,8 +482,8 @@
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
         <div class="card-title" style="margin:0;"><span>☀</span> Solar Return <span id="solarReturnYearTitle"></span></div>
         <div style="display:flex;gap:12px;align-items:center;">
-          <button class="edit-link" onclick="window.print()" style="font-size:0.75rem;">⎙ Print / Save PDF</button>
-          <button class="edit-link" onclick="closeSolarReturn()" style="font-size:0.75rem;">← Home</button>
+          <button class="btn-solar-action" onclick="window.print()">⎙ Print / Save PDF</button>
+          <button class="btn-solar-action" onclick="closeSolarReturn()">← Home</button>
         </div>
       </div>
       <div id="solarLoading" style="text-align:center;padding:40px 0;">

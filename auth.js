@@ -413,6 +413,31 @@ async function loadProfile() {
     el.style.display = currentSubscribed ? 'inline' : 'none';
   });
 
+  // Update home buttons to reflect what user already owns
+  const hasAllBundle = currentHasNatal && currentHasAstro && currentSolarReturnYear;
+  if (currentHasNatal) {
+    const p = document.getElementById('natalPrice');
+    if (p) p.textContent = '✓ Unlocked';
+  }
+  if (parseInt(currentSolarReturnYear) === new Date().getFullYear()) {
+    const p = document.getElementById('solarPrice');
+    if (p) p.textContent = '✓ Unlocked';
+  }
+  if (currentHasAstro) {
+    const p = document.getElementById('astroPrice');
+    if (p) p.textContent = '✓ Unlocked';
+  }
+  if (hasAllBundle) {
+    const b = document.getElementById('homeBundleBtn');
+    if (b) b.style.display = 'none';
+  }
+  if (currentSubscribed) {
+    const upsell = document.getElementById('proUpsellCard');
+    const p = document.getElementById('bundlePrice');
+    if (p) p.textContent = '✓ Pro Active';
+    if (upsell) upsell.style.display = 'none';
+  }
+
   // Show upgrade prompt to users who haven't paid for anything
   const hasAnyPaid = currentSubscribed || currentHasNatal || currentHasAstro || currentSolarReturnYear;
   const upgradePrompt = document.getElementById('upgradePrompt');
