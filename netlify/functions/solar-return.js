@@ -79,28 +79,28 @@ ${ageContext}
 A Solar Return marks the Sun's return to its exact natal degree — a new personal year begins. The location where a person celebrates their birthday shifts the Solar Return chart, often dramatically. This is a comprehensive annual forecast — make it feel like a real reading, not a summary. Write 8 sections using the titles below exactly as written, each on its own line, followed by the text. No bullet points. No markdown. Plain paragraphs only. Every sentence should land.
 
 THE YEAR AHEAD
-The overarching theme and energy of ${name}'s ${year} Solar Return year. What chapter is beginning? What is the soul's curriculum — the central question or invitation this year is organized around? Be bold and specific. 3 paragraphs.
+The overarching theme and energy of ${name}'s ${year} Solar Return year. What chapter is beginning? What is the soul's curriculum this year? Be bold and specific. 2 paragraphs.
 
 THE SKY THIS YEAR
-The most significant planetary themes active in ${year} that shape ${name}'s Solar Return. What is the broader cosmic weather — the major outer planet energies, eclipses, or collective shifts — and how do they land personally for someone with ${name}'s chart? 2 paragraphs.
+The most significant planetary themes active in ${year} and how they land personally for someone with ${name}'s chart. 1–2 paragraphs.
 
 LOVE & RELATIONSHIPS
-The year's energy around connection, intimacy, and partnership. What patterns are up for ${name} in their closest bonds? What is being asked of them — to open more, to set a boundary, to attract something new, to release something old? 2 paragraphs.
+The year's energy around connection, intimacy, and partnership for ${name}. What is being asked of them? 1–2 paragraphs.
 
 WORK & PURPOSE
-What this year holds for ${name}'s career, creative work, vocation, and sense of direction. Where is the momentum? Where is the friction? What kind of work or contribution is this year built for? 2 paragraphs.
+What this year holds for ${name}'s career, creative work, and sense of direction. Where is the momentum, where is the friction? 1–2 paragraphs.
 
 MONEY & RESOURCES
-The year's energy around finances, security, and material life. Is this a year to invest, consolidate, expand, or simplify? What is ${name}'s relationship to abundance and stability being asked to become? 1–2 paragraphs.
+The year's energy around finances and material life. Is this a year to invest, consolidate, or simplify? 1 paragraph.
 
 BODY & WELLBEING
-What this Solar Return year asks of ${name} physically and energetically. What rhythms, practices, or areas of the body deserve attention? What does rest look like this year — and what does depletion look like if they ignore it? 1–2 paragraphs.
+What this year asks of ${name} physically and energetically. What rhythms or areas deserve attention? 1 paragraph.
 
 INNER WORK
-The psychological and spiritual territory this year is asking ${name} to move through. What pattern is ready to be seen? What shadow is surfacing? What gift is waiting on the other side of that work? 2 paragraphs.
+The psychological territory this year is asking ${name} to move through. What pattern is ready to be seen, and what awaits on the other side? 1–2 paragraphs.
 
 A WORD TO CARRY
-A closing reflection — 2 to 3 sentences ${name} can return to throughout the year. Something that captures the essence of what ${year} is asking of them. Make it true, specific, and lasting.
+A closing reflection — 2 sentences ${name} can return to throughout the year. Make it true, specific, and lasting.
 
 Be evocative, personal, and honest. Every sentence should earn its place.`;
 
@@ -113,7 +113,7 @@ Be evocative, personal, and honest. Every sentence should earn its place.`;
     },
     body: JSON.stringify({
       model:      'claude-sonnet-4-6',
-      max_tokens: 2800,
+      max_tokens: 1800,
       messages:   [{ role: 'user', content: prompt }],
     }),
   });

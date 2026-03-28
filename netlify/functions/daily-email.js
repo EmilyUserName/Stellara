@@ -28,6 +28,20 @@ exports.handler = async function (event) {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
 
+    // Diagnostic GET: returns raw Supabase subscriber query result
+    if (event.httpMethod === 'GET') {
+      const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&select=id,name,email,birth_date,birth_city,email_opt_out`;
+      const res = await fetch(url, {
+        headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` },
+      });
+      const data = await res.json();
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: res.status, urlUsed: url, rowCount: Array.isArray(data) ? data.length : 'not array', data }),
+      };
+    }
+
     // Manual test mode: POST with { testEmail: "you@example.com" }
     // Bypasses subscribed check so you can test with your own account
     if (event.httpMethod === 'POST') {
