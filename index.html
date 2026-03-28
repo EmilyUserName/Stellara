@@ -778,14 +778,14 @@
         b.className = 'star-big';
         const size = 8 + Math.floor(Math.random() * 8); // 8–15px
         const color = BIG_COLORS[Math.floor(Math.random() * BIG_COLORS.length)];
-        const glow = color.replace(',1)', ',0.35)');
+        const glow = color.replace(',1)', ',0.25)');
         b.style.cssText = [
           `left:${lp + (Math.random() * 3 - 1.5).toFixed(2)}%`,
           `top:${tp  + (Math.random() * 3 - 1.5).toFixed(2)}%`,
           `width:${size}px`,
           `height:${size}px`,
-          `background:${color}`,
-          `box-shadow:0 0 ${size * 4}px ${size * 2}px ${glow}`,
+          `background:radial-gradient(circle, ${color} 0%, ${color.replace(',1)', ',0.6)')} 15%, transparent 60%)`,
+          `box-shadow:0 0 ${size * 5}px ${size * 3}px ${glow}`,
           `animation-duration:${(6 + Math.random() * 8).toFixed(2)}s`,
           `animation-delay:${(Math.random() * 10).toFixed(2)}s`,
         ].join(';');

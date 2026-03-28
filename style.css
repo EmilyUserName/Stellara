@@ -509,49 +509,50 @@ select option { background: var(--navy-2); }
 /* Free daily horoscopes on landing page */
 .free-horoscopes {
   margin: 28px 0;
-  background: rgba(19,36,64,0.5);
-  border: 1px solid rgba(126,168,212,0.2);
-  border-radius: 16px;
-  padding: 22px 20px;
+  background: rgba(19,36,64,0.6);
+  border: 1px solid rgba(126,168,212,0.3);
+  border-radius: 20px;
+  padding: 36px 28px;
 }
 .free-horoscopes-label {
-  font-size: 0.68rem;
-  letter-spacing: 0.15em;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--accent);
-  font-weight: 600;
-  margin-bottom: 8px;
+  font-weight: 700;
+  margin-bottom: 10px;
   text-align: center;
 }
 .free-horoscopes-desc {
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   color: var(--silver);
-  opacity: 0.7;
+  opacity: 0.8;
   text-align: center;
-  margin-bottom: 18px;
-  line-height: 1.5;
+  margin-bottom: 28px;
+  line-height: 1.6;
 }
 .free-horoscopes-signs {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
   justify-content: center;
 }
 .sign-pill {
   background: rgba(6,13,31,0.6);
-  border: 1px solid rgba(126,168,212,0.2);
-  border-radius: 20px;
-  padding: 7px 14px;
-  font-size: 0.8rem;
+  border: 1px solid rgba(126,168,212,0.25);
+  border-radius: 24px;
+  padding: 11px 20px;
+  font-size: 0.95rem;
   color: var(--silver);
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s;
   -webkit-appearance: none;
   appearance: none;
+  font-weight: 500;
 }
-.sign-pill:hover  { border-color: rgba(126,168,212,0.5); color: var(--white); }
-.sign-pill.active { background: rgba(126,168,212,0.15); border-color: rgba(126,168,212,0.55); color: var(--white); }
+.sign-pill:hover  { border-color: rgba(126,168,212,0.6); color: var(--white); background: rgba(126,168,212,0.08); }
+.sign-pill.active { background: rgba(126,168,212,0.15); border-color: rgba(126,168,212,0.65); color: var(--white); }
 .free-horoscope-reading {
   margin-top: 20px;
   padding-top: 20px;
