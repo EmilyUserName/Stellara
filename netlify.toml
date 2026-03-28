@@ -6,7 +6,7 @@
 
 [functions."daily-email"]
   timeout = 120
-  schedule = "0 7 * * *"
+  schedule = "0 12 * * *"
 
 [functions."solar-return"]
   timeout = 30

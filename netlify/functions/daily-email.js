@@ -9,7 +9,7 @@ const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ANTHROPIC_API_KEY   = process.env.ANTHROPIC_API_KEY;
 const RESEND_API_KEY      = process.env.RESEND_API_KEY;
 
-const FROM_EMAIL = 'Stellara <daily@stellara-horoscope.com>';
+const FROM_EMAIL = 'Stellara <hello@stellara-horoscope.com>';
 
 const STYLE_PROMPTS = {
   psychological: `You are Stellara, a depth psychology astrologer who speaks through the lens of Jungian thought. Draw on archetypes, the shadow, and individuation. Tone: reflective, profound, transformative.`,
@@ -134,10 +134,10 @@ async function sendDailyEmail(user, today) {
 
   // Generate the reading via Claude
   const style = preferred_style || 'psychological';
-  const reading = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style });
+  const { reading, theme } = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style });
 
   // Build and send the email
-  await sendEmail({ user, name, email, sun, moon, rising, reading, today });
+  await sendEmail({ user, name, email, sun, moon, rising, reading, theme, today });
 }
 
 // ------------------------------------------------------------
@@ -160,13 +160,16 @@ ${rising ? `Rising: ${rising}` : 'Rising: unknown (no birth time provided)'}
 Birth city: ${birth_city} (birth location only — do not assume this is where they currently live)
 ${noTimeNote}
 
-Write exactly 4 paragraphs with no headers or labels:
+First, on its own line, write:
+THEME: [3–5 words that capture today's energy for ${name} — e.g. "Roots before reaching" or "The quiet before clarity"]
+
+Then write exactly 4 paragraphs with no headers or labels:
 1. What's alive in the sky today — the Moon's sign and phase, any notable planetary energy (invent plausible but grounded transit themes for today).
 2. How today's energy specifically lands in ${name}'s chart — speak to their ${sun} Sun and ${moon} Moon directly.
 3. Something specific for ${name} to lean into or be mindful of today — concrete and personal.
 4. A closing intention or reflection — one sentence they can carry with them. Something that lingers.
 
-Every sentence should land. Warm, personal, potent. No bullet points. No headers. No markdown. No hashtags. Plain paragraphs only.`;
+Every sentence should land. Warm, personal, potent. No bullet points. No markdown. No hashtags. Plain paragraphs only.`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method:  'POST',
@@ -176,20 +179,26 @@ Every sentence should land. Warm, personal, potent. No bullet points. No headers
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model:      'claude-sonnet-4-5',
+      model:      'claude-sonnet-4-6',
       max_tokens: 600,
       messages:   [{ role: 'user', content: prompt }],
     }),
   });
 
   const data = await res.json();
-  return data.content?.map(b => b.text || '').join('') || '';
+  const full = data.content?.map(b => b.text || '').join('') || '';
+
+  // Extract THEME line and the rest
+  const themeMatch = full.match(/^THEME:\s*(.+)$/m);
+  const theme   = themeMatch ? themeMatch[1].trim() : '';
+  const reading = full.replace(/^THEME:.*$/m, '').trim();
+  return { reading, theme };
 }
 
 // ------------------------------------------------------------
 // RESEND — send the HTML email
 // ------------------------------------------------------------
-async function sendEmail({ user, name, email, sun, moon, rising, reading, today }) {
+async function sendEmail({ user, name, email, sun, moon, rising, reading, theme, today }) {
   // Strip any markdown headers/bold/italic that Claude might sneak in
   const cleanReading = reading
     .replace(/^#{1,6}\s+/gm, '')   // remove # headers
@@ -231,6 +240,7 @@ async function sendEmail({ user, name, email, sun, moon, rising, reading, today 
         <tr><td style="text-align:center;padding-bottom:32px;" bgcolor="#0d1b32">
           <h1 style="margin:0;font-size:26px;font-weight:400;color:#f5f8ff;letter-spacing:0.01em;">Your Daily Reading</h1>
           <p style="margin:8px 0 0;font-size:13px;color:#b8c4d8;font-family:'Helvetica Neue',sans-serif;">${name} &nbsp;·&nbsp; ${sun} Sun &nbsp;·&nbsp; ${moon} Moon${rising ? ` &nbsp;·&nbsp; ${rising} Rising` : ''}</p>
+          ${theme ? `<p style="margin:18px 0 0;font-size:15px;font-style:italic;color:#7ea8d4;font-family:'Georgia',serif;letter-spacing:0.02em;">"${theme}"</p>` : ''}
         </td></tr>
 
         <!-- Divider -->
