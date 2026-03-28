@@ -534,6 +534,7 @@ select option { background: var(--navy-2); }
 .free-horoscopes-signs {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: auto;
   gap: 10px;
 }
 .sign-pill {
@@ -555,9 +556,9 @@ select option { background: var(--navy-2); }
 .sign-pill:hover  { border-color: rgba(126,168,212,0.6); color: var(--white); background: rgba(126,168,212,0.08); }
 .sign-pill.active { background: rgba(126,168,212,0.15); border-color: rgba(126,168,212,0.65); color: var(--white); }
 .sign-icon {
+  font-variant-emoji: text;
   color: #5bb8ff;
   text-shadow: 0 0 6px rgba(91,184,255,0.9), 0 0 14px rgba(91,184,255,0.5);
-  font-style: normal;
   display: inline-block;
 }
 .free-horoscope-reading {
