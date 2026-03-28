@@ -380,8 +380,20 @@ async function loadProfile() {
 
   const { data } = result;
 
-  if (!data || !data.name) {
-    // New user — show home with free horoscopes, prompt to set up chart
+  if (!data) {
+    // New user — create a minimal profile row so webhook upserts always work
+    await sb.from('profiles').upsert({
+      id:    currentUser.id,
+      email: currentUser.email,
+    });
+    const setupPrompt = document.getElementById('setupPrompt');
+    if (setupPrompt) setupPrompt.style.display = 'block';
+    showHome();
+    return;
+  }
+
+  if (!data.name) {
+    // Profile exists but no birth details yet
     const setupPrompt = document.getElementById('setupPrompt');
     if (setupPrompt) setupPrompt.style.display = 'block';
     showHome();
