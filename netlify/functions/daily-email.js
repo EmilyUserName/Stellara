@@ -110,12 +110,13 @@ async function getSubscribers() {
 async function sendDailyEmail(user, today) {
   const { name, email, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, preferred_style } = user;
 
-  // Calculate chart if signs aren't saved
+  // Sun and moon are stable — use saved values if present.
+  // Rising always recalculated fresh (sensitive to formula changes).
   let sun    = sun_sign;
   let moon   = moon_sign;
-  let rising = rising_sign;
+  let rising = null;
 
-  if (!sun || !moon || !rising) {
+  if (!sun || !moon || birth_time) {
     try {
       const chartRes = await fetch(`${process.env.URL}/.netlify/functions/calculate-chart`, {
         method:  'POST',
@@ -126,14 +127,12 @@ async function sendDailyEmail(user, today) {
         const chart = await chartRes.json();
         sun    = sun    || chart.sun;
         moon   = moon   || chart.moon;
-        rising = rising || chart.rising;
+        rising = chart.rising || null;
 
-        // Save calculated signs back to the profile so we never recalculate
-        // (and manual corrections made directly in Supabase are preserved on next run)
+        // Only cache sun/moon — never cache rising so formula fixes apply immediately
         const patch = {};
-        if (!sun_sign   && sun)    patch.sun_sign    = sun;
-        if (!moon_sign  && moon)   patch.moon_sign   = moon;
-        if (!rising_sign && rising) patch.rising_sign = rising;
+        if (!sun_sign  && sun)  patch.sun_sign  = sun;
+        if (!moon_sign && moon) patch.moon_sign = moon;
         if (Object.keys(patch).length) {
           fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
             method:  'PATCH',

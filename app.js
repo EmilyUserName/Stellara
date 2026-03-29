@@ -125,7 +125,7 @@ const TOPIC_CONFIG = {
     mode: 'chart',
     displayName: 'Birth Chart',
     section1Label: 'Your Cosmic Blueprint',
-    maxTokens: 1000,
+    maxTokens: 1200,
     prompt1: (name, sun, moon, rising) =>
       `Write ${name}'s full Natal Birth Chart reading. This is a paid, comprehensive reading — it should feel thorough, personal, and genuinely revelatory. Not a sun-sign horoscope. A real chart interpretation.
 
@@ -134,25 +134,25 @@ Sun: ${sun}
 Moon: ${moon}
 ${rising ? `Rising: ${rising}` : 'Rising: unknown (no birth time provided)'}
 
-Write exactly 6 sections using the titles below, each on its own line in ALL CAPS, followed immediately by the reading text. No bullet points. No markdown. Plain paragraphs only. Every sentence should earn its place.
+Write exactly 6 sections using the titles below, each on its own line in ALL CAPS, followed immediately by the reading text. No bullet points. No markdown. Plain paragraphs only. Write rich, substantial paragraphs — each should feel complete and meaningful.
 
 CORE IDENTITY
-Who is ${name} at their essence? Synthesize the Sun${rising ? ', Rising' : ''}, and Moon into a coherent portrait of their character — how they move through the world, what drives them at their core, how they experience themselves. 2–3 paragraphs.
+Who is ${name} at their essence? Synthesize the Sun${rising ? ', Rising' : ''}, and Moon into a coherent portrait of their character — how they move through the world, what drives them, how they experience themselves. 2 paragraphs.
 
 EMOTIONAL WORLD
-${name}'s inner life, instincts, and emotional needs as revealed by their ${moon} Moon. How do they process feeling? What makes them feel safe, nourished, and at home? What does their inner world actually look like — the private self almost no one sees? 2 paragraphs.
+${name}'s inner life and emotional needs revealed by their ${moon} Moon. How do they process feeling? What makes them feel safe and nourished? What does their inner world look like — the private self almost no one sees? 2 paragraphs.
 
 LOVE & RELATIONSHIPS
-What does ${name} bring to love, and what do they need in return? How does their chart shape their relational style — the way they attach, the patterns they fall into, what they're drawn to and why? Be honest and specific. 2 paragraphs.
+What does ${name} bring to love and what do they need in return? How does their chart shape their relational style, attachment patterns, and what they're drawn to? 2 paragraphs.
 
 WORK & PURPOSE
-What does ${name}'s chart reveal about their vocation, creative drive, and sense of purpose? Where do they thrive? What kind of work lights them up? What are they here to build or contribute? 2 paragraphs.
+What does ${name}'s chart reveal about their vocation and sense of purpose? Where do they thrive? What kind of work lights them up and what are they here to build? 2 paragraphs.
 
 GIFTS & EDGES
-What are ${name}'s greatest strengths — the qualities written into their chart that are genuinely exceptional? And what are the edges — the patterns or tendencies that might hold them back if left unconscious? Be direct and compassionate. 2 paragraphs.
+${name}'s greatest chart strengths — genuinely exceptional qualities. And the edges — patterns that might hold them back if left unconscious. Direct and compassionate. 2 paragraphs.
 
 A WORD TO CARRY
-A closing reflection — 2 to 3 sentences ${name} can return to. Something that captures the essence of what their chart is asking of them in this life. Make it land.`,
+A closing reflection of 2–3 sentences ${name} can return to. The essence of what their chart asks of them in this life. Make it land.`,
   },
   birthday: {
     mode: 'chart',
@@ -479,6 +479,9 @@ Be concise and potent — every sentence should land. No filler. No bullet point
     // --- 10. Fill in the reading text ---
     document.getElementById('resultName').textContent   = name + "'s";
     document.getElementById('resultTopic').textContent  = topic.displayName;
+    const styleLabels = { psychological: 'Psychological', spiritual: 'Spiritual', modern: 'Modern & Direct', classical: 'Classical' };
+    const styleBadge = document.getElementById('resultStyle');
+    if (styleBadge) styleBadge.textContent = styleLabels[selectedStyle] ? '· ' + styleLabels[selectedStyle] : '';
     document.getElementById('todayDate').textContent    = today;
 
     const chartSection = document.getElementById('chartSection');
@@ -952,7 +955,7 @@ async function selectSign(sign, target) {
   loadingEl.style.display = 'none';
   if (!_freeHoroscopes?.[sign]) return;
 
-  nameEl.textContent      = `${SIGN_SYMBOLS[sign]} ${SIGN_NAMES[sign]}`;
+  nameEl.innerHTML        = `<span class="sign-icon">${SIGN_SYMBOLS[sign]}</span> ${SIGN_NAMES[sign]}`;
   textEl.textContent      = _freeHoroscopes[sign];
   readingEl.style.display = 'block';
 }
