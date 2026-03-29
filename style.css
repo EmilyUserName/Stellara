@@ -145,10 +145,10 @@ body {
   animation: bigStarPulse ease-in-out infinite;
 }
 @keyframes bigStarPulse {
-  0%   { opacity: 0;   transform: scale(0.2); }
-  25%  { opacity: 0.9; transform: scale(1);   }
-  65%  { opacity: 0.9; transform: scale(1);   }
-  100% { opacity: 0;   transform: scale(0.2); }
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 

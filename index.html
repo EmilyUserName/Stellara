@@ -20,7 +20,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <!-- All styling lives in style.css -->
-  <link rel="stylesheet" href="style.css?v=15" />
+  <link rel="stylesheet" href="style.css?v=16" />
 
   <!-- Leaflet (astrocartography map) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -834,18 +834,17 @@
       BIG_STARS.forEach(([lp, tp]) => {
         const b = document.createElement('div');
         b.className = 'star-big';
-        const size = 8 + Math.floor(Math.random() * 8); // 8–15px
+        const size = 2 + Math.random() * 2; // 2–4px pinpoint
         const color = BIG_COLORS[Math.floor(Math.random() * BIG_COLORS.length)];
-        const glow = color.replace(',1)', ',0.25)');
         b.style.cssText = [
           `left:${lp + (Math.random() * 3 - 1.5).toFixed(2)}%`,
           `top:${tp  + (Math.random() * 3 - 1.5).toFixed(2)}%`,
-          `width:${size}px`,
-          `height:${size}px`,
-          `background:radial-gradient(circle, ${color} 0%, ${color.replace(',1)', ',0.6)')} 15%, transparent 60%)`,
-          `box-shadow:0 0 ${size * 5}px ${size * 3}px ${glow}`,
-          `animation-duration:${(6 + Math.random() * 8).toFixed(2)}s`,
-          `animation-delay:${(Math.random() * 10).toFixed(2)}s`,
+          `width:${size.toFixed(1)}px`,
+          `height:${size.toFixed(1)}px`,
+          `background:${color}`,
+          `box-shadow:0 0 3px 1px ${color.replace(',1)', ',0.4)')}`,
+          `animation-duration:${(5 + Math.random() * 7).toFixed(2)}s`,
+          `animation-delay:${(Math.random() * 12).toFixed(2)}s`,
         ].join(';');
         starfield.appendChild(b);
       });
