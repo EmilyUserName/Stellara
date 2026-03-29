@@ -20,7 +20,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <!-- All styling lives in style.css -->
-  <link rel="stylesheet" href="style.css?v=8" />
+  <link rel="stylesheet" href="style.css?v=15" />
 
   <!-- Leaflet (astrocartography map) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -226,44 +226,48 @@
 
         <!-- Shown to Pro users -->
         <div id="proTopicsCard" style="display:none;">
-          <div class="style-selector">
-            <label><span class="flow-step">1</span> Choose your reading style</label>
-            <div class="style-cards">
-              <button class="style-card active" data-style="psychological" onclick="selectStyle(this)">
-                <div class="style-card-name">Psychological</div>
-                <div class="style-card-desc">Jungian depth, archetypes, shadow work</div>
-              </button>
-              <button class="style-card" data-style="spiritual" onclick="selectStyle(this)">
-                <div class="style-card-name">Spiritual</div>
-                <div class="style-card-desc">Soul-centered, mystical, cosmic connection</div>
-              </button>
-              <button class="style-card" data-style="modern" onclick="selectStyle(this)">
-                <div class="style-card-name">Modern & Direct</div>
-                <div class="style-card-desc">Clear, grounded, practical insights</div>
-              </button>
-              <button class="style-card" data-style="classical" onclick="selectStyle(this)">
-                <div class="style-card-name">Classical</div>
-                <div class="style-card-desc">Traditional astrology, mythological planets</div>
-              </button>
+          <div class="reading-config-box">
+            <div class="style-selector">
+              <label><span class="flow-step">1</span> Choose your reading style</label>
+              <div class="style-cards">
+                <button class="style-card active" data-style="psychological" onclick="selectStyle(this)">
+                  <div class="style-card-name">Psychological</div>
+                  <div class="style-card-desc">Jungian depth, archetypes, shadow work</div>
+                </button>
+                <button class="style-card" data-style="spiritual" onclick="selectStyle(this)">
+                  <div class="style-card-name">Spiritual</div>
+                  <div class="style-card-desc">Soul-centered, mystical, cosmic connection</div>
+                </button>
+                <button class="style-card" data-style="modern" onclick="selectStyle(this)">
+                  <div class="style-card-name">Modern & Direct</div>
+                  <div class="style-card-desc">Clear, grounded, practical insights</div>
+                </button>
+                <button class="style-card" data-style="classical" onclick="selectStyle(this)">
+                  <div class="style-card-name">Classical</div>
+                  <div class="style-card-desc">Traditional astrology, mythological planets</div>
+                </button>
+              </div>
             </div>
           </div>
-          <label style="display:block; margin-bottom:10px; margin-top:20px;"><span class="flow-step">2</span> What would you like to explore?</label>
-          <div class="topic-pills home-topic-pills">
-            <button class="topic-pill topic-pill-featured active" data-topic="daily" onclick="selectTopic(this)">Today's Sky</button>
-            <button class="topic-pill" data-topic="love"          onclick="selectTopic(this)">Love</button>
-            <button class="topic-pill" data-topic="career"        onclick="selectTopic(this)">Career</button>
-            <button class="topic-pill" data-topic="finances"      onclick="selectTopic(this)">Finances</button>
-            <button class="topic-pill" data-topic="health"        onclick="selectTopic(this)">Health</button>
-            <button class="topic-pill" data-topic="thisMonth"     onclick="selectTopic(this)">This Month</button>
-            <button class="topic-pill" data-topic="communication" onclick="selectTopic(this)">Communication</button>
-            <button class="topic-pill" data-topic="innerWorld"    onclick="selectTopic(this)">Inner World</button>
-            <button class="topic-pill" data-topic="energy"        onclick="selectTopic(this)">Energy & Timing</button>
-            <button class="topic-pill" data-topic="travel"        onclick="selectTopic(this)">Travel</button>
-            <button class="topic-pill" data-topic="spiritual"     onclick="selectTopic(this)">Spiritual Path</button>
-            <button class="topic-pill" data-topic="compatibility" onclick="selectTopic(this)">Compatibility</button>
-            <button class="topic-pill" data-topic="shadow"        onclick="selectTopic(this)">Shadow Work</button>
+          <div class="reading-config-box" style="margin-top:12px;">
+            <label style="display:block; margin-bottom:10px;"><span class="flow-step">2</span> What would you like to explore?</label>
+            <div class="topic-pills home-topic-pills">
+              <button class="topic-pill topic-pill-featured active" data-topic="daily" onclick="selectTopic(this)">Today's Sky</button>
+              <button class="topic-pill" data-topic="love"          onclick="selectTopic(this)">Love</button>
+              <button class="topic-pill" data-topic="career"        onclick="selectTopic(this)">Career</button>
+              <button class="topic-pill" data-topic="finances"      onclick="selectTopic(this)">Finances</button>
+              <button class="topic-pill" data-topic="health"        onclick="selectTopic(this)">Health</button>
+              <button class="topic-pill" data-topic="thisMonth"     onclick="selectTopic(this)">This Month</button>
+              <button class="topic-pill" data-topic="communication" onclick="selectTopic(this)">Communication</button>
+              <button class="topic-pill" data-topic="innerWorld"    onclick="selectTopic(this)">Inner World</button>
+              <button class="topic-pill" data-topic="energy"        onclick="selectTopic(this)">Energy & Timing</button>
+              <button class="topic-pill" data-topic="travel"        onclick="selectTopic(this)">Travel</button>
+              <button class="topic-pill" data-topic="spiritual"     onclick="selectTopic(this)">Spiritual Path</button>
+              <button class="topic-pill" data-topic="compatibility" onclick="selectTopic(this)">Compatibility</button>
+              <button class="topic-pill" data-topic="shadow"        onclick="selectTopic(this)">Shadow Work</button>
+            </div>
           </div>
-          <button class="btn" onclick="reveal()">✦ &nbsp;Reveal My Reading</button>
+          <button class="btn btn-reveal" onclick="reveal()">✦ &nbsp;Reveal My Reading</button>
         </div>
         <div id="upgradeHint" style="display:none;"></div>
         <div class="partner-input" id="partnerInputHome" style="display:none;">
@@ -465,7 +469,7 @@
          ===================================================== -->
     <div class="results card" id="results" style="margin-top:24px;">
 
-      <div class="card-title"><span>✦</span> <span id="resultName"></span> <span id="resultTopic">Birth Chart</span></div>
+      <div class="card-title"><span>✦</span> <span id="resultName"></span> <span id="resultTopic">Birth Chart</span><span class="result-style-badge" id="resultStyle"></span></div>
 
       <!-- Sun / Moon / Rising placement cards -->
       <div class="placements" id="placements"></div>
@@ -488,10 +492,10 @@
         <div class="insight-text" id="transitReading"></div>
       </div>
 
-      <div style="text-align:center; margin-top:28px;">
+      <div class="reading-actions">
         <button class="reset-btn" onclick="goHome()">← Home</button>
         <button class="share-btn" onclick="shareStellara()">Share Stellara ✦</button>
-        <button class="btn-solar-action" id="emailChartBtn" onclick="emailReading('chart')" style="margin-top:12px;display:block;width:fit-content;margin-left:auto;margin-right:auto;">✉ Email this reading</button>
+        <button class="btn-solar-action" id="emailChartBtn" onclick="emailReading('chart')">✉ Email this reading</button>
       </div>
 
     </div>
@@ -534,10 +538,10 @@
     <div class="card" style="margin-top:0;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
         <div class="card-title" style="margin:0;"><span>☀</span> Solar Return <span id="solarReturnYearTitle"></span></div>
-        <div style="display:flex;gap:12px;align-items:center;">
-          <button class="btn-solar-action" id="emailSolarBtn" onclick="emailReading('solar')">✉ Email this reading</button>
-          <button class="btn-solar-action" onclick="window.print()">⎙ Print / Save PDF</button>
+        <div class="solar-header-actions">
           <button class="btn-solar-action" onclick="closeSolarReturn()">← Home</button>
+          <button class="btn-solar-action" onclick="window.print()">⎙ Print / Save PDF</button>
+          <button class="btn-solar-action" id="emailSolarBtn" onclick="emailReading('solar')">✉ Email this reading</button>
         </div>
       </div>
       <div id="solarLoading" style="text-align:center;padding:40px 0;">
@@ -787,7 +791,7 @@
 
   <script src="astrology.js"></script>
   <script src="auth.js?v=8"></script>
-  <script src="app.js?v=11"></script>
+  <script src="app.js?v=12"></script>
   <script src="astrocartography.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
