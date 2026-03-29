@@ -14,7 +14,7 @@
    Change these variables and they update everywhere at once!
    ------------------------------------------------------------ */
 :root {
-  --navy:         #0d1b32;   /* darkest background */
+  --navy:         #163463;   /* darkest background */
   --navy-2:       #132440;   /* card backgrounds */
   --navy-3:       #192e50;   /* slightly lighter navy */
   --silver:       #d8e2f0;   /* muted text — bumped up */
