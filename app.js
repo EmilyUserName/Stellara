@@ -910,8 +910,8 @@ const SIGN_NAMES = {
 };
 
 const SIGN_SYMBOLS = {
-  aries: '♈', taurus: '♉', gemini: '♊', cancer: '♋', leo: '♌', virgo: '♍',
-  libra: '♎', scorpio: '♏', sagittarius: '♐', capricorn: '♑', aquarius: '♒', pisces: '♓',
+  aries: '♈\uFE0E', taurus: '♉\uFE0E', gemini: '♊\uFE0E', cancer: '♋\uFE0E', leo: '♌\uFE0E', virgo: '♍\uFE0E',
+  libra: '♎\uFE0E', scorpio: '♏\uFE0E', sagittarius: '♐\uFE0E', capricorn: '♑\uFE0E', aquarius: '♒\uFE0E', pisces: '♓\uFE0E',
 };
 
 document.addEventListener('DOMContentLoaded', () => {

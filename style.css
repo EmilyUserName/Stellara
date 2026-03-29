@@ -542,7 +542,7 @@ select option { background: var(--navy-2); }
 }
 @media (max-width: 500px) {
   .free-horoscopes-signs {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 .sign-pill {
