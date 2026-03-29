@@ -1021,6 +1021,9 @@ function submitSolarSetup() {
 
 function loadSolarReturn(year, location) {
   document.getElementById('solarReturnYearTitle').textContent = year;
+  const styleLabels = { psychological: 'Psychological', spiritual: 'Spiritual', modern: 'Modern & Direct', classical: 'Classical' };
+  const solarStyleBadge = document.getElementById('solarReturnStyle');
+  if (solarStyleBadge) solarStyleBadge.textContent = styleLabels[selectedStyle] ? '· ' + styleLabels[selectedStyle] : '';
   document.querySelector('.container').style.display = 'none';
   document.getElementById('solarSection').style.display = 'block';
   document.getElementById('solarLoading').style.display = 'block';
