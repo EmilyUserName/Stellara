@@ -125,34 +125,28 @@ const TOPIC_CONFIG = {
     mode: 'chart',
     displayName: 'Birth Chart',
     section1Label: 'Your Cosmic Blueprint',
-    maxTokens: 1200,
+    maxTokens: 1000,
     prompt1: (name, sun, moon, rising) =>
-      `Write ${name}'s full Natal Birth Chart reading. This is a paid, comprehensive reading — it should feel thorough, personal, and genuinely revelatory. Not a sun-sign horoscope. A real chart interpretation.
+      `Write ${name}'s Natal Birth Chart reading. This is a paid reading — make it feel personal, revealing, and genuinely useful. Not a generic horoscope.
 
 ${name}'s placements:
 Sun: ${sun}
 Moon: ${moon}
 ${rising ? `Rising: ${rising}` : 'Rising: unknown (no birth time provided)'}
 
-Write exactly 6 sections using the titles below, each on its own line in ALL CAPS, followed immediately by the reading text. No bullet points. No markdown. Plain paragraphs only. Write rich, substantial paragraphs — each should feel complete and meaningful.
+Write exactly 4 sections, each title on its own line in ALL CAPS, followed immediately by the text. No bullet points. No markdown. Plain paragraphs only. Every sentence should earn its place.
 
 CORE IDENTITY
-Who is ${name} at their essence? Synthesize the Sun${rising ? ', Rising' : ''}, and Moon into a coherent portrait of their character — how they move through the world, what drives them, how they experience themselves. 2 paragraphs.
+Who is ${name} at their essence? Synthesize the Sun${rising ? ', Rising' : ''}, and Moon into a portrait of their character — how they move through the world, what drives them. 2 paragraphs.
 
-EMOTIONAL WORLD
-${name}'s inner life and emotional needs revealed by their ${moon} Moon. How do they process feeling? What makes them feel safe and nourished? What does their inner world look like — the private self almost no one sees? 2 paragraphs.
-
-LOVE & RELATIONSHIPS
-What does ${name} bring to love and what do they need in return? How does their chart shape their relational style, attachment patterns, and what they're drawn to? 2 paragraphs.
+INNER LIFE & LOVE
+${name}'s emotional world (${moon} Moon) and what they bring to relationships — how they attach, what they need, what draws them. 1 paragraph each.
 
 WORK & PURPOSE
-What does ${name}'s chart reveal about their vocation and sense of purpose? Where do they thrive? What kind of work lights them up and what are they here to build? 2 paragraphs.
-
-GIFTS & EDGES
-${name}'s greatest chart strengths — genuinely exceptional qualities. And the edges — patterns that might hold them back if left unconscious. Direct and compassionate. 2 paragraphs.
+What ${name}'s chart reveals about vocation, creative drive, and direction. Where they thrive and what they're here to build. 1 paragraph.
 
 A WORD TO CARRY
-A closing reflection of 2–3 sentences ${name} can return to. The essence of what their chart asks of them in this life. Make it land.`,
+2 sentences ${name} can return to. The essence of what their chart asks of them. Make it land.`,
   },
   birthday: {
     mode: 'chart',
@@ -494,7 +488,7 @@ Be concise and potent — every sentence should land. No filler. No bullet point
       divider.style.display   = 'none';
       todayCard.style.display = 'none';
 
-      const CHART_SECTIONS = ['CORE IDENTITY', 'EMOTIONAL WORLD', 'LOVE & RELATIONSHIPS', 'WORK & PURPOSE', 'GIFTS & EDGES', 'A WORD TO CARRY'];
+      const CHART_SECTIONS = ['CORE IDENTITY', 'INNER LIFE & LOVE', 'WORK & PURPOSE', 'A WORD TO CARRY'];
       const readingEl = document.getElementById('chartReading');
 
       // Try to parse sections; fall back to plain text if format is unexpected
