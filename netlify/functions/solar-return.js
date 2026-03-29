@@ -66,7 +66,7 @@ async function generateReading(profile, year, returnLocation) {
 
   const prompt = `${style}
 
-You are writing ${name}'s Solar Return reading for ${year} — their annual cosmic forecast for the year ahead, beginning at their birthday.
+You are writing ${name}'s Solar Return reading for ${year} — their personal forecast for the year ahead, beginning at their birthday.
 
 ${name}'s natal chart:
 Sun: ${sun_sign}
@@ -76,33 +76,22 @@ Birth city: ${birth_city || 'unknown'}
 ${locationLine}
 ${ageContext}
 
-A Solar Return marks the Sun's return to its exact natal degree — a new personal year begins. The location where a person celebrates their birthday shifts the Solar Return chart, often dramatically. This is a comprehensive annual forecast — make it feel like a real reading, not a summary. Write 8 sections using the titles below exactly as written, each on its own line, followed by the text. No bullet points. No markdown. Plain paragraphs only. Every sentence should land.
+Write exactly 5 sections using the titles below, each title on its own line in ALL CAPS, followed immediately by the text. No bullet points. No markdown. Plain paragraphs only. Be potent and specific — every sentence should earn its place.
 
 THE YEAR AHEAD
-The overarching theme and energy of ${name}'s ${year} Solar Return year. What chapter is beginning? What is the soul's curriculum this year? Be bold and specific. 2 paragraphs.
+The overarching theme of ${name}'s ${year} Solar Return. What chapter is opening? What is the soul's curriculum? Be bold. 2 paragraphs.
 
 THE SKY THIS YEAR
-The most significant planetary themes active in ${year} and how they land personally for someone with ${name}'s chart. 1–2 paragraphs.
+The key planetary energy of ${year} and how it lands in ${name}'s chart specifically. 1 paragraph.
 
-LOVE & RELATIONSHIPS
-The year's energy around connection, intimacy, and partnership for ${name}. What is being asked of them? 1–2 paragraphs.
-
-WORK & PURPOSE
-What this year holds for ${name}'s career, creative work, and sense of direction. Where is the momentum, where is the friction? 1–2 paragraphs.
-
-MONEY & RESOURCES
-The year's energy around finances and material life. Is this a year to invest, consolidate, or simplify? 1 paragraph.
-
-BODY & WELLBEING
-What this year asks of ${name} physically and energetically. What rhythms or areas deserve attention? 1 paragraph.
+LOVE & WORK
+What ${year} holds for ${name} in relationships and in their career or creative work. Where is momentum, where is friction? 1 paragraph each — write them as two distinct paragraphs without sub-headers.
 
 INNER WORK
-The psychological territory this year is asking ${name} to move through. What pattern is ready to be seen, and what awaits on the other side? 1–2 paragraphs.
+The psychological territory this year is asking ${name} to move through. What pattern is ready to be seen? 1 paragraph.
 
 A WORD TO CARRY
-A closing reflection — 2 sentences ${name} can return to throughout the year. Make it true, specific, and lasting.
-
-Be evocative, personal, and honest. Every sentence should earn its place.`;
+A closing reflection of 2 sentences ${name} can return to all year. Make it true, specific, and lasting.`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method:  'POST',
@@ -113,7 +102,7 @@ Be evocative, personal, and honest. Every sentence should earn its place.`;
     },
     body: JSON.stringify({
       model:      'claude-sonnet-4-6',
-      max_tokens: 1200,
+      max_tokens: 1000,
       messages:   [{ role: 'user', content: prompt }],
     }),
   });
