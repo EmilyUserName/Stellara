@@ -44,10 +44,10 @@ exports.handler = async function (event) {
 
     // Manual test mode: POST with { testEmail: "you@example.com" }
     // Bypasses subscribed check so you can test with your own account
-    if (event.httpMethod === 'POST') {
-      const body = JSON.parse(event.body || '{}');
-      const emails = body.testEmails || (body.testEmail ? [body.testEmail] : null);
-      if (!emails) return { statusCode: 400, body: 'testEmail or testEmails required' };
+    // Note: Netlify scheduler fires as POST with {next_run:...} — only enter test mode if testEmail/testEmails present
+    const postBody = JSON.parse(event.body || '{}');
+    if (event.httpMethod === 'POST' && (postBody.testEmail || postBody.testEmails)) {
+      const emails = postBody.testEmails || [postBody.testEmail];
 
       const results = await Promise.allSettled(emails.map(async (testEmail) => {
         const res  = await fetch(
