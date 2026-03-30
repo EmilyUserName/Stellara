@@ -20,13 +20,15 @@ const STYLE_PROMPTS = {
 
 // ------------------------------------------------------------
 // ENTRY POINT
-// Runs on cron schedule, OR accepts POST with { testEmail } for manual testing.
 // ------------------------------------------------------------
 exports.handler = async function (event) {
   try {
-    const today = new Date().toLocaleDateString('en-US', {
+    const now   = new Date();
+    const today = now.toLocaleDateString('en-US', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
+    // ISO date string YYYY-MM-DD for idempotency check
+    const todayISO = now.toISOString().slice(0, 10);
 
     // Diagnostic GET: returns raw Supabase subscriber query result
     if (event.httpMethod === 'GET') {
@@ -43,11 +45,13 @@ exports.handler = async function (event) {
     }
 
     // Manual test mode: POST with { testEmail: "you@example.com" }
-    // Bypasses subscribed check so you can test with your own account
-    // Note: Netlify scheduler fires as POST with {next_run:...} — only enter test mode if testEmail/testEmails present
+    // Note: Netlify scheduler also fires as POST with {next_run:...} — only enter test mode if testEmail/testEmails present
     const postBody = JSON.parse(event.body || '{}');
     if (event.httpMethod === 'POST' && (postBody.testEmail || postBody.testEmails)) {
       const emails = postBody.testEmails || [postBody.testEmail];
+
+      // Calculate today's real sky for test sends too
+      const skyToday = await getTodaySky();
 
       const results = await Promise.allSettled(emails.map(async (testEmail) => {
         const res  = await fetch(
@@ -58,18 +62,19 @@ exports.handler = async function (event) {
         if (!Array.isArray(data)) return { email: testEmail, error: JSON.stringify(data) };
         const [user] = data;
         if (!user) return { email: testEmail, error: 'no profile found' };
-        await sendDailyEmail(user, today);
+        await sendDailyEmail(user, today, todayISO, skyToday, /* skipIdempotency */ true);
         return { email: testEmail, sent: true };
       }));
       return { statusCode: 200, body: JSON.stringify(results.map(r => r.value ?? { error: r.reason?.message })) };
     }
 
-    // Scheduled run — send to all Pro subscribers
-    const subscribers = await getSubscribers();
-    console.log(`[daily-email] Sending to ${subscribers.length} subscribers`);
+    // Scheduled run — calculate today's real sky once, then send to all eligible subscribers
+    const skyToday    = await getTodaySky();
+    const subscribers = await getSubscribers(todayISO);
+    console.log(`[daily-email] Sending to ${subscribers.length} subscribers (sky: Moon in ${skyToday.moon})`);
 
     const results = await Promise.allSettled(
-      subscribers.map(user => sendDailyEmail(user, today))
+      subscribers.map(user => sendDailyEmail(user, today, todayISO, skyToday, false))
     );
 
     const sent   = results.filter(r => r.status === 'fulfilled').length;
@@ -84,30 +89,60 @@ exports.handler = async function (event) {
 };
 
 // ------------------------------------------------------------
-// FETCH PRO SUBSCRIBERS WITH SAVED BIRTH INFO
+// CALCULATE TODAY'S REAL SKY (moon sign + sun sign)
+// Called once per run so all readings share the same accurate sky.
 // ------------------------------------------------------------
-async function getSubscribers() {
+async function getTodaySky() {
+  try {
+    const now      = new Date();
+    const birthDate = now.toISOString().slice(0, 10);
+    const birthTime = `${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')}`;
+
+    const res = await fetch(`${process.env.URL}/.netlify/functions/calculate-chart`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ birthDate, birthTime, birthCity: 'New York, New York, United States' }),
+    });
+    if (!res.ok) return {};
+    const chart = await res.json();
+    return { moon: chart.moon || null, sun: chart.sun || null };
+  } catch (_) {
+    return {};
+  }
+}
+
+// ------------------------------------------------------------
+// FETCH PRO SUBSCRIBERS — skip anyone already emailed today
+// ------------------------------------------------------------
+async function getSubscribers(todayISO) {
   console.log('[daily-email] SUPABASE_URL set:', !!SUPABASE_URL);
   console.log('[daily-email] SUPABASE_SERVICE_KEY set:', !!SUPABASE_SERVICE_KEY);
-  const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`;
+  const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out,last_email_date`;
   console.log('[daily-email] fetching:', url);
   const res = await fetch(url, {
-      headers: {
-        'apikey': SUPABASE_SERVICE_KEY,
-        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-      },
-    }
-  );
+    headers: {
+      'apikey':        SUPABASE_SERVICE_KEY,
+      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+    },
+  });
   console.log('[daily-email] Supabase status:', res.status);
   const data = await res.json();
   console.log('[daily-email] raw response:', JSON.stringify(data).slice(0, 200));
-  return Array.isArray(data) ? data.filter(u => u.email && !u.email_opt_out && u.name && u.birth_date && u.birth_city) : [];
+  if (!Array.isArray(data)) return [];
+  return data.filter(u =>
+    u.email &&
+    !u.email_opt_out &&
+    u.name &&
+    u.birth_date &&
+    u.birth_city &&
+    u.last_email_date !== todayISO   // skip if already sent today
+  );
 }
 
 // ------------------------------------------------------------
 // GENERATE + SEND ONE EMAIL
 // ------------------------------------------------------------
-async function sendDailyEmail(user, today) {
+async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) {
   const { name, email, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, preferred_style } = user;
 
   // Sun and moon are stable — use saved values if present.
@@ -151,20 +186,38 @@ async function sendDailyEmail(user, today) {
 
   // Generate the reading via Claude
   const style = preferred_style || 'psychological';
-  const { reading, theme } = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style });
+  const { reading, theme } = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday });
 
-  // Build and send the email
+  // Send the email
   await sendEmail({ user, name, email, sun, moon, rising, reading, theme, today });
+
+  // Mark as sent today (idempotency) — fire and forget
+  if (!skipIdempotency) {
+    fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
+      method:  'PATCH',
+      headers: {
+        'Content-Type':  'application/json',
+        'apikey':         SUPABASE_SERVICE_KEY,
+        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'Prefer':        'return=minimal',
+      },
+      body: JSON.stringify({ last_email_date: todayISO }),
+    }).catch(() => {});
+  }
 }
 
 // ------------------------------------------------------------
 // CLAUDE — generate the personalized daily reading
 // ------------------------------------------------------------
-async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style }) {
+async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday }) {
   const systemPrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.psychological;
   const noTimeNote = !birth_time
     ? `Note: ${name} did not provide a birth time so their Rising sign is unknown — acknowledge this briefly and naturally.`
     : '';
+
+  const moonLine = skyToday?.moon
+    ? `Today's Moon is in ${skyToday.moon} (calculated from real astronomical data — use this exactly).`
+    : `Describe a plausible Moon sign and phase for today.`;
 
   const prompt = `${systemPrompt}
 
@@ -177,11 +230,14 @@ ${rising ? `Rising: ${rising}` : 'Rising: unknown (no birth time provided)'}
 Birth city: ${birth_city} (birth location only — do not assume this is where they currently live)
 ${noTimeNote}
 
+Today's sky (accurate — do not change or contradict):
+${moonLine}
+
 First, on its own line, write:
 THEME: [3–5 words that capture today's energy for ${name} — e.g. "Roots before reaching" or "The quiet before clarity"]
 
 Then write exactly 4 paragraphs with no headers or labels:
-1. What's alive in the sky today — the Moon's sign and phase, any notable planetary energy (invent plausible but grounded transit themes for today).
+1. What's alive in the sky today — use the Moon's sign above accurately, and add any notable planetary energy (invent plausible but grounded transit themes for other planets).
 2. How today's energy specifically lands in ${name}'s chart — speak to their ${sun} Sun and ${moon} Moon directly.
 3. Something specific for ${name} to lean into or be mindful of today — concrete and personal.
 4. A closing intention or reflection — one sentence they can carry with them. Something that lingers.
