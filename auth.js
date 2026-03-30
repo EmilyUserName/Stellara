@@ -407,8 +407,10 @@ async function loadProfile() {
   document.body.classList.toggle('is-pro', currentSubscribed);
   const upsell = document.getElementById('proUpsellCard');
   const topics = document.getElementById('proTopicsCard');
+  const freeSection = document.getElementById('freeHoroscopesHome');
   if (upsell) upsell.style.display = currentSubscribed ? 'none' : 'block';
   if (topics) topics.style.display = currentSubscribed ? 'block' : 'none';
+  if (freeSection) freeSection.style.display = currentSubscribed ? 'none' : 'block';
   document.querySelectorAll('.is-pro-only').forEach(el => {
     el.style.display = currentSubscribed ? 'inline' : 'none';
   });
