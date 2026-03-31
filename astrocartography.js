@@ -42,6 +42,7 @@ function openAstroMap() {
 }
 
 function closeAstroMap() {
+  if (typeof setActiveNav === 'function') setActiveNav('home');
   closePanelImmediate();
   document.getElementById('astroSection').style.display  = 'none';
   document.querySelector('.container').style.display     = 'block';

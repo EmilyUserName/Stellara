@@ -547,6 +547,7 @@ Be concise and potent — every sentence should land. No filler. No bullet point
 // GO HOME — runs when the user clicks "← Home"
 // ------------------------------------------------------------
 function goHome() {
+  setActiveNav('home');
   document.getElementById('results').className = 'results card';
   // Reset topic pills to Full Chart
   selectedTopic = 'chart';
@@ -1050,6 +1051,7 @@ function loadSolarReturn(year, location) {
 }
 
 function closeSolarReturn() {
+  setActiveNav('home');
   document.getElementById('solarSection').style.display = 'none';
   document.querySelector('.container').style.display = 'block';
 }
@@ -1134,4 +1136,251 @@ async function emailReading(type) {
     btn.disabled = false;
     setTimeout(() => { btn.textContent = original; }, 3000);
   }
+}
+
+
+// ============================================================
+// BOTTOM NAVIGATION
+// ============================================================
+
+function setActiveNav(tab) {
+  document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
+  const active = document.getElementById('nav-' + tab);
+  if (active) active.classList.add('active');
+}
+
+function navGoHome() {
+  setActiveNav('home');
+  // Close any open sections
+  document.getElementById('weekSection').style.display   = 'none';
+  document.getElementById('solarSection').style.display  = 'none';
+  document.getElementById('astroSection').style.display  = 'none';
+  document.querySelector('.container').style.display     = 'block';
+  showHome();
+}
+
+function navGoWeek() {
+  setActiveNav('week');
+  openWeeklySpread();
+}
+
+function navGoChart() {
+  setActiveNav('home');
+  // Close other sections, go home, then trigger chart
+  document.getElementById('weekSection').style.display  = 'none';
+  document.getElementById('solarSection').style.display = 'none';
+  document.getElementById('astroSection').style.display = 'none';
+  document.querySelector('.container').style.display    = 'block';
+  showHome();
+  openNatalChart();
+}
+
+function navGoSolar() {
+  setActiveNav('solar');
+  document.getElementById('weekSection').style.display  = 'none';
+  document.querySelector('.container').style.display    = 'block';
+  openSolarReturn();
+}
+
+function navGoMap() {
+  setActiveNav('map');
+  document.getElementById('weekSection').style.display  = 'none';
+  document.querySelector('.container').style.display    = 'block';
+  openAstroMap();
+}
+
+function navGoAccount() {
+  setActiveNav('account');
+  document.getElementById('weekSection').style.display  = 'none';
+  document.getElementById('solarSection').style.display = 'none';
+  document.getElementById('astroSection').style.display = 'none';
+  document.querySelector('.container').style.display    = 'block';
+  showForm();
+}
+
+
+// ============================================================
+// WEEKLY SPREAD
+// ============================================================
+
+let weekSpreadData      = null; // cached 7-day array
+let weekSelectedIdx     = null; // which card is expanded
+
+// ── Open / close the weekly spread section ──────────────────
+function openWeeklySpread() {
+  if (!currentUser) { openAuthModal(); return; }
+
+  // Hide other sections, show week section
+  document.querySelector('.container').style.display    = 'none';
+  document.getElementById('solarSection').style.display = 'none';
+  document.getElementById('astroSection').style.display = 'none';
+  document.getElementById('weekSection').style.display  = 'block';
+
+  if (!currentSubscribed) {
+    // Show upsell gate
+    document.getElementById('weekUpsell').style.display = 'flex';
+    document.getElementById('weekMain').style.display   = 'none';
+    return;
+  }
+
+  document.getElementById('weekUpsell').style.display = 'none';
+  document.getElementById('weekMain').style.display   = 'block';
+
+  // Use cached data if available; otherwise load fresh
+  if (weekSpreadData) {
+    renderWeekSpread(weekSpreadData);
+  } else {
+    loadWeeklySpread();
+  }
+}
+
+function closeWeeklySpread() {
+  document.getElementById('weekSection').style.display = 'none';
+  document.querySelector('.container').style.display   = 'block';
+  setActiveNav('home');
+}
+
+// ── Fetch data from backend ──────────────────────────────────
+async function loadWeeklySpread() {
+  const spreadEl   = document.getElementById('weekSpread');
+  const loadingEl  = document.getElementById('weekLoading');
+  const rangeEl    = document.getElementById('weekDateRange');
+
+  spreadEl.style.display  = 'none';
+  loadingEl.style.display = 'block';
+
+  try {
+    const session = await sb.auth.getSession();
+    const jwt     = session?.data?.session?.access_token;
+    if (!jwt) throw new Error('Not authenticated');
+
+    const res  = await fetch('/api/get-weekly-spread', {
+      headers: { Authorization: `Bearer ${jwt}` },
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+
+    weekSpreadData = await res.json();
+
+    // Set date range label
+    if (weekSpreadData.length === 7) {
+      rangeEl.textContent = `${weekSpreadData[0].dateLabel} — ${weekSpreadData[6].dateLabel}`;
+    }
+
+    loadingEl.style.display = 'none';
+    spreadEl.style.display  = 'flex';
+    renderWeekSpread(weekSpreadData);
+
+  } catch (err) {
+    console.error('[Weekly Spread] Load error:', err);
+    loadingEl.innerHTML = `<p style="color:var(--silver);text-align:center;font-size:0.9rem;padding:20px;">Could not load your weekly spread.<br><a href="#" onclick="loadWeeklySpread();return false;" style="color:var(--gold);">Try again</a></p>`;
+  }
+}
+
+// ── Render the 7 day cards ───────────────────────────────────
+function renderWeekSpread(days) {
+  const spreadEl = document.getElementById('weekSpread');
+  spreadEl.innerHTML = '';
+
+  days.forEach((day, i) => {
+    const card = document.createElement('div');
+    const classes = ['day-card'];
+    if (day.isToday)        classes.push('today');
+    if (day.isPast)         classes.push('past');
+    if (weekSelectedIdx === i) classes.push('selected');
+    card.className = classes.join(' ');
+
+    // Show only day number on the card to save space
+    const dateParts = day.dateLabel.split(' '); // e.g. "Mar 30" → ["Mar", "30"]
+    const dayNum    = dateParts[1] || day.dateLabel;
+
+    card.innerHTML = `
+      <div class="day-card-name">${day.dayShort}</div>
+      <div class="day-card-date">${dayNum}</div>
+      <div class="day-card-glyph">${day.glyph}</div>
+      <div class="day-card-dot dot-${day.energy}"></div>
+    `;
+    card.addEventListener('click', () => openDayPanel(i));
+    spreadEl.appendChild(card);
+  });
+}
+
+// ── Open the slide-up day panel ──────────────────────────────
+function openDayPanel(idx) {
+  weekSelectedIdx = idx;
+  renderWeekSpread(weekSpreadData);
+
+  const day = weekSpreadData[idx];
+
+  document.getElementById('dpDayLabel').textContent  = `${day.dayFull.toUpperCase()} · ${day.dateLabel}`;
+  document.getElementById('dpDate').textContent      = day.dayFull;
+  document.getElementById('dpPlanet').textContent    = day.planet ? `${day.planet} dominant` : '';
+  document.getElementById('dpGlyph').textContent     = day.glyph;
+  document.getElementById('dpSummary').textContent   = day.summary || 'Reading coming soon…';
+
+  // Topic rows
+  const topicsEl = document.getElementById('dpTopics');
+  topicsEl.innerHTML = (day.topics || []).map(t => {
+    const dotColor = t.energy === 'high'
+      ? '#7ecc9b'
+      : t.energy === 'mid'
+        ? 'var(--gold)'
+        : 'rgba(184,196,216,0.25)';
+    const dotShadow = t.energy === 'high'
+      ? '0 0 5px rgba(126,204,155,0.7)'
+      : t.energy === 'mid'
+        ? '0 0 4px rgba(200,169,110,0.5)'
+        : 'none';
+    return `
+      <div class="spread-topic-row" onclick="revealTopicReading('${t.key}')">
+        <div class="spread-topic-glyph">${t.glyph}</div>
+        <div class="spread-topic-info">
+          <div class="spread-topic-name-row">
+            <div class="spread-topic-name">${t.name}</div>
+            <div class="spread-topic-dot" style="background:${dotColor};box-shadow:${dotShadow};"></div>
+          </div>
+          <div class="spread-topic-snippet">${t.snippet}</div>
+        </div>
+        <div class="spread-topic-arrow">›</div>
+      </div>`;
+  }).join('');
+
+  // Reveal button
+  const revealBtn = document.getElementById('dpRevealBtn');
+  revealBtn.textContent = `✦  Reveal Full ${day.dayFull} Reading`;
+  revealBtn.onclick = () => revealDayReading(day);
+
+  document.getElementById('dayPanel').classList.add('open');
+  document.getElementById('weekOverlay').classList.add('show');
+}
+
+// ── Close the day panel ──────────────────────────────────────
+function closeDayPanel() {
+  weekSelectedIdx = null;
+  if (weekSpreadData) renderWeekSpread(weekSpreadData);
+  document.getElementById('dayPanel').classList.remove('open');
+  document.getElementById('weekOverlay').classList.remove('show');
+}
+
+// ── "Reveal Full Day Reading" — goes home, triggers that topic ─
+function revealDayReading(day) {
+  const topicKey = day.topics?.[0]?.key || 'daily';
+  closeDayPanel();
+  closeWeeklySpread();
+  // Pre-select the dominant topic and trigger a reading
+  const topicEl = document.querySelector(`[data-topic="${topicKey}"]`);
+  if (topicEl) selectTopic(topicEl);
+  setTimeout(() => reveal(), 200);
+}
+
+// ── Topic row arrow — goes home and triggers that specific topic ─
+function revealTopicReading(topicKey) {
+  closeDayPanel();
+  closeWeeklySpread();
+  const topicEl = document.querySelector(`[data-topic="${topicKey}"]`);
+  if (topicEl) selectTopic(topicEl);
+  setTimeout(() => reveal(), 200);
 }

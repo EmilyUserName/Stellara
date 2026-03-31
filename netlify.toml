@@ -8,6 +8,16 @@
   timeout = 120
   schedule = "0 12 * * *"
 
+[functions."weekly-spread-scheduler"]
+  timeout = 120
+  schedule = "0 7 * * 1"
+
+[functions."generate-weekly-spread"]
+  timeout = 60
+
+[functions."get-weekly-spread"]
+  timeout = 30
+
 [functions."solar-return"]
   timeout = 90
 
@@ -85,4 +95,9 @@
 [[redirects]]
   from = "/api/email-reading"
   to = "/.netlify/functions/email-reading"
+  status = 200
+
+[[redirects]]
+  from = "/api/get-weekly-spread"
+  to = "/.netlify/functions/get-weekly-spread"
   status = 200

@@ -86,6 +86,9 @@ exports.handler = async function (event) {
         stripe_customer_id:     session.customer,
         stripe_subscription_id: session.subscription,
       });
+
+      // Generate weekly spread immediately for this new Pro subscriber
+      triggerWeeklySpreadGeneration(userId);
     }
   }
 
@@ -110,3 +113,25 @@ exports.handler = async function (event) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 };
+
+// Fire-and-forget: generate today ±3 days for a new Pro subscriber
+function triggerWeeklySpreadGeneration(userId) {
+  const today = new Date();
+  today.setUTCHours(12, 0, 0, 0);
+  const dates = [];
+  for (let i = -3; i <= 3; i++) {
+    const d = new Date(today);
+    d.setUTCDate(d.getUTCDate() + i);
+    dates.push(d.toISOString().slice(0, 10));
+  }
+
+  const siteUrl = process.env.URL || 'https://stellara-horoscope.com';
+  fetch(`${siteUrl}/.netlify/functions/generate-weekly-spread`, {
+    method:  'POST',
+    headers: {
+      'Content-Type':  'application/json',
+      'x-service-key': process.env.SUPABASE_SERVICE_KEY,
+    },
+    body: JSON.stringify({ userId, dates }),
+  }).catch(err => console.error('[stripe-webhook] Weekly spread generation error:', err));
+}

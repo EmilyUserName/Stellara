@@ -39,21 +39,30 @@ if (_qs.get('subscribed') === 'true' || _qs.get('natal') === 'true' || _qs.get('
 }
 
 function updateAuthUI() {
-  const emailEl  = document.getElementById('userEmail');
-  const topNav   = document.getElementById('topNav');
-  const landing  = document.getElementById('landingSection');
+  const emailEl   = document.getElementById('userEmail');
+  const topNav    = document.getElementById('topNav');
+  const landing   = document.getElementById('landingSection');
   const inputCard = document.getElementById('inputCard');
+  const bottomNav = document.getElementById('bottomNav');
 
   if (currentUser) {
-    emailEl.textContent    = currentUser.email;
-    topNav.style.display   = 'flex';
-    landing.style.display  = 'none';
+    emailEl.textContent     = currentUser.email;
+    topNav.style.display    = 'flex';
+    landing.style.display   = 'none';
     inputCard.style.display = 'block';
+    if (bottomNav) {
+      bottomNav.style.display = 'flex';
+      document.body.classList.add('has-bottom-nav');
+    }
   } else {
-    emailEl.textContent    = '';
-    topNav.style.display   = 'none';
-    landing.style.display  = 'block';
+    emailEl.textContent     = '';
+    topNav.style.display    = 'none';
+    landing.style.display   = 'block';
     inputCard.style.display = 'none';
+    if (bottomNav) {
+      bottomNav.style.display = 'none';
+      document.body.classList.remove('has-bottom-nav');
+    }
   }
 }
 
@@ -405,6 +414,10 @@ async function loadProfile() {
   currentSolarReturnYear = data.solar_return_year || null;
   currentHasAstro        = data.has_astrocartography || false;
   document.body.classList.toggle('is-pro', currentSubscribed);
+
+  // Show Week tab in bottom nav for Pro subscribers only
+  const navWeek = document.getElementById('nav-week');
+  if (navWeek) navWeek.style.display = currentSubscribed ? 'flex' : 'none';
   const upsell = document.getElementById('proUpsellCard');
   const topics = document.getElementById('proTopicsCard');
   const freeSection = document.getElementById('freeHoroscopesHome');
@@ -484,6 +497,7 @@ async function loadProfile() {
 }
 
 function showHome() {
+  if (typeof setActiveNav === 'function') setActiveNav('home');
   document.getElementById('homeSection').style.display  = 'block';
   document.getElementById('inputCard').style.display    = 'none';
   document.getElementById('results').className          = 'results card';

@@ -145,6 +145,30 @@ async function getSubscribers(todayISO) {
 async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) {
   const { name, email, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, preferred_style } = user;
 
+  // Atomic claim: update last_email_date to today ONLY if it hasn't been set yet.
+  // PostgREST's not.eq filter matches NULL and any other value != todayISO.
+  // If two runs compete, only one PATCH will match and return rows — the other gets [].
+  if (!skipIdempotency) {
+    const claimRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&or=(last_email_date.is.null,last_email_date.not.eq.${todayISO})`,
+      {
+        method:  'PATCH',
+        headers: {
+          'Content-Type':  'application/json',
+          'apikey':         SUPABASE_SERVICE_KEY,
+          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'Prefer':        'return=representation',
+        },
+        body: JSON.stringify({ last_email_date: todayISO }),
+      }
+    );
+    const claimed = await claimRes.json();
+    if (!Array.isArray(claimed) || claimed.length === 0) {
+      console.log(`[daily-email] Skipping ${email} — already claimed by another run.`);
+      return; // Another run already sent this one
+    }
+  }
+
   // Sun and moon are stable — use saved values if present.
   // Rising always recalculated fresh (sensitive to formula changes).
   let sun    = sun_sign;
@@ -190,20 +214,6 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
 
   // Send the email
   await sendEmail({ user, name, email, sun, moon, rising, today, ...content });
-
-  // Mark as sent today (idempotency) — fire and forget
-  if (!skipIdempotency) {
-    fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
-      method:  'PATCH',
-      headers: {
-        'Content-Type':  'application/json',
-        'apikey':         SUPABASE_SERVICE_KEY,
-        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-        'Prefer':        'return=minimal',
-      },
-      body: JSON.stringify({ last_email_date: todayISO }),
-    }).catch(() => {});
-  }
 }
 
 // ------------------------------------------------------------
