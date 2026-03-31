@@ -394,6 +394,13 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, subject,
       </a>
     </td></tr>
 
+    <!-- Share -->
+    <tr><td style="text-align:center;padding-top:20px;" bgcolor="#0f1e38">
+      <a href="https://stellara-horoscope.com" style="display:inline-block;padding:11px 28px;background:transparent;border:1px solid rgba(200,169,110,0.35);border-radius:10px;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
+        ✦ Share Stellara with a Friend
+      </a>
+    </td></tr>
+
     <!-- Footer -->
     <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0f1e38">
       <p style="margin:0;font-size:11px;color:#7ea8d4;opacity:0.45;font-family:Helvetica,Arial,sans-serif;line-height:2;">

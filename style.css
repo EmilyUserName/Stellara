@@ -673,6 +673,20 @@ select option { background: var(--navy-2); }
 }
 .landing-signin-btn:hover { background: rgba(126,168,212,0.08); border-color: var(--accent); color: var(--light); }
 
+.landing-share-btn {
+  background: transparent;
+  border: none;
+  color: rgba(200, 169, 110, 0.6);
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color 0.2s;
+}
+.landing-share-btn:hover { color: var(--gold); }
+
 
 /* ------------------------------------------------------------
    HOME SCREEN — returning user welcome
@@ -801,6 +815,7 @@ select option { background: var(--navy-2); }
   text-align: left;
   transition: all 0.2s;
   font-family: 'Barlow', sans-serif;
+  min-height: 148px;
 }
 .style-card:hover {
   border-color: rgba(126,168,212,0.4);

@@ -20,7 +20,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <!-- All styling lives in style.css -->
-  <link rel="stylesheet" href="style.css?v=23" />
+  <link rel="stylesheet" href="style.css?v=24" />
 
   <!-- Leaflet (astrocartography map) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -142,9 +142,10 @@
         </div>
       </div>
 
-      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:8px;">
-        <button class="btn landing-cta" onclick="openSignUp()">✦ &nbsp;Begin Your Journey — Free</button>
-        <button class="btn landing-signin-btn" onclick="openAuthModal()">Sign In</button>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:8px;">
+        <button class="btn landing-cta" style="margin-top:0;" onclick="openSignUp()">✦ &nbsp;Begin Your Journey — Free</button>
+        <button class="btn landing-signin-btn" style="margin-top:0;" onclick="openAuthModal()">Sign In</button>
+        <button class="share-btn landing-share-btn" onclick="shareStellara()">✦ &nbsp;Share with a Friend</button>
       </div>
     </div>
 
@@ -302,6 +303,7 @@
         <div class="edit-links-row">
           <a href="#" class="edit-link" onclick="showForm(); return false;">Edit birth info</a>
           <a href="#" class="edit-link is-pro-only" style="display:none;" onclick="manageSubscription(); return false;">Manage subscription</a>
+          <span class="edit-link" onclick="shareStellara()">Share with a friend</span>
           <span class="edit-link" onclick="openFeedback()">Share feedback</span>
         </div>
       </div>
