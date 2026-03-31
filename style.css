@@ -795,8 +795,8 @@ select option { background: var(--navy-2); }
 .style-card {
   background: rgba(6,13,31,0.6);
   border: 1px solid rgba(126,168,212,0.15);
-  border-radius: 10px;
-  padding: 13px 14px;
+  border-radius: 12px;
+  padding: 16px;
   cursor: pointer;
   text-align: left;
   transition: all 0.2s;
@@ -813,18 +813,20 @@ select option { background: var(--navy-2); }
 }
 .style-card-icon { font-size: 1.1rem; margin-bottom: 5px; }
 .style-card-name {
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--white);
-  letter-spacing: 0.04em;
-  margin-bottom: 3px;
+  letter-spacing: 0.02em;
+  margin-bottom: 5px;
+  hyphens: none;
 }
 .style-card.active .style-card-name { color: var(--accent); }
 .style-card-desc {
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   color: var(--silver);
-  line-height: 1.4;
+  line-height: 1.45;
   letter-spacing: 0.01em;
+  hyphens: none;
 }
 
 
@@ -2169,13 +2171,14 @@ body.has-bottom-nav #weekSection { padding-bottom: 160px; }
 /* Individual day card */
 .day-card {
   flex-shrink: 0;
-  width: 68vw;
-  max-width: 320px;
-  min-width: 200px;
+  width: 72vw;
+  max-width: 340px;
+  min-width: 220px;
+  min-height: 62vh;
   background: linear-gradient(160deg, rgba(11, 22, 52, 0.95), rgba(6, 13, 31, 0.98));
   border: 1px solid rgba(126, 168, 212, 0.14);
-  border-radius: 20px;
-  padding: 28px 16px 32px;
+  border-radius: 24px;
+  padding: 36px 20px 40px;
   text-align: center;
   cursor: pointer;
   transition: all 0.28s ease;
@@ -2183,7 +2186,8 @@ body.has-bottom-nav #weekSection { padding-bottom: 160px; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 14px;
   scroll-snap-align: center;
   -webkit-tap-highlight-color: transparent;
 }
