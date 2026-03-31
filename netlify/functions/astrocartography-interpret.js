@@ -51,31 +51,36 @@ Be evocative and personal. No headers. No bullet points.`;
 
   console.log('[astrocartography-interpret]', { planet, lineType, location, name, sun, moon, rising, style });
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method:  'POST',
-    headers: {
-      'Content-Type':      'application/json',
-      'x-api-key':         ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model:      'claude-sonnet-4-5',
-      max_tokens: 350,
-      messages:   [{ role: 'user', content: prompt }],
-    }),
-  });
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:  'POST',
+      headers: {
+        'Content-Type':      'application/json',
+        'x-api-key':         ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model:      'claude-sonnet-4-6',
+        max_tokens: 350,
+        messages:   [{ role: 'user', content: prompt }],
+      }),
+    });
 
-  const data = await res.json();
-  if (!res.ok) {
-    console.error('[astrocartography-interpret] Claude API error:', JSON.stringify(data));
-    return { statusCode: 502, body: JSON.stringify({ error: data.error?.message || 'Claude API error' }) };
+    const data = await res.json();
+    if (!res.ok) {
+      console.error('[astrocartography-interpret] Claude API error:', JSON.stringify(data));
+      return { statusCode: 502, body: JSON.stringify({ error: data.error?.message || 'Claude API error' }) };
+    }
+    const text = data.content?.map(b => b.text || '').join('') || '';
+    console.log('[astrocartography-interpret] success, chars:', text.length);
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    };
+  } catch (err) {
+    console.error('[astrocartography-interpret] Unhandled error:', err);
+    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
-  const text = data.content?.map(b => b.text || '').join('') || '';
-  console.log('[astrocartography-interpret] success, chars:', text.length);
-
-  return {
-    statusCode: 200,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text }),
-  };
 };
