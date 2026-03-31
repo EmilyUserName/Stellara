@@ -418,6 +418,8 @@ async function loadProfile() {
   // Show Week tab in bottom nav for Pro subscribers only
   const navWeek = document.getElementById('nav-week');
   if (navWeek) navWeek.style.display = currentSubscribed ? 'flex' : 'none';
+  const homeWeekBtn = document.getElementById('homeWeekBtn');
+  if (homeWeekBtn) homeWeekBtn.style.display = currentSubscribed ? 'block' : 'none';
   const upsell = document.getElementById('proUpsellCard');
   const topics = document.getElementById('proTopicsCard');
   const freeSection = document.getElementById('freeHoroscopesHome');

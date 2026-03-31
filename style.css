@@ -1012,6 +1012,22 @@ select option { background: var(--navy-2); }
   box-shadow: 0 0 36px rgba(200,215,240,0.22), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
+.btn-week-home {
+  background: transparent;
+  border: 1px solid rgba(200, 169, 110, 0.3);
+  color: var(--gold);
+  margin-top: 10px;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  padding: 13px;
+}
+.btn-week-home:hover {
+  background: rgba(200, 169, 110, 0.08);
+  border-color: rgba(200, 169, 110, 0.55);
+  color: var(--gold);
+  box-shadow: 0 0 18px rgba(200, 169, 110, 0.12);
+}
+
 .reset-btn {
   margin-top: 0;
   background: rgba(126,168,212,0.08);

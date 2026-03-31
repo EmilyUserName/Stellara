@@ -20,7 +20,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <!-- All styling lives in style.css -->
-  <link rel="stylesheet" href="style.css?v=22" />
+  <link rel="stylesheet" href="style.css?v=23" />
 
   <!-- Leaflet (astrocartography map) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -269,6 +269,7 @@
             </div>
           </div>
           <button class="btn btn-reveal" onclick="reveal()">✦ &nbsp;Reveal My Reading</button>
+          <button class="btn btn-week-home" id="homeWeekBtn" onclick="navGoWeek()" style="display:none;">☽ &nbsp;Your Weekly Spread</button>
         </div>
         <div id="upgradeHint" style="display:none;"></div>
         <div class="partner-input" id="partnerInputHome" style="display:none;">
@@ -682,7 +683,7 @@
       <div class="nav-label">Chart</div>
     </div>
     <div class="nav-item" id="nav-solar" onclick="navGoSolar()">
-      <div class="nav-glyph">☀</div>
+      <div class="nav-glyph">☼</div>
       <div class="nav-label">Solar</div>
     </div>
     <div class="nav-item" id="nav-map" onclick="navGoMap()">
@@ -893,7 +894,7 @@
   </div>
 
   <script src="astrology.js"></script>
-  <script src="auth.js?v=9"></script>
+  <script src="auth.js?v=10"></script>
   <script src="app.js?v=18"></script>
   <script src="astrocartography.js"></script>
   <script>
