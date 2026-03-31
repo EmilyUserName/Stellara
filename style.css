@@ -2054,7 +2054,7 @@ select option { background: var(--navy-2); }
   background: rgba(6, 13, 31, 0.98);
   border-top: 1px solid rgba(126, 168, 212, 0.22);
   display: flex;
-  padding: 14px 0 env(safe-area-inset-bottom, 22px);
+  padding: 14px 0 max(env(safe-area-inset-bottom, 0px), 24px);
   z-index: 200;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -2102,10 +2102,10 @@ select option { background: var(--navy-2); }
 .nav-item.active:hover .nav-glyph { color: var(--gold); }
 
 /* Push container content above the nav when nav is visible */
-body.has-bottom-nav .container  { padding-bottom: 110px; }
+body.has-bottom-nav .container  { padding-bottom: 160px; }
 body.has-bottom-nav #solarSection,
 body.has-bottom-nav #astroSection,
-body.has-bottom-nav #weekSection { padding-bottom: 110px; }
+body.has-bottom-nav #weekSection { padding-bottom: 160px; }
 
 
 /* ============================================================

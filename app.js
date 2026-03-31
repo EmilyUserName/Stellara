@@ -1206,6 +1206,23 @@ function navGoAccount() {
 let weekSpreadData      = null; // cached 7-day array
 let weekSelectedIdx     = null; // which card is expanded
 
+// Canonical glyphs — prevents colored Apple emoji rendering (e.g. ♐️ → ♐)
+const TOPIC_GLYPHS = {
+  daily:         '☉',
+  love:          '♀',
+  career:        '♄',
+  finances:      '♃',
+  health:        '♁',
+  thisMonth:     '☽',
+  communication: '☿',
+  innerWorld:    '♆',
+  energy:        '♂',
+  travel:        '♐\uFE0E',  // \uFE0E forces text presentation, not emoji
+  spiritual:     '♆',
+  compatibility: '♀',
+  shadow:        '♇',
+};
+
 // ── Open / close the weekly spread section ──────────────────
 function openWeeklySpread() {
   if (!currentUser) { openAuthModal(); return; }
@@ -1369,7 +1386,7 @@ function openDayPanel(idx) {
         : 'none';
     return `
       <div class="spread-topic-row" onclick="revealTopicReading('${t.key}')">
-        <div class="spread-topic-glyph">${t.glyph}</div>
+        <div class="spread-topic-glyph">${TOPIC_GLYPHS[t.key] || t.glyph}</div>
         <div class="spread-topic-info">
           <div class="spread-topic-name-row">
             <div class="spread-topic-name">${t.name}</div>
