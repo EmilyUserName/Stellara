@@ -1254,16 +1254,38 @@ async function loadWeeklySpread() {
     const jwt     = session?.data?.session?.access_token;
     if (!jwt) throw new Error('Not authenticated');
 
-    const res  = await fetch('/api/get-weekly-spread', {
-      headers: { Authorization: `Bearer ${jwt}` },
-    });
+    // Poll up to 10 times (30s) for generation to complete
+    let data = null;
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const res = await fetch('/api/get-weekly-spread', {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || `HTTP ${res.status}`);
+      if (res.status === 202) {
+        // Generation triggered — show progress and retry
+        const pct = Math.min(90, 10 + attempt * 10);
+        loadingEl.innerHTML = `
+          <p style="color:var(--gold);text-align:center;font-size:1rem;padding:20px 20px 8px;">
+            Generating your weekly spread…
+          </p>
+          <div style="width:60%;margin:0 auto 20px;background:rgba(255,255,255,0.1);border-radius:4px;height:4px;">
+            <div style="width:${pct}%;background:var(--gold);border-radius:4px;height:4px;transition:width 0.4s;"></div>
+          </div>`;
+        await new Promise(r => setTimeout(r, 3000));
+        continue;
+      }
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+
+      data = await res.json();
+      break;
     }
 
-    weekSpreadData = await res.json();
+    if (!data) throw new Error('Spread generation timed out — please try again in a moment.');
+    weekSpreadData = data;
 
     // Set date range label
     if (weekSpreadData.length === 7) {
