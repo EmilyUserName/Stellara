@@ -321,64 +321,64 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, subject,
   <title>${safeSubject}</title>
   <style>
     :root { color-scheme: dark; }
-    body, table, td { background-color: #0f1e38 !important; }
+    body, table, td { background-color: #0e1e40 !important; }
   </style>
 </head>
-<body style="margin:0;padding:0;background:#0f1e38;" bgcolor="#0f1e38">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#0f1e38;padding:48px 20px;" bgcolor="#0f1e38">
+<body style="margin:0;padding:0;background:#0e1e40;" bgcolor="#0e1e40">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#0e1e40;padding:48px 20px;" bgcolor="#0e1e40">
   <tr><td align="center">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
 
     <!-- Brand -->
-    <tr><td style="text-align:center;padding-bottom:36px;" bgcolor="#0f1e38">
+    <tr><td style="text-align:center;padding-bottom:36px;" bgcolor="#0e1e40">
       <div style="font-size:20px;color:#c8a96e;margin-bottom:6px;">✦</div>
-      <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#7ea8d4;font-family:Helvetica,Arial,sans-serif;">Stellara</div>
+      <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#5a6b8c;font-family:Helvetica,Arial,sans-serif;">Stellara</div>
     </td></tr>
 
     <!-- Date + placements -->
-    <tr><td style="text-align:center;padding-bottom:28px;" bgcolor="#0f1e38">
-      <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7ea8d4;font-family:Helvetica,Arial,sans-serif;margin-bottom:10px;">${today}</div>
+    <tr><td style="text-align:center;padding-bottom:28px;" bgcolor="#0e1e40">
+      <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#5a6b8c;font-family:Helvetica,Arial,sans-serif;margin-bottom:10px;">${today}</div>
       <div style="font-size:12px;color:#8fa8c8;font-family:Helvetica,Arial,sans-serif;letter-spacing:0.06em;">
         ${sun} Sun &nbsp;·&nbsp; ${moon} Moon${rising ? ` &nbsp;·&nbsp; ${rising} Rising` : ''}
       </div>
     </td></tr>
 
     <!-- Divider -->
-    <tr><td style="padding-bottom:32px;" bgcolor="#0f1e38">
+    <tr><td style="padding-bottom:32px;" bgcolor="#0e1e40">
       <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(200,169,110,0.35),transparent);"></div>
     </td></tr>
 
     <!-- Main paragraph -->
-    <tr><td style="padding-bottom:32px;" bgcolor="#0f1e38">
+    <tr><td style="padding-bottom:32px;" bgcolor="#0e1e40">
       <p style="margin:0;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;text-align:left;">${safeParagraph}</p>
     </td></tr>
 
     <!-- Quote -->
-    <tr><td style="padding:28px 24px;background:#132440;border-left:3px solid #c8a96e;border-radius:0 10px 10px 0;margin-bottom:32px;" bgcolor="#132440">
+    <tr><td style="padding:28px 24px;background:#102349;border-left:3px solid #c8a96e;border-radius:0 10px 10px 0;margin-bottom:32px;" bgcolor="#102349">
       <p style="margin:0;font-size:16px;line-height:1.7;color:#c8a96e;font-family:Georgia,'Times New Roman',serif;font-style:italic;text-align:center;">&ldquo;${safeQuote}&rdquo;</p>
     </td></tr>
 
     <!-- Spacer -->
-    <tr><td style="padding-bottom:28px;" bgcolor="#0f1e38"></td></tr>
+    <tr><td style="padding-bottom:28px;" bgcolor="#0e1e40"></td></tr>
 
     <!-- Watch / Lean / Power -->
-    <tr><td style="background:#132440;border:1px solid rgba(126,168,212,0.15);border-radius:14px;padding:28px 30px;" bgcolor="#132440">
+    <tr><td style="background:#102349;border:1px solid rgba(90,107,140,0.15);border-radius:14px;padding:28px 30px;" bgcolor="#102349">
 
       <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
           <td style="padding-bottom:18px;">
-            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#7ea8d4;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Watch for</div>
+            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#5a6b8c;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Watch for</div>
             <div style="font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.6;">${safeWatch}</div>
           </td>
         </tr>
         <tr>
-          <td style="padding-bottom:18px;border-top:1px solid rgba(126,168,212,0.1);padding-top:18px;">
-            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#7ea8d4;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Lean into</div>
+          <td style="padding-bottom:18px;border-top:1px solid rgba(90,107,140,0.1);padding-top:18px;">
+            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#5a6b8c;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Lean into</div>
             <div style="font-size:18px;color:#f5f8ff;font-family:Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:0.02em;">${safeLean}</div>
           </td>
         </tr>
         <tr>
-          <td style="border-top:1px solid rgba(126,168,212,0.1);padding-top:18px;">
+          <td style="border-top:1px solid rgba(90,107,140,0.1);padding-top:18px;">
             <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Your power move today</div>
             <div style="font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.6;">${safePower}</div>
           </td>
@@ -388,26 +388,26 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, subject,
     </td></tr>
 
     <!-- CTA -->
-    <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0f1e38">
-      <a href="https://stellara-horoscope.com" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,rgba(126,168,212,0.2),rgba(126,168,212,0.1));border:1px solid rgba(126,168,212,0.45);border-radius:10px;color:#dce8f8;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
+    <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0e1e40">
+      <a href="https://stellara-horoscope.com" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,rgba(90,107,140,0.2),rgba(90,107,140,0.1));border:1px solid rgba(90,107,140,0.45);border-radius:10px;color:#dce8f8;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
         → Open Stellara for your full reading
       </a>
     </td></tr>
 
     <!-- Share -->
-    <tr><td style="text-align:center;padding-top:20px;" bgcolor="#0f1e38">
+    <tr><td style="text-align:center;padding-top:20px;" bgcolor="#0e1e40">
       <a href="https://stellara-horoscope.com" style="display:inline-block;padding:11px 28px;background:transparent;border:1px solid rgba(200,169,110,0.35);border-radius:10px;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
         ✦ Share Stellara with a Friend
       </a>
     </td></tr>
 
     <!-- Footer -->
-    <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0f1e38">
-      <p style="margin:0;font-size:11px;color:#7ea8d4;opacity:0.45;font-family:Helvetica,Arial,sans-serif;line-height:2;">
+    <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0e1e40">
+      <p style="margin:0;font-size:11px;color:#5a6b8c;opacity:0.45;font-family:Helvetica,Arial,sans-serif;line-height:2;">
         You're receiving this as a Stellara Pro subscriber.<br/>
-        <a href="https://stellara-horoscope.com" style="color:#7ea8d4;text-decoration:none;opacity:0.8;">stellara-horoscope.com</a>
+        <a href="https://stellara-horoscope.com" style="color:#5a6b8c;text-decoration:none;opacity:0.8;">stellara-horoscope.com</a>
         &nbsp;·&nbsp;
-        <a href="https://stellara-horoscope.com/.netlify/functions/unsubscribe?id=${user.id}" style="color:#7ea8d4;text-decoration:none;opacity:0.8;">Unsubscribe</a>
+        <a href="https://stellara-horoscope.com/.netlify/functions/unsubscribe?id=${user.id}" style="color:#5a6b8c;text-decoration:none;opacity:0.8;">Unsubscribe</a>
       </p>
     </td></tr>
 
