@@ -186,10 +186,10 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
 
   // Generate the reading via Claude
   const style = preferred_style || 'psychological';
-  const { reading, theme } = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday });
+  const content = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday });
 
   // Send the email
-  await sendEmail({ user, name, email, sun, moon, rising, reading, theme, today });
+  await sendEmail({ user, name, email, sun, moon, rising, today, ...content });
 
   // Mark as sent today (idempotency) — fire and forget
   if (!skipIdempotency) {
@@ -207,78 +207,99 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
 }
 
 // ------------------------------------------------------------
-// CLAUDE — generate the personalized daily reading
+// CLAUDE — generate the new scannable morning digest
 // ------------------------------------------------------------
 async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday }) {
   const systemPrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.psychological;
-  const noTimeNote = !birth_time
-    ? `Note: ${name} did not provide a birth time so their Rising sign is unknown — acknowledge this briefly and naturally.`
-    : '';
 
   const moonLine = skyToday?.moon
-    ? `Today's Moon is in ${skyToday.moon} (calculated from real astronomical data — use this exactly).`
-    : `Describe a plausible Moon sign and phase for today.`;
+    ? `Today's Moon is in ${skyToday.moon} (real astronomical data — use this exactly, do not contradict it).`
+    : `Use a plausible Moon sign for today.`;
 
   const prompt = `${systemPrompt}
 
-Write ${name} a personalized daily reading for ${today}. This will be delivered as their morning email — make it feel like a meaningful ritual, not a generic horoscope.
+You are writing ${name}'s morning Stellara digest for ${today}.
 
 ${name}'s chart:
 Sun: ${sun}
 Moon: ${moon}
-${rising ? `Rising: ${rising}` : 'Rising: unknown (no birth time provided)'}
-Birth city: ${birth_city} (birth location only — do not assume this is where they currently live)
-${noTimeNote}
+${rising ? `Rising: ${rising}` : 'Rising: unknown'}
+Birth city: ${birth_city}
 
-Today's sky (accurate — do not change or contradict):
+Today's sky:
 ${moonLine}
+Add one or two other plausible planetary themes for today (Mercury, Venus, Mars, Saturn — invent grounded, specific transits).
 
-First, on its own line, write:
-THEME: [3–5 words that capture today's energy for ${name} — e.g. "Roots before reaching" or "The quiet before clarity"]
+Write the following sections using EXACTLY these labels on their own lines. No extra text between labels.
 
-Then write exactly 4 paragraphs with no headers or labels:
-1. What's alive in the sky today — use the Moon's sign above accurately, and add any notable planetary energy (invent plausible but grounded transit themes for other planets).
-2. How today's energy specifically lands in ${name}'s chart — speak to their ${sun} Sun and ${moon} Moon directly.
-3. Something specific for ${name} to lean into or be mindful of today — concrete and personal.
-4. A closing intention or reflection — one sentence they can carry with them. Something that lingers.
+SUBJECT:
+A short, intriguing, personalized email subject line for ${name}. Never generic. Examples: "Something soft is arriving today, ${name}" / "${name}, Venus has a message for you" / "Today your chart says: slow down." Make it feel like it was written just for them. Max 10 words.
 
-Every sentence should land. Warm, personal, potent. No bullet points. No markdown. No hashtags. Plain paragraphs only.`;
+PARAGRAPH:
+3–4 sentences written directly to ${name} in second person. Warm, poetic, psychologically intelligent. Reference their actual ${sun} Sun and ${moon} Moon and today's planetary energy. Specific to their chart — not generic. Tone of a wise friend, not a textbook. No em dashes used as list separators.
+
+QUOTE:
+One original 1–2 line quote tied directly to today's planetary theme for ${name}. Something they would screenshot and share to Instagram stories. Feels true and timely. Do NOT use a famous quote — write an original one.
+
+WATCH:
+One specific thing for ${name} to be aware of today. One line only.
+
+LEAN:
+2–4 words or a very short phrase — the energy ${name} should embrace today.
+
+POWER:
+One concrete, actionable suggestion for ${name} today. One line only. Specific, not generic.`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method:  'POST',
     headers: {
-      'Content-Type':    'application/json',
-      'x-api-key':       ANTHROPIC_API_KEY,
+      'Content-Type':      'application/json',
+      'x-api-key':         ANTHROPIC_API_KEY,
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
       model:      'claude-sonnet-4-6',
-      max_tokens: 600,
+      max_tokens: 500,
       messages:   [{ role: 'user', content: prompt }],
     }),
   });
 
   const data = await res.json();
-  const full = data.content?.map(b => b.text || '').join('') || '';
+  const full = (data.content?.map(b => b.text || '').join('') || '').trim();
 
-  // Extract THEME line and the rest
-  const themeMatch = full.match(/^THEME:\s*(.+)$/m);
-  const theme   = themeMatch ? themeMatch[1].trim() : '';
-  const reading = full.replace(/^THEME:.*$/m, '').trim();
-  return { reading, theme };
+  // Parse each labelled section
+  function extract(label) {
+    const re = new RegExp(`^${label}:\\s*([\\s\\S]*?)(?=\\n[A-Z]+:|$)`, 'm');
+    const m = full.match(re);
+    return m ? m[1].trim() : '';
+  }
+
+  return {
+    subject:   extract('SUBJECT'),
+    paragraph: extract('PARAGRAPH'),
+    quote:     extract('QUOTE'),
+    watch:     extract('WATCH'),
+    lean:      extract('LEAN'),
+    power:     extract('POWER'),
+  };
 }
 
 // ------------------------------------------------------------
-// RESEND — send the HTML email
+// RESEND — send the redesigned morning digest email
 // ------------------------------------------------------------
-async function sendEmail({ user, name, email, sun, moon, rising, reading, theme, today }) {
-  // Strip any markdown headers/bold/italic that Claude might sneak in
-  const cleanReading = reading
-    .replace(/^#{1,6}\s+/gm, '')   // remove # headers
-    .replace(/\*\*(.*?)\*\*/g, '$1') // remove **bold**
-    .replace(/\*(.*?)\*/g, '$1');    // remove *italic*
-  const paragraphs = cleanReading.split('\n\n').filter(Boolean);
-  const bodyHtml = paragraphs.map(p => `<p style="margin:0 0 20px 0;line-height:1.8;">${p.trim()}</p>`).join('');
+async function sendEmail({ user, name, email, sun, moon, rising, today, subject, paragraph, quote, watch, lean, power }) {
+  // Clean any stray markdown
+  const clean = s => (s || '')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .trim();
+
+  const safeSubject  = clean(subject)  || `Your Stellara reading for today, ${name} ✦`;
+  const safeParagraph = clean(paragraph);
+  const safeQuote    = clean(quote);
+  const safeWatch    = clean(watch);
+  const safeLean     = clean(lean);
+  const safePower    = clean(power);
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -287,65 +308,95 @@ async function sendEmail({ user, name, email, sun, moon, rising, reading, theme,
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <meta name="color-scheme" content="dark"/>
   <meta name="supported-color-schemes" content="dark"/>
-  <title>Your Daily Reading — Stellara</title>
+  <title>${safeSubject}</title>
   <style>
     :root { color-scheme: dark; }
-    body, table, td { background-color: #0d1b32 !important; }
+    body, table, td { background-color: #0f1e38 !important; }
   </style>
 </head>
-<body style="margin:0;padding:0;background:#0d1b32;font-family:'Georgia',serif;" bgcolor="#0d1b32">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d1b32;padding:40px 20px;" bgcolor="#0d1b32">
-    <tr><td align="center" bgcolor="#0d1b32">
-      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+<body style="margin:0;padding:0;background:#0f1e38;" bgcolor="#0f1e38">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#0f1e38;padding:48px 20px;" bgcolor="#0f1e38">
+  <tr><td align="center">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
 
-        <!-- Header -->
-        <tr><td style="text-align:center;padding-bottom:32px;" bgcolor="#0d1b32">
-          <div style="font-size:24px;color:#7ea8d4;margin-bottom:8px;">✦</div>
-          <div style="font-size:11px;letter-spacing:0.25em;text-transform:uppercase;color:#7ea8d4;font-family:'Helvetica Neue',sans-serif;">Stellara</div>
-        </td></tr>
-
-        <!-- Date -->
-        <tr><td style="text-align:center;padding-bottom:8px;" bgcolor="#0d1b32">
-          <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#7ea8d4;font-family:'Helvetica Neue',sans-serif;">${today}</div>
-        </td></tr>
-
-        <!-- Title -->
-        <tr><td style="text-align:center;padding-bottom:32px;" bgcolor="#0d1b32">
-          <h1 style="margin:0;font-size:26px;font-weight:400;color:#f5f8ff;letter-spacing:0.01em;">Your Daily Reading</h1>
-          <p style="margin:8px 0 0;font-size:13px;color:#b8c4d8;font-family:'Helvetica Neue',sans-serif;">${name} &nbsp;·&nbsp; ${sun} Sun &nbsp;·&nbsp; ${moon} Moon${rising ? ` &nbsp;·&nbsp; ${rising} Rising` : ''}</p>
-          ${theme ? `<p style="margin:18px 0 0;font-size:15px;font-style:italic;color:#7ea8d4;font-family:'Georgia',serif;letter-spacing:0.02em;">"${theme}"</p>` : ''}
-        </td></tr>
-
-        <!-- Divider -->
-        <tr><td style="padding-bottom:32px;" bgcolor="#0d1b32">
-          <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(126,168,212,0.3),transparent);"></div>
-        </td></tr>
-
-        <!-- Reading -->
-        <tr><td style="background:#132440;border:1px solid rgba(126,168,212,0.15);border-radius:12px;padding:32px 36px;" bgcolor="#132440">
-          <div style="font-size:16px;color:#dce4f0;font-family:'Georgia',serif;">
-            ${bodyHtml}
-          </div>
-        </td></tr>
-
-        <!-- CTA -->
-        <tr><td style="text-align:center;padding-top:32px;" bgcolor="#0d1b32">
-          <a href="https://stellara-horoscope.com" style="display:inline-block;padding:12px 32px;background:#1a3256;border:1px solid rgba(126,168,212,0.35);border-radius:10px;color:#dce4f0;font-family:'Helvetica Neue',sans-serif;font-size:13px;letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;">Open Stellara</a>
-        </td></tr>
-
-        <!-- Footer -->
-        <tr><td style="text-align:center;padding-top:32px;" bgcolor="#0d1b32">
-          <p style="margin:0;font-size:11px;color:#b8c4d8;opacity:0.5;font-family:'Helvetica Neue',sans-serif;line-height:1.8;">
-            You're receiving this because you're a Stellara Pro subscriber.<br/>
-            <a href="https://stellara-horoscope.com" style="color:#7ea8d4;opacity:0.8;">Open Stellara</a>
-            &nbsp;·&nbsp;
-            <a href="https://stellara-horoscope.com/.netlify/functions/unsubscribe?id=${user.id}" style="color:#7ea8d4;opacity:0.8;">Unsubscribe</a>
-          </p>
-        </td></tr>
-
-      </table>
+    <!-- Brand -->
+    <tr><td style="text-align:center;padding-bottom:36px;" bgcolor="#0f1e38">
+      <div style="font-size:20px;color:#c8a96e;margin-bottom:6px;">✦</div>
+      <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#7ea8d4;font-family:Helvetica,Arial,sans-serif;">Stellara</div>
     </td></tr>
+
+    <!-- Date + placements -->
+    <tr><td style="text-align:center;padding-bottom:28px;" bgcolor="#0f1e38">
+      <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7ea8d4;font-family:Helvetica,Arial,sans-serif;margin-bottom:10px;">${today}</div>
+      <div style="font-size:12px;color:#8fa8c8;font-family:Helvetica,Arial,sans-serif;letter-spacing:0.06em;">
+        ${sun} Sun &nbsp;·&nbsp; ${moon} Moon${rising ? ` &nbsp;·&nbsp; ${rising} Rising` : ''}
+      </div>
+    </td></tr>
+
+    <!-- Divider -->
+    <tr><td style="padding-bottom:32px;" bgcolor="#0f1e38">
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(200,169,110,0.35),transparent);"></div>
+    </td></tr>
+
+    <!-- Main paragraph -->
+    <tr><td style="padding-bottom:32px;" bgcolor="#0f1e38">
+      <p style="margin:0;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;text-align:left;">${safeParagraph}</p>
+    </td></tr>
+
+    <!-- Quote -->
+    <tr><td style="padding:28px 24px;background:#132440;border-left:3px solid #c8a96e;border-radius:0 10px 10px 0;margin-bottom:32px;" bgcolor="#132440">
+      <p style="margin:0;font-size:16px;line-height:1.7;color:#c8a96e;font-family:Georgia,'Times New Roman',serif;font-style:italic;text-align:center;">&ldquo;${safeQuote}&rdquo;</p>
+    </td></tr>
+
+    <!-- Spacer -->
+    <tr><td style="padding-bottom:28px;" bgcolor="#0f1e38"></td></tr>
+
+    <!-- Watch / Lean / Power -->
+    <tr><td style="background:#132440;border:1px solid rgba(126,168,212,0.15);border-radius:14px;padding:28px 30px;" bgcolor="#132440">
+
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding-bottom:18px;">
+            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#7ea8d4;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Watch for</div>
+            <div style="font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.6;">${safeWatch}</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding-bottom:18px;border-top:1px solid rgba(126,168,212,0.1);padding-top:18px;">
+            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#7ea8d4;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Lean into</div>
+            <div style="font-size:18px;color:#f5f8ff;font-family:Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:0.02em;">${safeLean}</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-top:1px solid rgba(126,168,212,0.1);padding-top:18px;">
+            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Your power move today</div>
+            <div style="font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.6;">${safePower}</div>
+          </td>
+        </tr>
+      </table>
+
+    </td></tr>
+
+    <!-- CTA -->
+    <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0f1e38">
+      <a href="https://stellara-horoscope.com" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,rgba(126,168,212,0.2),rgba(126,168,212,0.1));border:1px solid rgba(126,168,212,0.45);border-radius:10px;color:#dce8f8;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
+        → Open Stellara for your full reading
+      </a>
+    </td></tr>
+
+    <!-- Footer -->
+    <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0f1e38">
+      <p style="margin:0;font-size:11px;color:#7ea8d4;opacity:0.45;font-family:Helvetica,Arial,sans-serif;line-height:2;">
+        You're receiving this as a Stellara Pro subscriber.<br/>
+        <a href="https://stellara-horoscope.com" style="color:#7ea8d4;text-decoration:none;opacity:0.8;">stellara-horoscope.com</a>
+        &nbsp;·&nbsp;
+        <a href="https://stellara-horoscope.com/.netlify/functions/unsubscribe?id=${user.id}" style="color:#7ea8d4;text-decoration:none;opacity:0.8;">Unsubscribe</a>
+      </p>
+    </td></tr>
+
   </table>
+  </td></tr>
+</table>
 </body>
 </html>`;
 
@@ -358,7 +409,7 @@ async function sendEmail({ user, name, email, sun, moon, rising, reading, theme,
     body: JSON.stringify({
       from:    FROM_EMAIL,
       to:      email,
-      subject: `Your reading for ${today}, ${name} ✦`,
+      subject: safeSubject,
       html,
     }),
   });
