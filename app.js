@@ -1323,11 +1323,22 @@ function renderWeekSpread(days) {
       <div class="day-card-name">${day.dayShort}</div>
       <div class="day-card-date">${dayNum}</div>
       <div class="day-card-glyph">${day.glyph}</div>
+      ${day.planet ? `<div class="day-card-planet">${day.planet}</div>` : ''}
       <div class="day-card-dot dot-${day.energy}"></div>
     `;
     card.addEventListener('click', () => openDayPanel(i));
     spreadEl.appendChild(card);
   });
+
+  // Scroll today's card into centre view
+  const todayCard = spreadEl.querySelector('.day-card.today');
+  if (todayCard) {
+    requestAnimationFrame(() => {
+      const containerMid = spreadEl.offsetWidth / 2;
+      const cardMid      = todayCard.offsetLeft + todayCard.offsetWidth / 2;
+      spreadEl.scrollLeft = cardMid - containerMid;
+    });
+  }
 }
 
 // ── Open the slide-up day panel ──────────────────────────────
