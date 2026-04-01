@@ -1279,7 +1279,11 @@ async function loadWeeklySpread() {
   try {
     const session = await sb.auth.getSession();
     const jwt     = session?.data?.session?.access_token;
-    if (!jwt) throw new Error('Not authenticated');
+    if (!jwt) {
+      // Session expired — prompt sign-in instead of a confusing timeout error
+      loadingEl.innerHTML = `<p style="color:var(--silver);text-align:center;font-size:0.9rem;padding:20px;">Your session has expired.<br><a href="#" onclick="openAuthModal();return false;" style="color:var(--gold);">Sign in again</a> to view your spread.</p>`;
+      return;
+    }
 
     // Poll up to 10 times (30s) for generation to complete
     let data = null;
