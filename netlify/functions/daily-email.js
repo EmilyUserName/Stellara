@@ -260,6 +260,8 @@ LEAN:
 POWER:
 One concrete, actionable suggestion for ${name} today. One line only. Specific, not generic.`;
 
+  if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
+
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method:  'POST',
     headers: {
@@ -275,7 +277,13 @@ One concrete, actionable suggestion for ${name} today. One line only. Specific, 
   });
 
   const data = await res.json();
+  if (!res.ok) {
+    console.error('[daily-email] Claude API error:', res.status, JSON.stringify(data));
+    throw new Error(`Claude API error ${res.status}: ${data?.error?.message || 'unknown'}`);
+  }
+
   const full = (data.content?.map(b => b.text || '').join('') || '').trim();
+  if (!full) throw new Error('Claude returned empty content');
 
   // Parse each labelled section
   function extract(label) {
