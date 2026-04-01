@@ -454,6 +454,14 @@ Be concise and potent — every sentence should land. No filler. No bullet point
 
     // --- 8. Parse the response from Claude ---
     const data = await response.json();
+    if (!response.ok) {
+      console.error('[reveal] Horoscope API error:', response.status, data);
+      throw new Error(data?.error || `Server error ${response.status}`);
+    }
+    if (!data.content) {
+      console.error('[reveal] Unexpected response shape:', data);
+      throw new Error('Unexpected response from server');
+    }
     const text = data.content.map(b => b.text || '').join('');
 
     // --- 9. Render the placement cards (Sun / Moon / Rising) ---
@@ -534,10 +542,12 @@ Be concise and potent — every sentence should land. No filler. No bullet point
 
   } catch (e) {
     // --- 12. If something went wrong, show an error ---
+    console.error('[reveal] Error:', e);
     clearInterval(msgInterval);
-    document.getElementById('loading').className     = 'loading';
-    document.getElementById('inputCard').style.display = 'block';
-    err.textContent = 'Something went wrong. Please try again.';
+    document.getElementById('loading').className      = 'loading';
+    document.getElementById('homeSection').style.display = 'block';
+    document.getElementById('inputCard').style.display   = 'none';
+    err.textContent = e.message || 'Something went wrong. Please try again.';
     err.className   = 'error active';
   }
 }
