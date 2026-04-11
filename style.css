@@ -2470,6 +2470,8 @@ body.has-bottom-nav #weekSection { padding-bottom: 160px; }
 
 .spread-topic-row:last-child { border-bottom: none; }
 .spread-topic-row:hover      { padding-left: 4px; }
+.spread-topic-row--future    { cursor: default; opacity: 0.75; }
+.spread-topic-row--future:hover { padding-left: 0; }
 
 .spread-topic-glyph {
   font-size: 1.4rem;

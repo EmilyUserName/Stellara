@@ -1390,8 +1390,9 @@ function openDayPanel(idx) {
   document.getElementById('dpGlyph').textContent     = day.glyph;
   document.getElementById('dpSummary').textContent   = day.summary || 'Reading coming soon…';
 
-  // Topic rows
-  const topicsEl = document.getElementById('dpTopics');
+  // Topic rows — only today/past days are clickable (future days are a preview, not a reading)
+  const isFuture  = !day.isToday && !day.isPast;
+  const topicsEl  = document.getElementById('dpTopics');
   topicsEl.innerHTML = (day.topics || []).map(t => {
     const dotColor = t.energy === 'high'
       ? '#7ecc9b'
@@ -1403,8 +1404,9 @@ function openDayPanel(idx) {
       : t.energy === 'mid'
         ? '0 0 4px rgba(200,169,110,0.5)'
         : 'none';
+    const clickable = !isFuture;
     return `
-      <div class="spread-topic-row" onclick="revealTopicReading('${t.key}')">
+      <div class="spread-topic-row${clickable ? '' : ' spread-topic-row--future'}"${clickable ? ` onclick="revealTopicReading('${t.key}')"` : ''}>
         <div class="spread-topic-glyph">${TOPIC_GLYPHS[t.key] || t.glyph}</div>
         <div class="spread-topic-info">
           <div class="spread-topic-name-row">
@@ -1413,14 +1415,19 @@ function openDayPanel(idx) {
           </div>
           <div class="spread-topic-snippet">${t.snippet}</div>
         </div>
-        <div class="spread-topic-arrow">›</div>
+        ${clickable ? '<div class="spread-topic-arrow">›</div>' : ''}
       </div>`;
   }).join('');
 
-  // Reveal button
+  // Reveal button — only show for today and past days
   const revealBtn = document.getElementById('dpRevealBtn');
-  revealBtn.textContent = `✦  Reveal Full ${day.dayFull} Reading`;
-  revealBtn.onclick = () => revealDayReading(day);
+  if (isFuture) {
+    revealBtn.style.display = 'none';
+  } else {
+    revealBtn.style.display = '';
+    revealBtn.textContent   = `✦  Reveal Full ${day.dayFull} Reading`;
+    revealBtn.onclick       = () => revealDayReading(day);
+  }
 
   document.getElementById('dayPanel').classList.add('open');
   document.getElementById('weekOverlay').classList.add('show');
