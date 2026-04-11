@@ -535,6 +535,9 @@ Be concise and potent — every sentence should land. No filler. No bullet point
       document.getElementById('transitReading').textContent = (parts[1] || '').trim();
     }
 
+    // Store reading text for all modes so the email button always works
+    window._lastChartReading = text;
+
     // --- 11. Hide loading, show results ---
     clearInterval(msgInterval);
     document.getElementById('loading').className  = 'loading';
@@ -1117,7 +1120,8 @@ async function emailReading(type) {
 
   const readingData = isSolar ? window._lastSolarReading : { text: window._lastChartReading };
   if (!readingData?.text) {
-    alert('No reading found to send. Please generate a reading first.');
+    btn.textContent = 'Generate a reading first';
+    setTimeout(() => { btn.textContent = original; }, 3000);
     return;
   }
 
