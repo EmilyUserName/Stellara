@@ -638,8 +638,8 @@ select option { background: var(--navy-2); }
 }
 .landing-plan {
   padding: 22px 28px;
-  background: rgba(18,39,82,0.55);
-  border: 1px solid rgba(90,107,140,0.35);
+  background: #0e1e40;
+  border: 1px solid rgba(90,107,140,0.45);
   border-radius: 14px;
 }
 .landing-plan-divider {
@@ -649,13 +649,13 @@ select option { background: var(--navy-2); }
   font-size: 0.68rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--silver);
   font-weight: 600;
   margin-bottom: 8px;
 }
 .landing-plan-desc {
   font-size: 0.88rem;
-  color: var(--silver);
+  color: var(--silver-light);
   line-height: 1.7;
 }
 
@@ -1968,17 +1968,17 @@ select option { background: var(--navy-2); }
 
 /* Pro plan highlight on landing */
 .landing-plan-pro {
-  background: rgba(90,107,140,0.09);
-  border: 1px solid rgba(90,107,140,0.35);
+  background: #0e1e40;
+  border: 1px solid rgba(200,169,110,0.3);
   border-radius: 14px;
   padding: 24px 22px;
 }
-.landing-plan-pro .landing-plan-name { color: var(--accent); font-size: 1rem; }
+.landing-plan-pro .landing-plan-name { color: var(--gold); font-size: 1rem; letter-spacing: 0.12em; }
 .landing-pro-section-label {
   font-size: 0.68rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--silver);
   font-family: 'Barlow', sans-serif;
   font-weight: 700;
   margin: 18px 0 8px;
@@ -2017,8 +2017,8 @@ select option { background: var(--navy-2); }
 
 /* Bundle plan highlight on landing */
 .landing-plan-bundle {
-  background: rgba(255,210,120,0.05);
-  border: 1px solid rgba(255,210,120,0.2);
+  background: #0e1e40;
+  border: 1px solid rgba(255,210,120,0.25);
   border-radius: 14px;
   padding: 22px 28px;
 }
