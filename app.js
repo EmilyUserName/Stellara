@@ -958,12 +958,18 @@ async function selectSign(sign, target) {
       if (data && data[sign]) _freeHoroscopes = data;
     } catch (e) {
       loadingEl.style.display = 'none';
+      textEl.textContent      = 'Could not load today\'s horoscopes. Please try again in a moment.';
+      readingEl.style.display = 'block';
       return;
     }
   }
 
   loadingEl.style.display = 'none';
-  if (!_freeHoroscopes?.[sign]) return;
+  if (!_freeHoroscopes?.[sign]) {
+    textEl.textContent      = 'Could not load this reading. Please try again in a moment.';
+    readingEl.style.display = 'block';
+    return;
+  }
 
   nameEl.innerHTML        = `<span class="sign-icon">${SIGN_SYMBOLS[sign]}</span> ${SIGN_NAMES[sign]}`;
   textEl.textContent      = _freeHoroscopes[sign];

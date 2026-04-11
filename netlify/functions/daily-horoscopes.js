@@ -16,26 +16,31 @@ exports.handler = async function (event) {
   const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
   if (event.httpMethod !== 'GET') return { statusCode: 405, body: 'Method Not Allowed' };
 
-  const today = new Date().toISOString().slice(0, 10); // "2026-03-27"
+  const today = new Date().toISOString().slice(0, 10);
 
-  // 1. Try to return cached horoscopes for today
-  const cached = await getCached(today);
-  if (cached) {
-    return { statusCode: 200, headers, body: JSON.stringify(cached) };
+  try {
+    // 1. Try to return cached horoscopes for today
+    const cached = await getCached(today);
+    if (cached) {
+      return { statusCode: 200, headers, body: JSON.stringify(cached) };
+    }
+
+    // 2. Not cached — generate via Claude
+    const generated = await generateHoroscopes(today);
+    if (!generated) {
+      return { statusCode: 502, headers, body: JSON.stringify({ error: 'Failed to generate horoscopes' }) };
+    }
+
+    // 3. Cache in Supabase (fire-and-forget — don't block the response)
+    cacheHoroscopes(today, generated).catch(err =>
+      console.error('[daily-horoscopes] cache error:', err)
+    );
+
+    return { statusCode: 200, headers, body: JSON.stringify(generated) };
+  } catch (err) {
+    console.error('[daily-horoscopes] Unhandled error:', err);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
   }
-
-  // 2. Not cached — generate via Claude
-  const generated = await generateHoroscopes(today);
-  if (!generated) {
-    return { statusCode: 502, headers, body: JSON.stringify({ error: 'Failed to generate horoscopes' }) };
-  }
-
-  // 3. Cache in Supabase (fire-and-forget — don't block the response)
-  cacheHoroscopes(today, generated).catch(err =>
-    console.error('[daily-horoscopes] cache error:', err)
-  );
-
-  return { statusCode: 200, headers, body: JSON.stringify(generated) };
 };
 
 // ── Supabase helpers ──────────────────────────────────────────
@@ -98,7 +103,7 @@ Return ONLY valid JSON in this exact format, nothing else:
     },
     body: JSON.stringify({
       model:      'claude-sonnet-4-6',
-      max_tokens: 1200,
+      max_tokens: 900,
       messages:   [{ role: 'user', content: prompt }],
     }),
   });
