@@ -145,30 +145,6 @@ async function getSubscribers(todayISO) {
 async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) {
   const { name, email, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, preferred_style } = user;
 
-  // Atomic claim: update last_email_date to today ONLY if it hasn't been set yet.
-  // PostgREST's not.eq filter matches NULL and any other value != todayISO.
-  // If two runs compete, only one PATCH will match and return rows — the other gets [].
-  if (!skipIdempotency) {
-    const claimRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&or=(last_email_date.is.null,last_email_date.not.eq.${todayISO})`,
-      {
-        method:  'PATCH',
-        headers: {
-          'Content-Type':  'application/json',
-          'apikey':         SUPABASE_SERVICE_KEY,
-          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-          'Prefer':        'return=representation',
-        },
-        body: JSON.stringify({ last_email_date: todayISO }),
-      }
-    );
-    const claimed = await claimRes.json();
-    if (!Array.isArray(claimed) || claimed.length === 0) {
-      console.log(`[daily-email] Skipping ${email} — already claimed by another run.`);
-      return; // Another run already sent this one
-    }
-  }
-
   // Sun and moon are stable — use saved values if present.
   // Rising always recalculated fresh (sensitive to formula changes).
   let sun    = sun_sign;
@@ -212,8 +188,8 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
   const style = preferred_style || 'psychological';
   const content = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday });
 
-  // Send the email
-  await sendEmail({ user, name, email, sun, moon, rising, today, ...content });
+  // Send the email — only stamp last_email_date after a confirmed successful send
+  await sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, ...content });
 }
 
 // ------------------------------------------------------------
@@ -305,7 +281,7 @@ One concrete, actionable suggestion for ${name} today. One line only. Specific, 
 // ------------------------------------------------------------
 // RESEND — send the redesigned morning digest email
 // ------------------------------------------------------------
-async function sendEmail({ user, name, email, sun, moon, rising, today, subject, paragraph, quote, watch, lean, power }) {
+async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, subject, paragraph, quote, watch, lean, power }) {
   // Clean any stray markdown
   const clean = s => (s || '')
     .replace(/\*\*(.*?)\*\*/g, '$1')
@@ -425,7 +401,7 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, subject,
 </body>
 </html>`;
 
-  await fetch('https://api.resend.com/emails', {
+  const sendRes = await fetch('https://api.resend.com/emails', {
     method:  'POST',
     headers: {
       'Content-Type':  'application/json',
@@ -438,4 +414,27 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, subject,
       html,
     }),
   });
+
+  if (!sendRes.ok) {
+    const errText = await sendRes.text();
+    throw new Error(`Resend error ${sendRes.status}: ${errText}`);
+  }
+
+  // Stamp last_email_date only after confirmed delivery — prevents orphaned claims
+  // when Claude or Resend fails mid-run (which would block retries all day).
+  if (!skipIdempotency) {
+    fetch(
+      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`,
+      {
+        method:  'PATCH',
+        headers: {
+          'Content-Type':  'application/json',
+          'apikey':         SUPABASE_SERVICE_KEY,
+          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'Prefer':        'return=minimal',
+        },
+        body: JSON.stringify({ last_email_date: todayISO }),
+      }
+    ).catch(err => console.error('[daily-email] Failed to stamp last_email_date:', err));
+  }
 }

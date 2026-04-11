@@ -6,7 +6,7 @@
 
 [functions."daily-email"]
   timeout = 120
-  schedule = "0 12 * * *"
+  schedule = "0 10 * * *"
 
 [functions."weekly-spread-scheduler"]
   timeout = 120
@@ -14,6 +14,9 @@
 
 [functions."generate-weekly-spread"]
   timeout = 60
+
+# Background function — runs up to 15 minutes, no timeout needed
+[functions."generate-weekly-spread-background"]
 
 [functions."get-weekly-spread"]
   timeout = 30

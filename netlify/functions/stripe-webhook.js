@@ -126,7 +126,7 @@ function triggerWeeklySpreadGeneration(userId) {
   }
 
   const siteUrl = process.env.URL || 'https://stellara-horoscope.com';
-  fetch(`${siteUrl}/.netlify/functions/generate-weekly-spread`, {
+  fetch(`${siteUrl}/.netlify/functions/generate-weekly-spread-background`, {
     method:  'POST',
     headers: {
       'Content-Type':  'application/json',

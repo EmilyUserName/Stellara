@@ -73,17 +73,25 @@ exports.handler = async function (event) {
     );
 
     // ── 5. If any dates missing, trigger generation async ────
+    // Only fire generation on the FIRST request (?generate=true).
+    // Subsequent polls just check for completion without re-triggering.
     const missingDates = dates.filter(d => !existingDates.has(d));
     if (missingDates.length > 0) {
-      // Fire-and-forget — don't wait, tell client to retry
-      fetch(`${SITE_URL}/.netlify/functions/generate-weekly-spread`, {
-        method:  'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'x-service-key': SUPABASE_SERVICE_KEY,
-        },
-        body: JSON.stringify({ userId, dates: missingDates }),
-      }).catch(err => console.error('[get-weekly-spread] Generation trigger error:', err));
+      const shouldGenerate = event.queryStringParameters?.generate === 'true';
+      if (shouldGenerate) {
+        // Fire-and-forget to background function — returns immediately, runs up to 15 min
+        fetch(`${SITE_URL}/.netlify/functions/generate-weekly-spread-background`, {
+          method:  'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'x-service-key': SUPABASE_SERVICE_KEY,
+          },
+          body: JSON.stringify({ userId, dates: missingDates }),
+        }).catch(err => console.error('[get-weekly-spread] Generation trigger error:', err));
+        console.log('[get-weekly-spread] Generation triggered for', missingDates.length, 'dates');
+      } else {
+        console.log('[get-weekly-spread] Waiting for generation, missing', missingDates.length, 'dates');
+      }
 
       return {
         statusCode: 202,

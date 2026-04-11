@@ -63,7 +63,7 @@ async function getSubscribers() {
 
 // ── Call generate-weekly-spread for one user ─────────────────
 async function generateForUser(userId, dates) {
-  const res = await fetch(`${SITE_URL}/.netlify/functions/generate-weekly-spread`, {
+  const res = await fetch(`${SITE_URL}/.netlify/functions/generate-weekly-spread-background`, {
     method:  'POST',
     headers: {
       'Content-Type':  'application/json',

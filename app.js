@@ -544,11 +544,13 @@ Be concise and potent — every sentence should land. No filler. No bullet point
     // --- 12. If something went wrong, show an error ---
     console.error('[reveal] Error:', e);
     clearInterval(msgInterval);
-    document.getElementById('loading').className      = 'loading';
+    document.getElementById('loading').className         = 'loading';
     document.getElementById('homeSection').style.display = 'block';
     document.getElementById('inputCard').style.display   = 'none';
-    err.textContent = e.message || 'Something went wrong. Please try again.';
-    err.className   = 'error active';
+    // Always show error on homeErrorMsg — errorMsg is inside hidden inputCard
+    const displayErr = document.getElementById('homeErrorMsg') || err;
+    displayErr.textContent = e.message || 'Something went wrong. Please try again.';
+    displayErr.className   = 'error active';
   }
 }
 
@@ -1285,10 +1287,13 @@ async function loadWeeklySpread() {
       return;
     }
 
-    // Poll up to 10 times (30s) for generation to complete
+    // Poll up to 10 times (30s) for generation to complete.
+    // Only the first request triggers generation (?generate=true);
+    // retries just check if the background job has finished.
     let data = null;
     for (let attempt = 0; attempt < 10; attempt++) {
-      const res = await fetch('/api/get-weekly-spread', {
+      const url = attempt === 0 ? '/api/get-weekly-spread?generate=true' : '/api/get-weekly-spread';
+      const res = await fetch(url, {
         headers: { Authorization: `Bearer ${jwt}` },
       });
 
