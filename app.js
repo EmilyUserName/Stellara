@@ -1390,8 +1390,8 @@ function openDayPanel(idx) {
   document.getElementById('dpGlyph').textContent     = day.glyph;
   document.getElementById('dpSummary').textContent   = day.summary || 'Reading coming soon…';
 
-  // Topic rows — only today/past days are clickable (future days are a preview, not a reading)
-  const isFuture  = !day.isToday && !day.isPast;
+  // Topic rows — only today is clickable; past and future days are preview-only
+  const isFuture  = !day.isToday;
   const topicsEl  = document.getElementById('dpTopics');
   topicsEl.innerHTML = (day.topics || []).map(t => {
     const dotColor = t.energy === 'high'
