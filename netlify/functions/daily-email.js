@@ -77,9 +77,10 @@ exports.handler = async function (event) {
       subscribers.map(user => sendDailyEmail(user, today, todayISO, skyToday, false))
     );
 
-    const sent   = results.filter(r => r.status === 'fulfilled').length;
+    const sent   = results.filter(r => r.status === 'fulfilled' && r.value === true).length;
+    const skipped = results.filter(r => r.status === 'fulfilled' && r.value !== true).length;
     const failed = results.filter(r => r.status === 'rejected').length;
-    console.log(`[daily-email] Sent: ${sent}, Failed: ${failed}`);
+    console.log(`[daily-email] Sent: ${sent}, Skipped: ${skipped}, Failed: ${failed}`);
 
     return { statusCode: 200, body: JSON.stringify({ sent, failed }) };
   } catch (err) {
@@ -146,11 +147,10 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
   const { name, email, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, preferred_style } = user;
 
   // Atomic claim — prevents duplicate sends if two function instances run concurrently.
-  // PATCH only succeeds if last_email_date is not already today; whichever run wins the
-  // race claims the row, the other gets an empty array back and skips.
+  // Use or= to match both NULL and any non-today value (plain not.eq misses NULLs in SQL).
   if (!skipIdempotency) {
     const claimRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&last_email_date=not.eq.${todayISO}`,
+      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&or=(last_email_date.is.null,last_email_date.not.eq.${todayISO})`,
       {
         method:  'PATCH',
         headers: {
@@ -165,7 +165,7 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
     const claimed = await claimRes.json();
     if (!Array.isArray(claimed) || claimed.length === 0) {
       console.log(`[daily-email] Skipping ${email} — already claimed by another run.`);
-      return;
+      return false;
     }
   }
 
@@ -214,6 +214,7 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
 
   // Send the email — only stamp last_email_date after a confirmed successful send
   await sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, ...content });
+  return true;
 }
 
 // ------------------------------------------------------------
