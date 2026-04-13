@@ -145,6 +145,30 @@ async function getSubscribers(todayISO) {
 async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) {
   const { name, email, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, preferred_style } = user;
 
+  // Atomic claim — prevents duplicate sends if two function instances run concurrently.
+  // PATCH only succeeds if last_email_date is not already today; whichever run wins the
+  // race claims the row, the other gets an empty array back and skips.
+  if (!skipIdempotency) {
+    const claimRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&last_email_date=not.eq.${todayISO}`,
+      {
+        method:  'PATCH',
+        headers: {
+          'Content-Type':  'application/json',
+          'apikey':         SUPABASE_SERVICE_KEY,
+          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'Prefer':        'return=representation',
+        },
+        body: JSON.stringify({ last_email_date: todayISO }),
+      }
+    );
+    const claimed = await claimRes.json();
+    if (!Array.isArray(claimed) || claimed.length === 0) {
+      console.log(`[daily-email] Skipping ${email} — already claimed by another run.`);
+      return;
+    }
+  }
+
   // Sun and moon are stable — use saved values if present.
   // Rising always recalculated fresh (sensitive to formula changes).
   let sun    = sun_sign;
