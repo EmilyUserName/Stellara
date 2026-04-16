@@ -340,8 +340,9 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO
 
     <!-- Brand -->
     <tr><td style="text-align:center;padding-bottom:36px;" bgcolor="#0e1e40">
-      <div style="font-size:20px;color:#c8a96e;margin-bottom:6px;">✦</div>
-      <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#5a6b8c;font-family:Helvetica,Arial,sans-serif;">Stellara</div>
+      <div style="font-size:28px;color:#c8a96e;margin-bottom:10px;line-height:1;">✦</div>
+      <div style="font-size:38px;font-weight:800;color:#f8faff;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;margin-bottom:8px;line-height:1;">stellara</div>
+      <div style="font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:#8fa8c8;font-family:Helvetica,Arial,sans-serif;">Your Personal Cosmos</div>
     </td></tr>
 
     <!-- Date + placements -->
