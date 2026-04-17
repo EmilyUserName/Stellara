@@ -21,7 +21,7 @@
   --silver-light: #edf1fb;   /* body text — brighter */
   --silver-bright:#f6f8ff;   /* bright text */
   --light:        #edf1fb;   /* alias for silver-light, used throughout */
-  --accent:       #5a6b8c;   /* blue accent — labels, borders */
+  --accent:       #8fa8c8;   /* blue accent — labels, borders */
   --accent-glow:  rgba(90,107,140,0.18);
   --gold:         #c8a96e;   /* gold accent — section labels */
   --white:        #f8faff;   /* headings and key text — brighter */
