@@ -72,6 +72,20 @@ function moonLongitude(jd) {
 }
 
 // ------------------------------------------------------------
+// NORTH NODE — Mean Lunar Ascending Node (Meeus Ch. 47)
+// Accurate to ~0.5°, sufficient for astrology
+// ------------------------------------------------------------
+function northNodeLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  const omega = 125.0445479
+    - 1934.1362608 * T
+    +    0.0020754 * T * T
+    + T * T * T / 467441
+    - T * T * T * T / 60616000;
+  return ((omega % 360) + 360) % 360;
+}
+
+// ------------------------------------------------------------
 // ASCENDANT — uses astronomy-engine for accurate sidereal time
 // (accounts for nutation/aberration; same precision as Astro.com)
 // ------------------------------------------------------------
@@ -195,17 +209,20 @@ exports.handler = async function (event) {
   }
 
   // 3. Calculate chart
-  const jd      = toJD(birthUTC);
-  const sunLon  = sunLongitude(jd);
-  const moonLon = moonLongitude(jd);
-  const ascLon  = birthTime ? ascendant(birthUTC, lat, lon) : null;
+  const jd        = toJD(birthUTC);
+  const sunLon    = sunLongitude(jd);
+  const moonLon   = moonLongitude(jd);
+  const ascLon    = birthTime ? ascendant(birthUTC, lat, lon) : null;
+  const nodeLon   = northNodeLongitude(jd);
 
   const result = {
-    sun:    SIGNS[Math.floor(sunLon  / 30)],
-    moon:   SIGNS[Math.floor(moonLon / 30)],
-    rising: ascLon !== null ? SIGNS[Math.floor(ascLon / 30)] : null,
+    sun:       SIGNS[Math.floor(sunLon  / 30)],
+    moon:      SIGNS[Math.floor(moonLon / 30)],
+    rising:    ascLon !== null ? SIGNS[Math.floor(ascLon / 30)] : null,
+    northNode: SIGNS[Math.floor(nodeLon / 30)],
+    southNode: SIGNS[Math.floor(((nodeLon + 180) % 360) / 30)],
   };
-  console.log('[calculate-chart]', { birthDate, birthTime, birthCity, lat, lon, jd, sunLon, moonLon, ascLon, result });
+  console.log('[calculate-chart]', { birthDate, birthTime, birthCity, lat, lon, jd, sunLon, moonLon, ascLon, nodeLon, result });
 
   return {
     statusCode: 200,

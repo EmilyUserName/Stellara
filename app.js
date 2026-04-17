@@ -275,7 +275,7 @@ A WORD TO CARRY
     section1Label: 'Your Soul\'s Mission',
     section2Label: 'How today activates your life mission',
     prompt1: (name, sun, moon, rising) =>
-      `Based on ${name}'s ${sun} Sun, ${moon} Moon${rising ? ` and ${rising} Rising` : ''}, reveal their soul's core mission in this lifetime. Read their North Node direction from the karmic signature of their chart — what they're meant to evolve toward and what they're releasing from past cycles. What is ${name} truly here to do? What gifts are they learning to step into? What wound becomes their greatest teaching?\n\nWrite in these 4 sections, each heading on its own line in ALL CAPS, followed immediately by plain paragraph text. No bullet points.\n\nTHE CORE MISSION\nWhat ${name} is here to embody and contribute — the soul's fundamental direction.\n\nTHE KARMIC WOUND BECOMING A GIFT\nThe core place of old pain or limitation that, when worked with consciously, becomes their most powerful contribution to others.\n\nTHREE SOUL LESSONS\nThree specific karmic lessons as concrete "from → to" arcs tied to their chart.\n\nACTIVATING YOUR PURPOSE\nPractical daily, weekly, and long-term guidance for aligning with this mission. What does living on purpose actually look like for ${name} specifically?`,
+      `Based on ${name}'s chart — ${sun} Sun, ${moon} Moon${rising ? `, ${rising} Rising` : ''}, and North Node sign provided above — reveal their soul's core mission in this lifetime. The North Node sign is the actual astronomical placement calculated from their birth data: use it as the primary lens for this reading. What does it mean to have the North Node in that sign? What karmic patterns (South Node) are they releasing? What is ${name} truly here to grow into?\n\nWrite in these 4 sections, each heading on its own line in ALL CAPS, followed immediately by plain paragraph text. No bullet points.\n\nTHE CORE MISSION\nWhat ${name} is here to embody — anchored in their actual North Node sign. Be specific to that sign's evolutionary themes.\n\nTHE KARMIC WOUND BECOMING A GIFT\nWhat the South Node reveals about patterns they're releasing, and how that exact wound becomes their teaching gift.\n\nTHREE SOUL LESSONS\nThree specific "from → to" karmic arcs for ${name}, tied to the nodal axis and their Sun/Moon.\n\nACTIVATING YOUR PURPOSE\nPractical daily, weekly, and long-term guidance for aligning with this mission. Concrete, specific to their chart.`,
     prompt2: (name, sun, moon, today) =>
       `Today is ${today}. Describe how today's planetary movements are activating ${name}'s soul mission and life purpose (${sun} Sun, ${moon} Moon). Is there a karmic opening, a test, or a moment of alignment available today? Give ${name} one soul-aligned action they can take today.`,
   },
@@ -356,9 +356,11 @@ async function reveal() {
   const manualMoon   = document.getElementById('moonSign').value;
   const manualRising = document.getElementById('risingSign').value;
 
-  let sun    = manualSun    || null;
-  let moon   = manualMoon   || null;
-  let rising = manualRising || null;
+  let sun       = manualSun    || null;
+  let moon      = manualMoon   || null;
+  let rising    = manualRising || null;
+  let northNode = null;
+  let southNode = null;
 
   if (!sun || !moon || (!rising && birthTime)) {
     try {
@@ -372,6 +374,8 @@ async function reveal() {
         if (!sun)    sun    = chart.sun;
         if (!moon)   moon   = chart.moon;
         if (!rising) rising = chart.rising;
+        northNode = chart.northNode || null;
+        southNode = chart.southNode || null;
       }
     } catch (_) {
       // Fallback to client-side estimates
@@ -443,6 +447,8 @@ async function reveal() {
 Sun sign: ${sun}
 Moon sign: ${moon}
 ${rising ? `Rising sign: ${rising}` : 'Rising sign: unknown (no birth time provided)'}
+${northNode ? `North Node (soul's evolutionary direction): ${northNode}` : ''}
+${southNode ? `South Node (karmic past, what to release): ${southNode}` : ''}
 Birth city: ${birthCity} (this is where they were born, not necessarily where they live now — do not make assumptions about their current location)`;
 
   // When no birth time was given, ask Claude to be honest about it in the reading
