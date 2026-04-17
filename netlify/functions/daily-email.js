@@ -399,7 +399,7 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO
 
     <!-- CTA -->
     <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0e1e40">
-      <a href="https://stellara-horoscope.com" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,rgba(90,107,140,0.2),rgba(90,107,140,0.1));border:1px solid rgba(90,107,140,0.45);border-radius:10px;color:#dce8f8;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
+      <a href="https://stellara-horoscope.com" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,rgba(143,168,200,0.22),rgba(90,130,180,0.12));border:1px solid rgba(143,168,200,0.58);border-radius:10px;color:#edf1fb;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
         → Open Stellara for your full reading
       </a>
     </td></tr>
@@ -413,11 +413,11 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO
 
     <!-- Footer -->
     <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0e1e40">
-      <p style="margin:0;font-size:11px;color:#5a6b8c;opacity:0.45;font-family:Helvetica,Arial,sans-serif;line-height:2;">
+      <p style="margin:0;font-size:11px;color:#8fa8c8;font-family:Helvetica,Arial,sans-serif;line-height:2;">
         You're receiving this as a Stellara Pro subscriber.<br/>
-        <a href="https://stellara-horoscope.com" style="color:#5a6b8c;text-decoration:none;opacity:0.8;">stellara-horoscope.com</a>
+        <a href="https://stellara-horoscope.com" style="color:#8fa8c8;text-decoration:none;">stellara-horoscope.com</a>
         &nbsp;·&nbsp;
-        <a href="https://stellara-horoscope.com/.netlify/functions/unsubscribe?id=${user.id}" style="color:#5a6b8c;text-decoration:none;opacity:0.8;">Unsubscribe</a>
+        <a href="https://stellara-horoscope.com/.netlify/functions/unsubscribe?id=${user.id}" style="color:#8fa8c8;text-decoration:none;">Unsubscribe</a>
       </p>
     </td></tr>
 
