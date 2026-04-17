@@ -509,6 +509,44 @@ select option { background: var(--navy-2); }
   font-size: 0.85rem;
   letter-spacing: 0.06em;
 }
+.landing-topics-sections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 28px;
+  justify-content: center;
+}
+.landing-topics-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 140px;
+}
+.landing-topics-section-title {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.landing-topic-new {
+  position: relative;
+}
+.landing-topic-new::after {
+  content: 'NEW';
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  color: var(--gold);
+  border: 1px solid rgba(200,169,110,0.5);
+  border-radius: 3px;
+  padding: 0px 3px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
 
 /* Free daily horoscopes on landing page */
 .free-horoscopes {
@@ -940,6 +978,39 @@ select option { background: var(--navy-2); }
 }
 @media (max-width: 420px) {
   .partner-input-row { flex-direction: column; gap: 10px; }
+}
+
+/* Topic section headers inside pill containers */
+.topic-section-header {
+  width: 100%;
+  flex: 0 0 100%;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 600;
+  padding: 10px 0 2px;
+  margin-top: 4px;
+  text-align: left;
+  pointer-events: none;
+}
+
+/* NEW badge on topic pills */
+.pill-new {
+  display: inline-block;
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  color: var(--gold);
+  border: 1px solid rgba(200,169,110,0.5);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 5px;
+  vertical-align: middle;
+  line-height: 1.4;
 }
 
 /* Today's Sky — same prominence as Full Chart, gold glow, animated pulse */

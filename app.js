@@ -181,11 +181,11 @@ A WORD TO CARRY
       `Today is ${today}. Describe the current planetary energy around work and ambition — focus on Saturn, Mars, Mercury, and the Sun's movements. Then connect this specifically to ${name}'s ${sun} Sun and ${moon} Moon. Give 1-2 concrete actions or awarenesses for their professional life today.`,
   },
   finances: {
-    displayName: 'Finances Reading',
-    section1Label: 'Your Relationship with Abundance',
+    displayName: 'Finances & Values',
+    section1Label: 'Your Relationship with Money & Values',
     section2Label: 'Financial energy in the sky today',
     prompt1: (name, sun, moon, rising) =>
-      `Focus entirely on ${name}'s relationship with money, resources, and material security based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. Explore their values around wealth, how they earn and spend, what abundance means to them at a deeper level, and any patterns around scarcity or generosity to be aware of.`,
+      `Based on ${name}'s ${sun} Sun, ${moon} Moon${rising ? ` and ${rising} Rising` : ''}, reveal their deep relationship with money, resources, and values. Go beyond surface financial advice — explore the psychological and emotional patterns that shape how ${name} earns, spends, saves, and relates to material security. What does money represent to them at a deeper level: safety, freedom, power, love? What scarcity or abundance beliefs were formed early, and how do they still operate? Connect their financial patterns to their sense of self-worth — where these are intertwined, the money story changes when the self-worth story changes.\n\nThen: what does ${name} truly value beyond money? What is their natural path to earning in alignment with who they are? Where does abundance flow most easily? Name the specific money pattern they most need to transform. Be psychologically honest and warmly specific — no toxic positivity, real talk about the patterns and real guidance for shifting them.`,
     prompt2: (name, sun, moon, today) =>
       `Today is ${today}. Describe the current planetary energy around finances and material decisions — focus on Venus, Jupiter, and Saturn movements. Then connect this to how ${name}'s ${sun} Sun and ${moon} Moon are being influenced. Give 1-2 concrete financial insights or awarenesses for today.`,
   },
@@ -269,6 +269,51 @@ A WORD TO CARRY
       `Explore ${name}'s shadow — the unconscious patterns, suppressed traits, and hidden gifts that live in the darker corners of their chart based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. What do they tend to project onto others? What part of themselves are they still learning to integrate? Be courageous, compassionate, and ultimately empowering.`,
     prompt2: (name, sun, moon, today) =>
       `Today is ${today}. Describe the current Pluto, Scorpio, and 12th house energy active in the collective. Then connect this to ${name}'s ${sun} Sun and ${moon} Moon. What shadow material might be surfacing for ${name} today, and what is the invitation in it? Give them one concrete shadow work reflection or practice.`,
+  },
+  soulPurpose: {
+    displayName: 'Soul Purpose',
+    section1Label: 'Your Soul\'s Mission',
+    section2Label: 'How today activates your life mission',
+    prompt1: (name, sun, moon, rising) =>
+      `Based on ${name}'s ${sun} Sun, ${moon} Moon${rising ? ` and ${rising} Rising` : ''}, reveal their soul's core mission in this lifetime. Read their North Node direction from the karmic signature of their chart — what they're meant to evolve toward and what they're releasing from past cycles. What is ${name} truly here to do? What gifts are they learning to step into? What wound becomes their greatest teaching?\n\nWrite in these 4 sections, each heading on its own line in ALL CAPS, followed immediately by plain paragraph text. No bullet points.\n\nTHE CORE MISSION\nWhat ${name} is here to embody and contribute — the soul's fundamental direction.\n\nTHE KARMIC WOUND BECOMING A GIFT\nThe core place of old pain or limitation that, when worked with consciously, becomes their most powerful contribution to others.\n\nTHREE SOUL LESSONS\nThree specific karmic lessons as concrete "from → to" arcs tied to their chart.\n\nACTIVATING YOUR PURPOSE\nPractical daily, weekly, and long-term guidance for aligning with this mission. What does living on purpose actually look like for ${name} specifically?`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe how today's planetary movements are activating ${name}'s soul mission and life purpose (${sun} Sun, ${moon} Moon). Is there a karmic opening, a test, or a moment of alignment available today? Give ${name} one soul-aligned action they can take today.`,
+  },
+  friendship: {
+    displayName: 'Friendship & Community',
+    section1Label: 'Your Social Blueprint',
+    section2Label: 'Social energy in the sky today',
+    prompt1: (name, sun, moon, rising) =>
+      `Based on ${name}'s ${sun} Sun, ${moon} Moon${rising ? ` and ${rising} Rising` : ''}, reveal their social blueprint — how they relate to friendships, groups, and community. What do they need from friends? What kind of community feeds their soul? How do they show up in group dynamics — naturally leading, supporting, provoking, harmonizing? Where do they feel most at home socially, and where do they feel out of step? Address both what draws people to ${name} and what ${name} needs to feel truly seen by their people. Be psychologically astute and warmly specific.`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe today's social and collective energy — focus on Uranus and the Moon's influence on group dynamics. How does this land in ${name}'s social world given their ${sun} Sun and ${moon} Moon? Are they being called to reach out, protect their energy, or show up for community in some specific way? Give 1-2 concrete social insights for ${name} today.`,
+  },
+  creativity: {
+    displayName: 'Creativity & Joy',
+    section1Label: 'Your Creative Blueprint',
+    section2Label: 'Creative flow available today',
+    prompt1: (name, sun, moon, rising) =>
+      `Based on ${name}'s ${sun} Sun, ${moon} Moon${rising ? ` and ${rising} Rising` : ''}, reveal their unique creative blueprint and relationship with joy. How does creativity want to move through them — what forms, mediums, experiences? What genuinely lights ${name} up — not what they think they "should" enjoy, but what their chart says brings them alive? Explore both artistic expression and the everyday joys that restore their sense of self. Where have they been denying themselves play? What happens when they create freely, without needing it to be productive or perfect? Give explicit permission to play. Be warm, specific, and liberating.`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe today's creative and Venus energy — what imaginative, joyful, or expressive openings are available? Connect this to ${name}'s ${sun} Sun and ${moon} Moon. Is today a day for bold creative action, quiet imaginative exploration, or simply allowing themselves pleasure? Give ${name} one concrete way to bring more joy or creativity into this specific day.`,
+  },
+  wound: {
+    displayName: 'Wound & Wisdom',
+    section1Label: 'Your Wound & Healing Gift',
+    section2Label: 'What\'s asking to be healed today',
+    prompt1: (name, sun, moon, rising) =>
+      `Based on ${name}'s ${sun} Sun, ${moon} Moon${rising ? ` and ${rising} Rising` : ''}, identify their core psychic wound — the place of deep sensitivity, old pain, and extraordinary healing potential that Chiron represents in every chart. What is ${name}'s core wound? How has it shaped them — what beliefs formed around it, how does it show up in their relationships and self-concept? Be compassionate and specific: not diagnosing, but witnessing. Then reveal the alchemy: how this exact wound becomes their most profound gift to others. Where are they meant to teach, heal, or lead precisely because of this pain?\n\nWrite in three sections — THE WOUND, HOW IT SHOWS UP NOW, and THE ALCHEMY — using plain paragraphs. Use trauma-informed, compassionate language throughout. Never say "this is why this bad thing happened to you." Honor that healing is non-linear.`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe the current Chiron and healing energy in the sky. What wounds or tender places might be stirring for ${name} (${sun} Sun, ${moon} Moon) today? Is this a day when old patterns might surface — and if so, what is the invitation in that? Give ${name} one gentle, compassionate practice for whatever comes up today.`,
+  },
+  power: {
+    displayName: 'Power & Transformation',
+    section1Label: 'Your Power & Transformation',
+    section2Label: 'Where transformation is active today',
+    prompt1: (name, sun, moon, rising) =>
+      `Based on ${name}'s ${sun} Sun, ${moon} Moon${rising ? ` and ${rising} Rising` : ''}, reveal their relationship with power, depth, and transformation. Pluto's signature in their chart shows where they experience the most intense cycles of death and rebirth. Where in ${name}'s life do they encounter the most profound transformation? Where do they tend to give their power away — and where do they reclaim it with full force? What patterns are being asked to die completely so a truer self can emerge? What power do they carry that they haven't fully claimed yet?\n\nWrite in three sections — YOUR PLUTONIAN SIGNATURE, WHAT NEEDS TO DIE, and RECLAIMING YOUR POWER — using plain paragraphs. Be unflinching, psychologically deep, and ultimately empowering. Don't avoid the darkness, but always move toward the light on the other side of it.`,
+    prompt2: (name, sun, moon, today) =>
+      `Today is ${today}. Describe the current Pluto and Scorpio energy active in the sky — where are transformation, power dynamics, and intensity showing up? Then connect this to ${name}'s ${sun} Sun and ${moon} Moon. What might be releasing, intensifying, or transforming for ${name} today? Give one concrete guidance for navigating intensity or claiming power today.`,
   },
 };
 

@@ -75,17 +75,35 @@
       </div>
 
       <div class="landing-topics">
-        <div class="landing-topic">Today's Sky</div>
-        <div class="landing-topic">Love</div>
-        <div class="landing-topic">Career</div>
-        <div class="landing-topic">Finances</div>
-        <div class="landing-topic">Health</div>
-        <div class="landing-topic">This Month</div>
-        <div class="landing-topic">Compatibility</div>
-        <div class="landing-topic">Shadow Work</div>
-        <div class="landing-topic">Travel</div>
-        <div class="landing-topic">Inner World</div>
-        <div class="landing-topic">Spiritual Path</div>
+        <div class="landing-topics-sections">
+          <div class="landing-topics-section">
+            <div class="landing-topics-section-title">WHO YOU ARE</div>
+            <div class="landing-topic">Life Path</div>
+            <div class="landing-topic landing-topic-new">Soul Purpose</div>
+            <div class="landing-topic">Inner World</div>
+            <div class="landing-topic">Shadow Work</div>
+          </div>
+          <div class="landing-topics-section">
+            <div class="landing-topics-section-title">HOW YOU RELATE</div>
+            <div class="landing-topic">Love & Romance</div>
+            <div class="landing-topic landing-topic-new">Friendship</div>
+            <div class="landing-topic">Communication</div>
+          </div>
+          <div class="landing-topics-section">
+            <div class="landing-topics-section-title">HOW YOU THRIVE</div>
+            <div class="landing-topic">Career & Calling</div>
+            <div class="landing-topic">Finances & Values</div>
+            <div class="landing-topic">Health & Vitality</div>
+            <div class="landing-topic landing-topic-new">Creativity & Joy</div>
+          </div>
+          <div class="landing-topics-section">
+            <div class="landing-topics-section-title">YOUR EVOLUTION</div>
+            <div class="landing-topic landing-topic-new">Wound & Wisdom</div>
+            <div class="landing-topic landing-topic-new">Power & Transformation</div>
+            <div class="landing-topic">Spiritual Path</div>
+            <div class="landing-topic">Energy & Timing</div>
+          </div>
+        </div>
       </div>
 
 
@@ -107,9 +125,12 @@
             <li><strong>Classical</strong> — Traditional astrology rooted in ancient wisdom</li>
           </ul>
 
-          <div class="landing-pro-section-label">13 Personalized Topics</div>
+          <div class="landing-pro-section-label">15 Personalized Topics</div>
           <ul class="landing-plan-features">
-            <li>Today's Sky &nbsp;·&nbsp; Love &nbsp;·&nbsp; Career &nbsp;·&nbsp; Finances &nbsp;·&nbsp; Health &nbsp;·&nbsp; This Month &nbsp;·&nbsp; Communication &nbsp;·&nbsp; Inner World &nbsp;·&nbsp; Energy &amp; Timing &nbsp;·&nbsp; Travel &nbsp;·&nbsp; Spiritual Path &nbsp;·&nbsp; Compatibility &nbsp;·&nbsp; Shadow Work</li>
+            <li><strong>WHO YOU ARE:</strong> Life Path &nbsp;·&nbsp; Soul Purpose &nbsp;·&nbsp; Inner World &nbsp;·&nbsp; Shadow Work</li>
+            <li><strong>HOW YOU RELATE:</strong> Love &amp; Romance &nbsp;·&nbsp; Friendship &nbsp;·&nbsp; Communication</li>
+            <li><strong>HOW YOU THRIVE:</strong> Career &amp; Calling &nbsp;·&nbsp; Finances &amp; Values &nbsp;·&nbsp; Health &amp; Vitality &nbsp;·&nbsp; Creativity &amp; Joy</li>
+            <li><strong>YOUR EVOLUTION:</strong> Wound &amp; Wisdom &nbsp;·&nbsp; Power &amp; Transformation &nbsp;·&nbsp; Spiritual Path &nbsp;·&nbsp; Energy &amp; Timing</li>
           </ul>
 
           <div class="landing-pro-section-label">Also Included</div>
@@ -220,7 +241,7 @@
           <div class="pro-upsell-title">✦ Personalized Readings</div>
           <div class="pro-upsell-desc">Go beyond your sun sign. Pro connects your exact birth chart to what's happening in the sky right now — a reading written for you, not your sign.</div>
           <div class="pro-upsell-topics">
-            <span>Today's Sky</span><span>Love</span><span>Career</span><span>Finances</span><span>Health</span><span>This Month</span><span>Inner World</span><span>Spiritual Path</span><span>Shadow Work</span><span>Travel</span><span>Compatibility</span><span>Energy & Timing</span>
+            <span>Today's Sky</span><span>Soul Purpose</span><span>Love & Romance</span><span>Friendship</span><span>Career & Calling</span><span>Finances & Values</span><span>Health & Vitality</span><span>Creativity & Joy</span><span>Wound & Wisdom</span><span>Power & Transformation</span><span>Inner World</span><span>Spiritual Path</span><span>Shadow Work</span><span>Energy & Timing</span>
           </div>
           <div class="pro-upsell-note">All topics. All reading styles. Daily email digest.</div>
           <button class="pro-upsell-btn" onclick="openUpgradeModal()">Upgrade to Pro — $12 / month</button>
@@ -255,18 +276,29 @@
             <label style="display:block; margin-bottom:10px;"><span class="flow-step">2</span> What would you like to explore?</label>
             <div class="topic-pills home-topic-pills">
               <button class="topic-pill topic-pill-featured active" data-topic="daily" onclick="selectTopic(this)">Today's Sky</button>
-              <button class="topic-pill" data-topic="love"          onclick="selectTopic(this)">Love</button>
-              <button class="topic-pill" data-topic="career"        onclick="selectTopic(this)">Career</button>
-              <button class="topic-pill" data-topic="finances"      onclick="selectTopic(this)">Finances</button>
-              <button class="topic-pill" data-topic="health"        onclick="selectTopic(this)">Health</button>
-              <button class="topic-pill" data-topic="thisMonth"     onclick="selectTopic(this)">This Month</button>
+
+              <div class="topic-section-header">✦ Who You Are</div>
+              <button class="topic-pill" data-topic="chart"        onclick="selectTopic(this)">Life Path</button>
+              <button class="topic-pill" data-topic="soulPurpose"  onclick="selectTopic(this)">Soul Purpose <span class="pill-new">New</span></button>
+              <button class="topic-pill" data-topic="innerWorld"   onclick="selectTopic(this)">Inner World</button>
+              <button class="topic-pill" data-topic="shadow"       onclick="selectTopic(this)">Shadow Work</button>
+
+              <div class="topic-section-header">✦ How You Relate</div>
+              <button class="topic-pill" data-topic="love"         onclick="selectTopic(this)">Love & Romance</button>
+              <button class="topic-pill" data-topic="friendship"   onclick="selectTopic(this)">Friendship <span class="pill-new">New</span></button>
               <button class="topic-pill" data-topic="communication" onclick="selectTopic(this)">Communication</button>
-              <button class="topic-pill" data-topic="innerWorld"    onclick="selectTopic(this)">Inner World</button>
-              <button class="topic-pill" data-topic="energy"        onclick="selectTopic(this)">Energy & Timing</button>
-              <button class="topic-pill" data-topic="travel"        onclick="selectTopic(this)">Travel</button>
-              <button class="topic-pill" data-topic="spiritual"     onclick="selectTopic(this)">Spiritual Path</button>
-              <button class="topic-pill" data-topic="compatibility" onclick="selectTopic(this)">Compatibility</button>
-              <button class="topic-pill" data-topic="shadow"        onclick="selectTopic(this)">Shadow Work</button>
+
+              <div class="topic-section-header">✦ How You Thrive</div>
+              <button class="topic-pill" data-topic="career"       onclick="selectTopic(this)">Career & Calling</button>
+              <button class="topic-pill" data-topic="finances"     onclick="selectTopic(this)">Finances & Values</button>
+              <button class="topic-pill" data-topic="health"       onclick="selectTopic(this)">Health & Vitality</button>
+              <button class="topic-pill" data-topic="creativity"   onclick="selectTopic(this)">Creativity & Joy <span class="pill-new">New</span></button>
+
+              <div class="topic-section-header">✦ Your Evolution</div>
+              <button class="topic-pill" data-topic="wound"        onclick="selectTopic(this)">Wound & Wisdom <span class="pill-new">New</span></button>
+              <button class="topic-pill" data-topic="power"        onclick="selectTopic(this)">Power & Transformation <span class="pill-new">New</span></button>
+              <button class="topic-pill" data-topic="spiritual"    onclick="selectTopic(this)">Spiritual Path</button>
+              <button class="topic-pill" data-topic="energy"       onclick="selectTopic(this)">Energy & Timing</button>
             </div>
           </div>
           <button class="btn btn-reveal" onclick="reveal()">✦ &nbsp;Reveal My Reading</button>
@@ -416,18 +448,29 @@
         <label>Focus</label>
         <div class="topic-pills">
           <button class="topic-pill topic-pill-featured active" data-topic="daily" onclick="selectTopic(this)">Today's Sky <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="love"          onclick="selectTopic(this)">Love <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="career"        onclick="selectTopic(this)">Career <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="finances"      onclick="selectTopic(this)">Finances <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="health"        onclick="selectTopic(this)">Health <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="thisMonth"     onclick="selectTopic(this)">This Month <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="communication" onclick="selectTopic(this)">Communication <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="innerWorld"    onclick="selectTopic(this)">Inner World <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="energy"        onclick="selectTopic(this)">Energy & Timing <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="travel"        onclick="selectTopic(this)">Travel <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="spiritual"     onclick="selectTopic(this)">Spiritual Path <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="compatibility" onclick="selectTopic(this)">Compatibility <span class="pill-pro">Pro</span></button>
-          <button class="topic-pill"        data-topic="shadow"        onclick="selectTopic(this)">Shadow Work <span class="pill-pro">Pro</span></button>
+
+          <div class="topic-section-header">✦ Who You Are</div>
+          <button class="topic-pill" data-topic="chart"        onclick="selectTopic(this)">Life Path</button>
+          <button class="topic-pill" data-topic="soulPurpose"  onclick="selectTopic(this)">Soul Purpose <span class="pill-pro">Pro</span> <span class="pill-new">New</span></button>
+          <button class="topic-pill" data-topic="innerWorld"   onclick="selectTopic(this)">Inner World <span class="pill-pro">Pro</span></button>
+          <button class="topic-pill" data-topic="shadow"       onclick="selectTopic(this)">Shadow Work <span class="pill-pro">Pro</span></button>
+
+          <div class="topic-section-header">✦ How You Relate</div>
+          <button class="topic-pill" data-topic="love"         onclick="selectTopic(this)">Love & Romance <span class="pill-pro">Pro</span></button>
+          <button class="topic-pill" data-topic="friendship"   onclick="selectTopic(this)">Friendship <span class="pill-pro">Pro</span> <span class="pill-new">New</span></button>
+          <button class="topic-pill" data-topic="communication" onclick="selectTopic(this)">Communication <span class="pill-pro">Pro</span></button>
+
+          <div class="topic-section-header">✦ How You Thrive</div>
+          <button class="topic-pill" data-topic="career"       onclick="selectTopic(this)">Career & Calling <span class="pill-pro">Pro</span></button>
+          <button class="topic-pill" data-topic="finances"     onclick="selectTopic(this)">Finances & Values <span class="pill-pro">Pro</span></button>
+          <button class="topic-pill" data-topic="health"       onclick="selectTopic(this)">Health & Vitality <span class="pill-pro">Pro</span></button>
+          <button class="topic-pill" data-topic="creativity"   onclick="selectTopic(this)">Creativity & Joy <span class="pill-pro">Pro</span> <span class="pill-new">New</span></button>
+
+          <div class="topic-section-header">✦ Your Evolution</div>
+          <button class="topic-pill" data-topic="wound"        onclick="selectTopic(this)">Wound & Wisdom <span class="pill-pro">Pro</span> <span class="pill-new">New</span></button>
+          <button class="topic-pill" data-topic="power"        onclick="selectTopic(this)">Power & Transformation <span class="pill-pro">Pro</span> <span class="pill-new">New</span></button>
+          <button class="topic-pill" data-topic="spiritual"    onclick="selectTopic(this)">Spiritual Path <span class="pill-pro">Pro</span></button>
+          <button class="topic-pill" data-topic="energy"       onclick="selectTopic(this)">Energy & Timing <span class="pill-pro">Pro</span></button>
         </div>
         <div class="partner-input" id="partnerInputCard" style="display:none;">
           <div class="partner-input-heading">♡ &nbsp;Who are you reading with?</div>
