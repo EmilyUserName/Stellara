@@ -347,7 +347,7 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO
 
     <!-- Date + placements -->
     <tr><td style="text-align:center;padding-bottom:28px;" bgcolor="#0e1e40">
-      <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#5a6b8c;font-family:Helvetica,Arial,sans-serif;margin-bottom:10px;">${today}</div>
+      <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#9fb5cc;font-family:Helvetica,Arial,sans-serif;margin-bottom:10px;">${today}</div>
       <div style="font-size:12px;color:#8fa8c8;font-family:Helvetica,Arial,sans-serif;letter-spacing:0.06em;">
         ${sun} Sun &nbsp;·&nbsp; ${moon} Moon${rising ? ` &nbsp;·&nbsp; ${rising} Rising` : ''}
       </div>
@@ -377,13 +377,13 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO
       <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
           <td style="padding-bottom:18px;">
-            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#5a6b8c;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Watch for</div>
+            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#9fb5cc;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Watch for</div>
             <div style="font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.6;">${safeWatch}</div>
           </td>
         </tr>
         <tr>
           <td style="padding-bottom:18px;border-top:1px solid rgba(90,107,140,0.1);padding-top:18px;">
-            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#5a6b8c;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Lean into</div>
+            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#9fb5cc;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Lean into</div>
             <div style="font-size:18px;color:#f5f8ff;font-family:Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:0.02em;">${safeLean}</div>
           </td>
         </tr>
