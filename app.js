@@ -160,7 +160,7 @@ A WORD TO CARRY
     displayName: "Today's Sky",
     section2Label: "Today's cosmic weather for you",
     prompt2: (name, sun, moon, today) =>
-      `Today is ${today}. Give ${name} (${sun} Sun, ${moon} Moon) their personal daily reading. Describe the most significant planetary energy active today — the Moon's sign and phase, any major aspects or movements worth noting. Invent plausible but grounded transit themes for today. Then make it personal: how does today's cosmic weather interact with ${name}'s chart specifically? What is today asking of them? What should they lean into, and what should they move through carefully? Fresh, direct, potent. 2 paragraphs max.`,
+      `Today is ${today}. Give ${name} (${sun} Sun, ${moon} Moon) their personal daily reading. Use the exact planetary positions provided above — Moon sign, phase, and other placements are real astronomical data and must be stated accurately. Interpret what this sky means: what is the dominant energy today, what does the Moon in its current sign and phase ask of everyone, and how does this interact with ${name}'s chart specifically? What should they lean into, and what should they move through carefully? Fresh, direct, potent. 2 paragraphs max.`,
   },
   love: {
     displayName: 'Love Reading',
@@ -431,6 +431,23 @@ async function reveal() {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
 
+  // Fetch real astronomical positions for today — Claude must use these, not invent them
+  let todaySky = null;
+  try {
+    const skyRes = await fetch('/api/get-sky');
+    if (skyRes.ok) todaySky = await skyRes.json();
+  } catch (_) {}
+
+  const skyContext = todaySky ? `
+TODAY'S ACTUAL SKY — use these exact placements. Do NOT contradict or invent different positions:
+Moon: ${todaySky.moon} (${todaySky.moonPhase})
+Sun: ${todaySky.sun}
+Mercury: ${todaySky.mercury || 'unknown'}
+Venus: ${todaySky.venus || 'unknown'}
+Mars: ${todaySky.mars || 'unknown'}
+Jupiter: ${todaySky.jupiter || 'unknown'}
+Saturn: ${todaySky.saturn || 'unknown'}` : '';
+
   const topic = TOPIC_CONFIG[selectedTopic];
   const mode  = topic.mode || 'both';
   const style = STYLE_CONFIG[selectedStyle];
@@ -460,7 +477,7 @@ Birth city: ${birthCity} (this is where they were born, not necessarily where th
   if (mode === 'chart') {
     prompt = `${style.system}
 
-${userContext}
+${userContext}${skyContext}
 
 ${topic.prompt1(name, sun, moon, rising, partnerInfo)}${noTimeNote}
 
@@ -468,7 +485,7 @@ Be concise and potent — every sentence should land. No filler. No bullet point
   } else if (mode === 'daily') {
     prompt = `${style.system}
 
-${userContext}
+${userContext}${skyContext}
 Today's date: ${today}
 
 ${topic.prompt2(name, sun, moon, today, partnerInfo)}${noTimeNote}
@@ -477,7 +494,7 @@ Be concise and potent — every sentence should land. No filler. No bullet point
   } else {
     prompt = `${style.system}
 
-${userContext}
+${userContext}${skyContext}
 Today's date: ${today}
 
 Write two sections separated by the exact delimiter "---TRANSITS---":

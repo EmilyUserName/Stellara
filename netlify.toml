@@ -107,3 +107,8 @@
   from = "/api/get-weekly-spread"
   to = "/.netlify/functions/get-weekly-spread"
   status = 200
+
+[[redirects]]
+  from = "/api/get-sky"
+  to = "/.netlify/functions/get-sky"
+  status = 200
