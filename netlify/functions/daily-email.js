@@ -232,8 +232,13 @@ async function generateReading({ name, sun, moon, rising, birth_city, birth_time
   const systemPrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.psychological;
   const { natalMercury, natalVenus, natalMars, natalJupiter, natalSaturn, natalMC, northNode, southNode } = natalPlanets;
 
-  const skyLines = skyToday && skyToday.moon ? `Moon: ${skyToday.moon} (${skyToday.moonPhase || 'unknown phase'})
-Sun: ${skyToday.sun || 'unknown'}
+  const lunaLine = skyToday?.newMoonSign
+    ? `Lunar phase: ${skyToday.moonPhase || 'unknown'} — this lunation's new moon was exact in ${skyToday.newMoonSign}${skyToday.newMoonDate ? ' on ' + skyToday.newMoonDate : ''}`
+    : `Lunar phase: ${skyToday?.moonPhase || 'unknown'}`;
+
+  const skyLines = skyToday && skyToday.moon ? `Sun: ${skyToday.sun || 'unknown'}
+Moon: ${skyToday.moon} (current transit)
+${lunaLine}
 Mercury: ${skyToday.mercury || 'unknown'}
 Venus: ${skyToday.venus || 'unknown'}
 Mars: ${skyToday.mars || 'unknown'}

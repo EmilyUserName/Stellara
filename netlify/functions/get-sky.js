@@ -63,8 +63,7 @@ function moonLongitudeMeeus(jd) {
   return ((lon % 360) + 360) % 360;
 }
 
-function moonPhase(moonLon, sunLon) {
-  const angle = ((moonLon - sunLon) + 360) % 360;
+function moonPhase(angle) {
   if (angle < 45)  return 'New Moon';
   if (angle < 90)  return 'Waxing Crescent';
   if (angle < 135) return 'First Quarter';
@@ -113,10 +112,30 @@ exports.handler = async function () {
       moonLon = moonLongitudeMeeus(toJD(now));
     }
 
+    // Find the most recent new moon to report the lunation sign correctly.
+    // "New Moon in Aries" means the conjunction was in Aries — not the current
+    // transit sign (which may have moved on already).
+    let newMoonSign = null;
+    let newMoonDate = null;
+    try {
+      const nm    = Astronomy.SearchMoonPhase(0, time, -40);
+      const nmVec = Astronomy.GeoVector('Moon', nm, true);
+      const nmLon = ((Astronomy.Ecliptic(nmVec).elon % 360) + 360) % 360;
+      newMoonSign = SIGNS[Math.floor(nmLon / 30)];
+      newMoonDate = nm.date.toISOString().slice(0, 10);
+    } catch (e) {
+      console.error('[get-sky] new moon search error:', e.message);
+    }
+
+    // Use astronomy-engine's own phase angle for an accurate phase name
+    const phaseAngle = Astronomy.MoonPhase(time);
+
     const sky = {
-      sun:       SIGNS[Math.floor(sunLon  / 30)],
-      moon:      SIGNS[Math.floor(moonLon / 30)],
-      moonPhase: moonPhase(moonLon, sunLon),
+      sun:         SIGNS[Math.floor(sunLon  / 30)],
+      moon:        SIGNS[Math.floor(moonLon / 30)],
+      moonPhase:   moonPhase(phaseAngle),
+      newMoonSign: newMoonSign,
+      newMoonDate: newMoonDate,
       mercury:   bodySign('Mercury', time),
       venus:     bodySign('Venus',   time),
       mars:      bodySign('Mars',    time),
@@ -141,10 +160,11 @@ exports.handler = async function () {
       const jd      = toJD(new Date());
       const sunLon  = sunLongitudeMeeus(jd);
       const moonLon = moonLongitudeMeeus(jd);
+      const angle = ((moonLon - sunLon) + 360) % 360;
       const fallback = {
         sun:       SIGNS[Math.floor(sunLon  / 30)],
         moon:      SIGNS[Math.floor(moonLon / 30)],
-        moonPhase: moonPhase(moonLon, sunLon),
+        moonPhase: moonPhase(angle),
       };
       console.log('[get-sky] Meeus fallback:', fallback);
       return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fallback) };

@@ -452,8 +452,9 @@ async function reveal() {
 
   const skyContext = todaySky ? `
 TODAY'S ACTUAL SKY — use these exact placements. Do NOT contradict or invent different positions:
-Moon: ${todaySky.moon} (${todaySky.moonPhase})
 Sun: ${todaySky.sun}
+Moon: ${todaySky.moon} (current transit — this is where the moon is RIGHT NOW)
+Lunar phase: ${todaySky.moonPhase}${todaySky.newMoonSign ? ` — this lunation's new moon was exact in ${todaySky.newMoonSign}${todaySky.newMoonDate ? ' on ' + todaySky.newMoonDate : ''}` : ''}
 Mercury: ${todaySky.mercury || 'unknown'}
 Venus: ${todaySky.venus || 'unknown'}
 Mars: ${todaySky.mars || 'unknown'}
