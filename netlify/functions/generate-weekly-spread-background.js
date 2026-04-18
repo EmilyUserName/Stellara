@@ -56,8 +56,24 @@ async function generateAndStore(userId, dates) {
     throw new Error('User profile incomplete — cannot generate spread');
   }
 
+  // Fetch natal planets
+  let natalPlanets = {};
+  if (profile.birth_date && profile.birth_city) {
+    try {
+      const chartRes = await fetch(
+        `${process.env.URL}/.netlify/functions/calculate-chart`,
+        {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ birthDate: profile.birth_date, birthTime: profile.birth_time || null, birthCity: profile.birth_city }),
+        }
+      );
+      if (chartRes.ok) natalPlanets = await chartRes.json();
+    } catch (_) {}
+  }
+
   // Generate via Claude
-  const days = await callClaude(profile, dates);
+  const days = await callClaude(profile, dates, natalPlanets);
   if (!days.length) throw new Error('Claude returned no content');
 
   // Upsert each day into weekly_spreads
@@ -67,20 +83,33 @@ async function generateAndStore(userId, dates) {
 }
 
 // ── Claude call ──────────────────────────────────────────────
-async function callClaude(profile, dates) {
+async function callClaude(profile, dates, natalPlanets = {}) {
   const { name, sun_sign: sun, moon_sign: moon, rising_sign: rising, birth_city } = profile;
+  const { mercury, venus, mars, jupiter, saturn, midheaven, northNode, southNode } = natalPlanets;
 
   const dateList = dates.map(d => {
     const dt = new Date(d + 'T12:00:00Z');
     return `${d} (${dt.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })})`;
   }).join('\n');
 
+  const natalLines = [
+    `Sun: ${sun || 'unknown'}`,
+    `Moon: ${moon || 'unknown'}`,
+    `Rising: ${rising || 'unknown'}`,
+    midheaven  ? `Midheaven (MC): ${midheaven}` : '',
+    northNode  ? `North Node: ${northNode}` : '',
+    southNode  ? `South Node: ${southNode}` : '',
+    mercury    ? `Mercury: ${mercury}` : '',
+    venus      ? `Venus: ${venus}` : '',
+    mars       ? `Mars: ${mars}` : '',
+    jupiter    ? `Jupiter: ${jupiter}` : '',
+    saturn     ? `Saturn: ${saturn}` : '',
+  ].filter(Boolean).join('\n');
+
   const prompt = `You are Stellara, generating a personalized cosmic spread for ${name}.
 
-NATAL CHART:
-Sun: ${sun || 'unknown'}
-Moon: ${moon || 'unknown'}
-Rising: ${rising || 'unknown'}
+NATAL CHART (birth placements — do not confuse with current transits):
+${natalLines}
 Birth city: ${birth_city || 'unknown'}
 
 DATES TO GENERATE:

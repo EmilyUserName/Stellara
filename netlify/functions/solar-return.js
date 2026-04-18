@@ -28,7 +28,7 @@ exports.handler = async function (event) {
 
   // Fetch profile
   const profileRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=name,sun_sign,moon_sign,rising_sign,birth_city,birth_date,solar_return_year,preferred_style`,
+    `${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=name,sun_sign,moon_sign,rising_sign,birth_city,birth_date,birth_time,solar_return_year,preferred_style`,
     { headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` } }
   );
   const profiles = await profileRes.json();
@@ -41,8 +41,24 @@ exports.handler = async function (event) {
     return { statusCode: 403, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Solar Return not purchased' }) };
   }
 
+  // Fetch natal planets (Mercury through Saturn + MC + nodes)
+  let natalPlanets = {};
+  if (profile.birth_date && profile.birth_city) {
+    try {
+      const chartRes = await fetch(
+        `${process.env.URL}/.netlify/functions/calculate-chart`,
+        {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ birthDate: profile.birth_date, birthTime: profile.birth_time || null, birthCity: profile.birth_city }),
+        }
+      );
+      if (chartRes.ok) natalPlanets = await chartRes.json();
+    } catch (_) {}
+  }
+
   // Generate reading fresh each time (year and location can vary)
-  const reading = await generateReading(profile, parseInt(year), returnLocation);
+  const reading = await generateReading(profile, parseInt(year), returnLocation, natalPlanets);
   if (!reading) return { statusCode: 502, body: 'Failed to generate reading' };
 
   return {
@@ -52,9 +68,10 @@ exports.handler = async function (event) {
   };
 };
 
-async function generateReading(profile, year, returnLocation) {
+async function generateReading(profile, year, returnLocation, natalPlanets = {}) {
   const { name, sun_sign, moon_sign, rising_sign, birth_city, birth_date, preferred_style } = profile;
   const style = STYLE_PROMPTS[preferred_style] || STYLE_PROMPTS.psychological;
+  const { mercury, venus, mars, jupiter, saturn, midheaven, northNode, southNode } = natalPlanets;
 
   const birthYear  = birth_date ? parseInt(birth_date.slice(0, 4)) : null;
   const age        = birthYear ? year - birthYear : null;
@@ -64,14 +81,26 @@ async function generateReading(profile, year, returnLocation) {
     ? `Solar Return location (where ${name} will be on their birthday): ${returnLocation}`
     : `Birth city (used as Solar Return location): ${birth_city || 'unknown'}`;
 
+  const natalLines = [
+    `Sun: ${sun_sign}`,
+    `Moon: ${moon_sign || 'unknown'}`,
+    rising_sign || natalPlanets.rising ? `Rising (Ascendant): ${rising_sign || natalPlanets.rising}` : 'Rising: unknown',
+    midheaven   ? `Midheaven (MC — career/public legacy): ${midheaven}` : '',
+    northNode   ? `North Node (soul direction): ${northNode}` : '',
+    southNode   ? `South Node (karmic past): ${southNode}` : '',
+    mercury     ? `Mercury (mind, communication): ${mercury}` : '',
+    venus       ? `Venus (love style, values): ${venus}` : '',
+    mars        ? `Mars (drive, energy): ${mars}` : '',
+    jupiter     ? `Jupiter (expansion, luck): ${jupiter}` : '',
+    saturn      ? `Saturn (discipline, life lessons): ${saturn}` : '',
+  ].filter(Boolean).join('\n');
+
   const prompt = `${style}
 
 You are writing ${name}'s Solar Return reading for ${year} — their personal forecast for the year ahead, beginning at their birthday.
 
 ${name}'s natal chart:
-Sun: ${sun_sign}
-Moon: ${moon_sign || 'unknown'}
-${rising_sign ? `Rising: ${rising_sign}` : 'Rising: unknown'}
+${natalLines}
 Birth city: ${birth_city || 'unknown'}
 ${locationLine}
 ${ageContext}

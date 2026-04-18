@@ -162,9 +162,17 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
 
   // Sun and moon are stable — use saved values if present.
   // Rising always recalculated fresh (sensitive to formula changes).
-  let sun    = sun_sign;
-  let moon   = moon_sign;
-  let rising = null;
+  let sun          = sun_sign;
+  let moon         = moon_sign;
+  let rising       = null;
+  let natalMercury = null;
+  let natalVenus   = null;
+  let natalMars    = null;
+  let natalJupiter = null;
+  let natalSaturn  = null;
+  let natalMC      = null;
+  let northNode    = null;
+  let southNode    = null;
 
   if (!sun || !moon || birth_time) {
     try {
@@ -174,10 +182,18 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
         body:    JSON.stringify({ birthDate: birth_date, birthTime: birth_time, birthCity: birth_city }),
       });
       if (chartRes.ok) {
-        const chart = await chartRes.json();
-        sun    = sun    || chart.sun;
-        moon   = moon   || chart.moon;
-        rising = chart.rising || null;
+        const chart    = await chartRes.json();
+        sun            = sun    || chart.sun;
+        moon           = moon   || chart.moon;
+        rising         = chart.rising      || null;
+        natalMercury   = chart.mercury     || null;
+        natalVenus     = chart.venus       || null;
+        natalMars      = chart.mars        || null;
+        natalJupiter   = chart.jupiter     || null;
+        natalSaturn    = chart.saturn      || null;
+        natalMC        = chart.midheaven   || null;
+        northNode      = chart.northNode   || null;
+        southNode      = chart.southNode   || null;
 
         // Only cache sun/moon — never cache rising so formula fixes apply immediately
         const patch = {};
@@ -201,7 +217,8 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
 
   // Generate the reading via Claude
   const style = preferred_style || 'psychological';
-  const content = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday });
+  const natalPlanets = { natalMercury, natalVenus, natalMars, natalJupiter, natalSaturn, natalMC, northNode, southNode };
+  const content = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets });
 
   // Send the email — only stamp last_email_date after a confirmed successful send
   await sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, ...content });
@@ -211,8 +228,9 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
 // ------------------------------------------------------------
 // CLAUDE — generate the new scannable morning digest
 // ------------------------------------------------------------
-async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday }) {
+async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets = {} }) {
   const systemPrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.psychological;
+  const { natalMercury, natalVenus, natalMars, natalJupiter, natalSaturn, natalMC, northNode, southNode } = natalPlanets;
 
   const skyLines = skyToday && skyToday.moon ? `Moon: ${skyToday.moon} (${skyToday.moonPhase || 'unknown phase'})
 Sun: ${skyToday.sun || 'unknown'}
@@ -230,10 +248,18 @@ Pluto: ${skyToday.pluto || 'unknown'}
 
 You are writing ${name}'s morning Stellara digest for ${today}.
 
-${name}'s chart:
+${name}'s natal chart (birth placements — fixed, not today's sky):
 Sun: ${sun}
 Moon: ${moon}
-${rising ? `Rising: ${rising}` : 'Rising: unknown'}
+${rising ? `Rising (Ascendant): ${rising}` : 'Rising: unknown'}
+${natalMC       ? `Midheaven (MC): ${natalMC}` : ''}
+${northNode     ? `North Node: ${northNode}` : ''}
+${southNode     ? `South Node: ${southNode}` : ''}
+${natalMercury  ? `Mercury: ${natalMercury}` : ''}
+${natalVenus    ? `Venus: ${natalVenus}` : ''}
+${natalMars     ? `Mars: ${natalMars}` : ''}
+${natalJupiter  ? `Jupiter: ${natalJupiter}` : ''}
+${natalSaturn   ? `Saturn: ${natalSaturn}` : ''}
 Birth city: ${birth_city}
 
 TODAY'S ACTUAL SKY:

@@ -359,8 +359,14 @@ async function reveal() {
   let sun       = manualSun    || null;
   let moon      = manualMoon   || null;
   let rising    = manualRising || null;
-  let northNode = null;
-  let southNode = null;
+  let northNode    = null;
+  let southNode    = null;
+  let natalMercury = null;
+  let natalVenus   = null;
+  let natalMars    = null;
+  let natalJupiter = null;
+  let natalSaturn  = null;
+  let natalMC      = null;
 
   if (!sun || !moon || (!rising && birthTime)) {
     try {
@@ -374,8 +380,14 @@ async function reveal() {
         if (!sun)    sun    = chart.sun;
         if (!moon)   moon   = chart.moon;
         if (!rising) rising = chart.rising;
-        northNode = chart.northNode || null;
-        southNode = chart.southNode || null;
+        northNode    = chart.northNode    || null;
+        southNode    = chart.southNode    || null;
+        natalMercury = chart.mercury      || null;
+        natalVenus   = chart.venus        || null;
+        natalMars    = chart.mars         || null;
+        natalJupiter = chart.jupiter      || null;
+        natalSaturn  = chart.saturn       || null;
+        natalMC      = chart.midheaven    || null;
       }
     } catch (_) {
       // Fallback to client-side estimates
@@ -465,12 +477,20 @@ Note: Chiron is not calculated — do not state a specific Chiron sign or positi
   const partnerInfo = [partnerName, partnerSign].filter(Boolean).join(', ');
 
   const userContext = `The user's name is ${name}.
-Sun sign: ${sun}
-Moon sign: ${moon}
-${rising ? `Rising sign: ${rising}` : 'Rising sign: unknown (no birth time provided)'}
+
+NATAL CHART (birth placements — fixed, do not confuse with today's sky):
+Sun: ${sun}
+Moon: ${moon}
+${rising ? `Rising (Ascendant): ${rising}` : 'Rising (Ascendant): unknown (no birth time provided)'}
+${natalMC ? `Midheaven (MC — career/public legacy): ${natalMC}` : ''}
 ${northNode ? `North Node (soul's evolutionary direction): ${northNode}` : ''}
 ${southNode ? `South Node (karmic past, what to release): ${southNode}` : ''}
-Birth city: ${birthCity} (this is where they were born, not necessarily where they live now — do not make assumptions about their current location)`;
+${natalMercury ? `Mercury (mind, communication): ${natalMercury}` : ''}
+${natalVenus   ? `Venus (love style, values, aesthetics): ${natalVenus}` : ''}
+${natalMars    ? `Mars (drive, energy, how they act): ${natalMars}` : ''}
+${natalJupiter ? `Jupiter (where luck and expansion flows): ${natalJupiter}` : ''}
+${natalSaturn  ? `Saturn (life lessons, karmic discipline): ${natalSaturn}` : ''}
+Birth city: ${birthCity} (birthplace — do not assume current location)`;
 
   // When no birth time was given, ask Claude to be honest about it in the reading
   const noTimeNote = !birthTime

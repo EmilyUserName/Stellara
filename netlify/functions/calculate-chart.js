@@ -86,6 +86,40 @@ function northNodeLongitude(jd) {
 }
 
 // ------------------------------------------------------------
+// NATAL PLANET SIGN — uses astronomy-engine GeoVector
+// Each call is individually try/catched so one failure doesn't
+// break the whole chart.
+// ------------------------------------------------------------
+function natalPlanetSign(bodyName, astroTime) {
+  try {
+    const vec = Astronomy.GeoVector(bodyName, astroTime, true);
+    const ecl = Astronomy.Ecliptic(vec);
+    const lon = ((ecl.elon % 360) + 360) % 360;
+    return SIGNS[Math.floor(lon / 30)];
+  } catch (e) {
+    console.error(`[calculate-chart] natal ${bodyName} error:`, e.message);
+    return null;
+  }
+}
+
+// ------------------------------------------------------------
+// MIDHEAVEN (MC) — ecliptic longitude culminating on meridian
+// Requires birth time + longitude. Returns null if no birth time.
+// Formula: MC = atan2(sin(RAMC), cos(RAMC) * cos(ε))
+// where RAMC = Local Sidereal Time in degrees
+// ------------------------------------------------------------
+function midheaven(date, lon) {
+  const d2r  = Math.PI / 180;
+  const time = Astronomy.MakeTime(date);
+  const eps  = Astronomy.e_tilt(time).tobl;
+  const gast = Astronomy.SiderealTime(time);
+  const lst  = ((gast * 15 + lon) % 360 + 360) % 360;
+  const lstR = lst * d2r;
+  const mc   = Math.atan2(Math.sin(lstR), Math.cos(lstR) * Math.cos(eps * d2r)) / d2r;
+  return ((mc % 360) + 360) % 360;
+}
+
+// ------------------------------------------------------------
 // ASCENDANT — uses astronomy-engine for accurate sidereal time
 // (accounts for nutation/aberration; same precision as Astro.com)
 // ------------------------------------------------------------
@@ -214,15 +248,25 @@ exports.handler = async function (event) {
   const moonLon   = moonLongitude(jd);
   const ascLon    = birthTime ? ascendant(birthUTC, lat, lon) : null;
   const nodeLon   = northNodeLongitude(jd);
+  const mcLon     = birthTime ? midheaven(birthUTC, lon) : null;
+
+  let astroTime = null;
+  try { astroTime = Astronomy.MakeTime(birthUTC); } catch (_) {}
 
   const result = {
-    sun:       SIGNS[Math.floor(sunLon  / 30)],
-    moon:      SIGNS[Math.floor(moonLon / 30)],
-    rising:    ascLon !== null ? SIGNS[Math.floor(ascLon / 30)] : null,
-    northNode: SIGNS[Math.floor(nodeLon / 30)],
-    southNode: SIGNS[Math.floor(((nodeLon + 180) % 360) / 30)],
+    sun:        SIGNS[Math.floor(sunLon  / 30)],
+    moon:       SIGNS[Math.floor(moonLon / 30)],
+    rising:     ascLon !== null ? SIGNS[Math.floor(ascLon / 30)] : null,
+    northNode:  SIGNS[Math.floor(nodeLon / 30)],
+    southNode:  SIGNS[Math.floor(((nodeLon + 180) % 360) / 30)],
+    midheaven:  mcLon !== null ? SIGNS[Math.floor(mcLon / 30)] : null,
+    mercury:    astroTime ? natalPlanetSign('Mercury', astroTime) : null,
+    venus:      astroTime ? natalPlanetSign('Venus',   astroTime) : null,
+    mars:       astroTime ? natalPlanetSign('Mars',    astroTime) : null,
+    jupiter:    astroTime ? natalPlanetSign('Jupiter', astroTime) : null,
+    saturn:     astroTime ? natalPlanetSign('Saturn',  astroTime) : null,
   };
-  console.log('[calculate-chart]', { birthDate, birthTime, birthCity, lat, lon, jd, sunLon, moonLon, ascLon, nodeLon, result });
+  console.log('[calculate-chart]', { birthDate, birthTime, birthCity, lat, lon, jd, sunLon, moonLon, ascLon, nodeLon, mcLon, result });
 
   return {
     statusCode: 200,
