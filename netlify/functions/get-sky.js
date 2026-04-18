@@ -1,17 +1,14 @@
 // ============================================================
 // get-sky.js — Returns today's actual astronomical positions
-// Pure computation using Meeus formulas + astronomy-engine.
-// No external API calls. Called before every reading so Claude
-// receives real sky data instead of inventing placements.
-// Sun and Moon use Meeus (always reliable). Planets use
-// astronomy-engine with individual try/catch so one failure
-// never takes down the whole response.
+// All bodies use astronomy-engine (JPL DE431 accuracy).
+// Meeus formulas kept as fallback for Sun/Moon only.
 // ============================================================
 const Astronomy = require('astronomy-engine');
 
 const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo',
                'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
 
+// Meeus fallbacks — only used if astronomy-engine GeoVector fails
 function toJD(date) {
   let Y = date.getUTCFullYear();
   let M = date.getUTCMonth() + 1;
@@ -25,7 +22,7 @@ function toJD(date) {
   return Math.trunc(365.25 * (Y + 4716)) + Math.trunc(30.6001 * (M + 1)) + D + B - 1524.5;
 }
 
-function sunLongitude(jd) {
+function sunLongitudeMeeus(jd) {
   const T   = (jd - 2451545.0) / 36525;
   const d2r = Math.PI / 180;
   const L0  = (280.46646 + 36000.76983 * T) % 360;
@@ -39,7 +36,7 @@ function sunLongitude(jd) {
   return ((lon % 360) + 360) % 360;
 }
 
-function moonLongitude(jd) {
+function moonLongitudeMeeus(jd) {
   const T   = (jd - 2451545.0) / 36525;
   const d2r = Math.PI / 180;
   const L1  = (218.3165 + 481267.8813 * T) % 360;
@@ -78,12 +75,16 @@ function moonPhase(moonLon, sunLon) {
   return 'Waning Crescent';
 }
 
-function planetSign(bodyName, time) {
+// Primary path for all bodies — JPL DE431 accuracy via astronomy-engine
+function bodyLongitude(bodyName, time) {
+  const vec = Astronomy.GeoVector(bodyName, time, true);
+  const ecl = Astronomy.Ecliptic(vec);
+  return ((ecl.elon % 360) + 360) % 360;
+}
+
+function bodySign(bodyName, time) {
   try {
-    const vec = Astronomy.GeoVector(bodyName, time, true);
-    const ecl = Astronomy.Ecliptic(vec);
-    const lon = ((ecl.elon % 360) + 360) % 360;
-    return SIGNS[Math.floor(lon / 30)];
+    return SIGNS[Math.floor(bodyLongitude(bodyName, time) / 30)];
   } catch (e) {
     console.error(`[get-sky] ${bodyName} error:`, e.message);
     return null;
@@ -92,36 +93,38 @@ function planetSign(bodyName, time) {
 
 exports.handler = async function () {
   try {
-    const now    = new Date();
-    const jd     = toJD(now);
-    const sunLon = sunLongitude(jd);
-    const moonLon = moonLongitude(jd);
+    const now  = new Date();
+    const time = Astronomy.MakeTime(now);
 
-    // Sun and Moon are always computed from Meeus — never null.
-    const sunSign  = SIGNS[Math.floor(sunLon  / 30)];
-    const moonSign = SIGNS[Math.floor(moonLon / 30)];
-    const phase    = moonPhase(moonLon, sunLon);
-
-    // Planets use astronomy-engine. Each has its own try/catch inside
-    // planetSign(), so a failure returns null for that planet only and
-    // the overall response still succeeds with 200.
-    let time;
-    try { time = Astronomy.MakeTime(now); } catch (e) {
-      console.error('[get-sky] MakeTime error:', e.message);
+    // Sun and Moon use astronomy-engine (same JPL path as planets).
+    // Meeus is fallback only — its ~16-term moon formula can be 5-10°
+    // off near sign boundaries, which causes wrong sign reports.
+    let sunLon, moonLon;
+    try {
+      sunLon = bodyLongitude('Sun', time);
+    } catch (e) {
+      console.error('[get-sky] Sun fallback to Meeus:', e.message);
+      sunLon = sunLongitudeMeeus(toJD(now));
+    }
+    try {
+      moonLon = bodyLongitude('Moon', time);
+    } catch (e) {
+      console.error('[get-sky] Moon fallback to Meeus:', e.message);
+      moonLon = moonLongitudeMeeus(toJD(now));
     }
 
     const sky = {
-      sun:       sunSign,
-      moon:      moonSign,
-      moonPhase: phase,
-      mercury:   time ? planetSign('Mercury', time) : null,
-      venus:     time ? planetSign('Venus',   time) : null,
-      mars:      time ? planetSign('Mars',    time) : null,
-      jupiter:   time ? planetSign('Jupiter', time) : null,
-      saturn:    time ? planetSign('Saturn',  time) : null,
-      uranus:    time ? planetSign('Uranus',  time) : null,
-      neptune:   time ? planetSign('Neptune', time) : null,
-      pluto:     time ? planetSign('Pluto',   time) : null,
+      sun:       SIGNS[Math.floor(sunLon  / 30)],
+      moon:      SIGNS[Math.floor(moonLon / 30)],
+      moonPhase: moonPhase(moonLon, sunLon),
+      mercury:   bodySign('Mercury', time),
+      venus:     bodySign('Venus',   time),
+      mars:      bodySign('Mars',    time),
+      jupiter:   bodySign('Jupiter', time),
+      saturn:    bodySign('Saturn',  time),
+      uranus:    bodySign('Uranus',  time),
+      neptune:   bodySign('Neptune', time),
+      pluto:     bodySign('Pluto',   time),
     };
 
     console.log('[get-sky]', sky);
@@ -132,25 +135,19 @@ exports.handler = async function () {
       body: JSON.stringify(sky),
     };
   } catch (err) {
-    // Even in the outermost catch, attempt to return sun/moon from Meeus
-    // so Claude never falls back to inventing positions.
+    // Outermost catch: attempt Meeus fallback so Claude never invents
     console.error('[get-sky] outer error:', err);
     try {
-      const now    = new Date();
-      const jd     = toJD(now);
-      const sunLon  = sunLongitude(jd);
-      const moonLon = moonLongitude(jd);
+      const jd      = toJD(new Date());
+      const sunLon  = sunLongitudeMeeus(jd);
+      const moonLon = moonLongitudeMeeus(jd);
       const fallback = {
         sun:       SIGNS[Math.floor(sunLon  / 30)],
         moon:      SIGNS[Math.floor(moonLon / 30)],
         moonPhase: moonPhase(moonLon, sunLon),
       };
-      console.log('[get-sky] fallback response:', fallback);
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(fallback),
-      };
+      console.log('[get-sky] Meeus fallback:', fallback);
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fallback) };
     } catch (e2) {
       return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
     }

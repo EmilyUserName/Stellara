@@ -243,15 +243,30 @@ exports.handler = async function (event) {
   }
 
   // 3. Calculate chart
-  const jd        = toJD(birthUTC);
-  const sunLon    = sunLongitude(jd);
-  const moonLon   = moonLongitude(jd);
-  const ascLon    = birthTime ? ascendant(birthUTC, lat, lon) : null;
-  const nodeLon   = northNodeLongitude(jd);
-  const mcLon     = birthTime ? midheaven(birthUTC, lon) : null;
+  const jd      = toJD(birthUTC);
+  const nodeLon = northNodeLongitude(jd);
+  const ascLon  = birthTime ? ascendant(birthUTC, lat, lon) : null;
+  const mcLon   = birthTime ? midheaven(birthUTC, lon) : null;
 
   let astroTime = null;
   try { astroTime = Astronomy.MakeTime(birthUTC); } catch (_) {}
+
+  // Sun and Moon: use astronomy-engine (JPL accuracy) with Meeus fallback.
+  // The simplified Meeus moon formula (~16 terms) can be 5-10° off near
+  // sign boundaries — enough to show the wrong sign.
+  let sunLon, moonLon;
+  try {
+    const vec = Astronomy.GeoVector('Sun', astroTime, true);
+    sunLon = ((Astronomy.Ecliptic(vec).elon % 360) + 360) % 360;
+  } catch (_) {
+    sunLon = sunLongitude(jd);
+  }
+  try {
+    const vec = Astronomy.GeoVector('Moon', astroTime, true);
+    moonLon = ((Astronomy.Ecliptic(vec).elon % 360) + 360) % 360;
+  } catch (_) {
+    moonLon = moonLongitude(jd);
+  }
 
   const result = {
     sun:        SIGNS[Math.floor(sunLon  / 30)],
