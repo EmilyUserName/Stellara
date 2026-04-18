@@ -11,9 +11,38 @@
 // Auth: x-service-key header must match SUPABASE_SERVICE_KEY
 // ============================================================
 
+const Astronomy = require('astronomy-engine');
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ANTHROPIC_API_KEY    = process.env.ANTHROPIC_API_KEY;
+
+const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo',
+               'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+const PHASE_NAMES = ['New Moon','Waxing Crescent','First Quarter','Waxing Gibbous',
+                     'Full Moon','Waning Gibbous','Last Quarter','Waning Crescent'];
+
+function getSkyForDate(dateStr) {
+  try {
+    const time = Astronomy.MakeTime(new Date(dateStr + 'T12:00:00Z'));
+    function bodySign(name) {
+      try {
+        const vec = Astronomy.GeoVector(name, time, true);
+        const lon = ((Astronomy.Ecliptic(vec).elon % 360) + 360) % 360;
+        return SIGNS[Math.floor(lon / 30)];
+      } catch { return null; }
+    }
+    const phase = PHASE_NAMES[Math.floor(Astronomy.MoonPhase(time) / 45)];
+    return {
+      sun: bodySign('Sun'), moon: bodySign('Moon'), moonPhase: phase,
+      mercury: bodySign('Mercury'), venus: bodySign('Venus'),
+      mars: bodySign('Mars'), jupiter: bodySign('Jupiter'), saturn: bodySign('Saturn'),
+    };
+  } catch (e) {
+    console.error('[weekly-spread] sky error for', dateStr, e.message);
+    return null;
+  }
+}
 
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') {
@@ -73,10 +102,14 @@ module.exports.generateAndStore = generateAndStore;
 async function callClaude(profile, dates) {
   const { name, sun_sign: sun, moon_sign: moon, rising_sign: rising, birth_city } = profile;
 
-  const dateList = dates.map(d => {
-    const dt = new Date(d + 'T12:00:00Z');
-    return `${d} (${dt.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })})`;
-  }).join('\n');
+  // Compute actual sky for each date — no fabrication
+  const dateLines = dates.map(d => {
+    const dt  = new Date(d + 'T12:00:00Z');
+    const sky = getSkyForDate(d);
+    const label = dt.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    if (!sky) return `${d} (${label}): sky data unavailable`;
+    return `${d} (${label}):\n  Sun: ${sky.sun} | Moon: ${sky.moon} (${sky.moonPhase}) | Mercury: ${sky.mercury || '?'} | Venus: ${sky.venus || '?'} | Mars: ${sky.mars || '?'} | Jupiter: ${sky.jupiter || '?'} | Saturn: ${sky.saturn || '?'}`;
+  }).join('\n\n');
 
   const prompt = `You are Stellara, generating a personalized cosmic spread for ${name}.
 
@@ -86,20 +119,20 @@ Moon: ${moon || 'unknown'}
 Rising: ${rising || 'unknown'}
 Birth city: ${birth_city || 'unknown'}
 
-DATES TO GENERATE:
-${dateList}
+ACTUAL SKY FOR EACH DATE — use these exact positions. Do NOT invent or contradict them:
+${dateLines}
 
 Return ONLY a valid JSON array. No markdown, no code fences, no explanation. Start with [ and end with ].
 
 For each date produce one object in this exact shape:
 {
   "date": "YYYY-MM-DD",
-  "planet": "dominant planet name (e.g. Venus)",
+  "planet": "the planet whose sign placement is most personally activated for ${name} that day",
   "glyph": "Unicode astrological glyph for that planet",
   "energy": "high" or "mid" or "low",
-  "summary": "2-3 sentences written to ${name} in second person, personal to their ${sun} Sun / ${moon} Moon and the day's planetary energy",
+  "summary": "2-3 sentences written to ${name} in second person, referencing their ${sun} Sun / ${moon} Moon AND the actual planetary positions shown above for that date",
   "topics": [
-    { "key": "exact_key", "name": "Display Name", "glyph": "glyph", "energy": "high|mid|low", "snippet": "one sentence for ${name} about this topic today" },
+    { "key": "exact_key", "name": "Display Name", "glyph": "glyph", "energy": "high|mid|low", "snippet": "one sentence for ${name} about this topic, grounded in the real sky positions for that date" },
     { "key": "exact_key", "name": "Display Name", "glyph": "glyph", "energy": "high|mid|low", "snippet": "one sentence" },
     { "key": "exact_key", "name": "Display Name", "glyph": "glyph", "energy": "high|mid|low", "snippet": "one sentence" }
   ]
@@ -120,13 +153,13 @@ spiritual → Spiritual Path (♆)
 compatibility → Compatibility (♀)
 shadow → Shadow Work (♇)
 
-Planet glyphs: Sun ☉  Moon ☽  Mercury ☿  Venus ♀  Mars ♂  Jupiter ♃  Saturn ♄  Uranus ♅  Neptune ♆  Pluto ♇  Chiron ⚷
+Planet glyphs: Sun ☉  Moon ☽  Mercury ☿  Venus ♀  Mars ♂  Jupiter ♃  Saturn ♄  Uranus ♅  Neptune ♆  Pluto ♇
 
 Rules:
-- Each day must have a different dominant planet (never the same planet two days in a row)
-- Vary energy levels across the week — include low and mid days, not all high
-- Summaries must reference ${name}'s specific ${sun} Sun and ${moon} Moon — never generic
-- Topics must vary across days — don't repeat the same 3 topics every day`;
+- Dominant planet must be chosen based on the actual sky data shown above — which planet's sign placement is most relevant to ${name}'s chart that day
+- Vary energy levels naturally based on the sky — don't force artificial variety
+- Summaries must reference ${name}'s specific ${sun} Sun / ${moon} Moon AND the real planetary positions for that date
+- Topics must be chosen based on which planets are most active that day per the sky data`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',

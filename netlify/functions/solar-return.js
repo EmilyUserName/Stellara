@@ -7,9 +7,60 @@
 // reflects the user's current request.
 // ============================================================
 
+const Astronomy = require('astronomy-engine');
+
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ANTHROPIC_API_KEY    = process.env.ANTHROPIC_API_KEY;
+
+const SR_SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo',
+                  'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+const SR_PHASES = ['New Moon','Waxing Crescent','First Quarter','Waxing Gibbous',
+                   'Full Moon','Waning Gibbous','Last Quarter','Waning Crescent'];
+
+// Compute the exact solar return moment for a given birth date + target year,
+// then return all planetary positions at that instant.
+function getSolarReturnSky(birthDate, targetYear) {
+  try {
+    // Step 1: find natal sun longitude from birth date
+    const birthUTC  = new Date(birthDate + 'T12:00:00Z');
+    const birthTime = Astronomy.MakeTime(birthUTC);
+    const sunVec    = Astronomy.GeoVector('Sun', birthTime, true);
+    const natalLon  = ((Astronomy.Ecliptic(sunVec).elon % 360) + 360) % 360;
+
+    // Step 2: find the moment the sun returns to that exact longitude in targetYear
+    const searchStart = Astronomy.MakeTime(new Date(`${targetYear}-01-01T00:00:00Z`));
+    const returnTime  = Astronomy.SearchSunLongitude(natalLon, searchStart, 400);
+    if (!returnTime) return null;
+
+    // Step 3: compute all planets at the solar return moment
+    function bodySign(name) {
+      try {
+        const vec = Astronomy.GeoVector(name, returnTime, true);
+        const lon = ((Astronomy.Ecliptic(vec).elon % 360) + 360) % 360;
+        return SR_SIGNS[Math.floor(lon / 30)];
+      } catch { return null; }
+    }
+
+    return {
+      returnDate: returnTime.date.toISOString().slice(0, 10),
+      returnDateFull: returnTime.date.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }),
+      sun:     bodySign('Sun'),  // will match natal sign
+      moon:    bodySign('Moon'),
+      moonPhase: SR_PHASES[Math.floor(Astronomy.MoonPhase(returnTime) / 45)],
+      mercury: bodySign('Mercury'),
+      venus:   bodySign('Venus'),
+      mars:    bodySign('Mars'),
+      jupiter: bodySign('Jupiter'),
+      saturn:  bodySign('Saturn'),
+      uranus:  bodySign('Uranus'),
+      neptune: bodySign('Neptune'),
+    };
+  } catch (e) {
+    console.error('[solar-return] getSolarReturnSky error:', e.message);
+    return null;
+  }
+}
 
 const STYLE_PROMPTS = {
   psychological: `You are Stellara, a depth psychology astrologer who speaks through the lens of Jungian thought. Draw on archetypes, the shadow, and individuation. Tone: reflective, profound, transformative.`,
@@ -57,8 +108,11 @@ exports.handler = async function (event) {
     } catch (_) {}
   }
 
+  // Compute actual sky at the exact solar return moment
+  const srSky = profile.birth_date ? getSolarReturnSky(profile.birth_date, parseInt(year)) : null;
+
   // Generate reading fresh each time (year and location can vary)
-  const reading = await generateReading(profile, parseInt(year), returnLocation, natalPlanets);
+  const reading = await generateReading(profile, parseInt(year), returnLocation, natalPlanets, srSky);
   if (!reading) return { statusCode: 502, body: 'Failed to generate reading' };
 
   return {
@@ -68,7 +122,7 @@ exports.handler = async function (event) {
   };
 };
 
-async function generateReading(profile, year, returnLocation, natalPlanets = {}) {
+async function generateReading(profile, year, returnLocation, natalPlanets = {}, srSky = null) {
   const { name, sun_sign, moon_sign, rising_sign, birth_city, birth_date, preferred_style } = profile;
   const style = STYLE_PROMPTS[preferred_style] || STYLE_PROMPTS.psychological;
   const { mercury, venus, mars, jupiter, saturn, midheaven, northNode, southNode } = natalPlanets;
@@ -95,6 +149,19 @@ async function generateReading(profile, year, returnLocation, natalPlanets = {})
     saturn      ? `Saturn (discipline, life lessons): ${saturn}` : '',
   ].filter(Boolean).join('\n');
 
+  const srSkyBlock = srSky ? `
+ACTUAL SKY AT THE EXACT SOLAR RETURN MOMENT (${srSky.returnDateFull}):
+Sun: ${srSky.sun}
+Moon: ${srSky.moon} (${srSky.moonPhase})
+Mercury: ${srSky.mercury || 'unknown'}
+Venus: ${srSky.venus || 'unknown'}
+Mars: ${srSky.mars || 'unknown'}
+Jupiter: ${srSky.jupiter || 'unknown'}
+Saturn: ${srSky.saturn || 'unknown'}
+Uranus: ${srSky.uranus || 'unknown'}
+Neptune: ${srSky.neptune || 'unknown'}
+These are real calculated positions — use them exactly. Do NOT invent or contradict them.` : '';
+
   const prompt = `${style}
 
 You are writing ${name}'s Solar Return reading for ${year} — their personal forecast for the year ahead, beginning at their birthday.
@@ -104,6 +171,7 @@ ${natalLines}
 Birth city: ${birth_city || 'unknown'}
 ${locationLine}
 ${ageContext}
+${srSkyBlock}
 
 Write exactly 5 sections using the titles below, each title on its own line in ALL CAPS, followed immediately by the text. No bullet points. No markdown. Plain paragraphs only. Be potent and specific — every sentence should earn its place.
 
