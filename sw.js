@@ -2,7 +2,7 @@
 // Minimal — just enough to make the app installable as a PWA.
 // Network-first: always fetch fresh content, no aggressive caching.
 
-const CACHE = 'stellara-v1';
+const CACHE = 'stellara-v2';
 const SHELL = ['/', '/index.html', '/style.css', '/app.js', '/auth.js', '/astrology.js', '/icon.svg'];
 
 self.addEventListener('install', event => {

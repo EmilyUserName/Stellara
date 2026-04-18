@@ -3,6 +3,9 @@
 // Pure computation using Meeus formulas + astronomy-engine.
 // No external API calls. Called before every reading so Claude
 // receives real sky data instead of inventing placements.
+// Sun and Moon use Meeus (always reliable). Planets use
+// astronomy-engine with individual try/catch so one failure
+// never takes down the whole response.
 // ============================================================
 const Astronomy = require('astronomy-engine');
 
@@ -89,24 +92,36 @@ function planetSign(bodyName, time) {
 
 exports.handler = async function () {
   try {
-    const now  = new Date();
-    const jd   = toJD(now);
-    const sunLon  = sunLongitude(jd);
+    const now    = new Date();
+    const jd     = toJD(now);
+    const sunLon = sunLongitude(jd);
     const moonLon = moonLongitude(jd);
-    const time = Astronomy.MakeTime(now);
+
+    // Sun and Moon are always computed from Meeus — never null.
+    const sunSign  = SIGNS[Math.floor(sunLon  / 30)];
+    const moonSign = SIGNS[Math.floor(moonLon / 30)];
+    const phase    = moonPhase(moonLon, sunLon);
+
+    // Planets use astronomy-engine. Each has its own try/catch inside
+    // planetSign(), so a failure returns null for that planet only and
+    // the overall response still succeeds with 200.
+    let time;
+    try { time = Astronomy.MakeTime(now); } catch (e) {
+      console.error('[get-sky] MakeTime error:', e.message);
+    }
 
     const sky = {
-      sun:       SIGNS[Math.floor(sunLon  / 30)],
-      moon:      SIGNS[Math.floor(moonLon / 30)],
-      moonPhase: moonPhase(moonLon, sunLon),
-      mercury:   planetSign('Mercury', time),
-      venus:     planetSign('Venus',   time),
-      mars:      planetSign('Mars',    time),
-      jupiter:   planetSign('Jupiter', time),
-      saturn:    planetSign('Saturn',  time),
-      uranus:    planetSign('Uranus',  time),
-      neptune:   planetSign('Neptune', time),
-      pluto:     planetSign('Pluto',   time),
+      sun:       sunSign,
+      moon:      moonSign,
+      moonPhase: phase,
+      mercury:   time ? planetSign('Mercury', time) : null,
+      venus:     time ? planetSign('Venus',   time) : null,
+      mars:      time ? planetSign('Mars',    time) : null,
+      jupiter:   time ? planetSign('Jupiter', time) : null,
+      saturn:    time ? planetSign('Saturn',  time) : null,
+      uranus:    time ? planetSign('Uranus',  time) : null,
+      neptune:   time ? planetSign('Neptune', time) : null,
+      pluto:     time ? planetSign('Pluto',   time) : null,
     };
 
     console.log('[get-sky]', sky);
@@ -117,7 +132,27 @@ exports.handler = async function () {
       body: JSON.stringify(sky),
     };
   } catch (err) {
-    console.error('[get-sky] error:', err);
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    // Even in the outermost catch, attempt to return sun/moon from Meeus
+    // so Claude never falls back to inventing positions.
+    console.error('[get-sky] outer error:', err);
+    try {
+      const now    = new Date();
+      const jd     = toJD(now);
+      const sunLon  = sunLongitude(jd);
+      const moonLon = moonLongitude(jd);
+      const fallback = {
+        sun:       SIGNS[Math.floor(sunLon  / 30)],
+        moon:      SIGNS[Math.floor(moonLon / 30)],
+        moonPhase: moonPhase(moonLon, sunLon),
+      };
+      console.log('[get-sky] fallback response:', fallback);
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fallback),
+      };
+    } catch (e2) {
+      return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    }
   }
 };
