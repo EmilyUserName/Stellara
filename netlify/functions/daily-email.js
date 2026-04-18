@@ -95,18 +95,9 @@ exports.handler = async function (event) {
 // ------------------------------------------------------------
 async function getTodaySky() {
   try {
-    const now      = new Date();
-    const birthDate = now.toISOString().slice(0, 10);
-    const birthTime = `${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')}`;
-
-    const res = await fetch(`${process.env.URL}/.netlify/functions/calculate-chart`, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ birthDate, birthTime, birthCity: 'New York, New York, United States' }),
-    });
+    const res = await fetch(`${process.env.URL}/.netlify/functions/get-sky`);
     if (!res.ok) return {};
-    const chart = await res.json();
-    return { moon: chart.moon || null, sun: chart.sun || null };
+    return await res.json();
   } catch (_) {
     return {};
   }
@@ -223,9 +214,17 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
 async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday }) {
   const systemPrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.psychological;
 
-  const moonLine = skyToday?.moon
-    ? `Today's Moon is in ${skyToday.moon} (real astronomical data — use this exactly, do not contradict it).`
-    : `Use a plausible Moon sign for today.`;
+  const skyLines = skyToday && skyToday.moon ? `Moon: ${skyToday.moon} (${skyToday.moonPhase || 'unknown phase'})
+Sun: ${skyToday.sun || 'unknown'}
+Mercury: ${skyToday.mercury || 'unknown'}
+Venus: ${skyToday.venus || 'unknown'}
+Mars: ${skyToday.mars || 'unknown'}
+Jupiter: ${skyToday.jupiter || 'unknown'}
+Saturn: ${skyToday.saturn || 'unknown'}
+Neptune: ${skyToday.neptune || 'unknown'}
+Pluto: ${skyToday.pluto || 'unknown'}
+(These are real calculated positions — use them exactly. Do not contradict or invent different placements.)`
+    : `(Sky data unavailable — speak to general planetary themes without naming specific positions.)`;
 
   const prompt = `${systemPrompt}
 
@@ -237,9 +236,8 @@ Moon: ${moon}
 ${rising ? `Rising: ${rising}` : 'Rising: unknown'}
 Birth city: ${birth_city}
 
-Today's sky:
-${moonLine}
-Add one or two other plausible planetary themes for today (Mercury, Venus, Mars, Saturn — invent grounded, specific transits).
+TODAY'S ACTUAL SKY:
+${skyLines}
 
 Write the following sections using EXACTLY these labels on their own lines. No extra text between labels.
 

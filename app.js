@@ -196,7 +196,7 @@ A WORD TO CARRY
     prompt1: (name, sun, moon, rising) =>
       `Focus entirely on ${name}'s health, wellbeing, and daily rhythms based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. Explore their physical and emotional needs, how stress shows up in their body, what restores them, and the connection between their inner world and physical vitality. Be holistic and grounded.`,
     prompt2: (name, sun, moon, today) =>
-      `Today is ${today}. Describe the current planetary energy around health and wellbeing — focus on the Moon, Mars, and Chiron movements. Then connect this to how ${name}'s ${sun} Sun and ${moon} Moon are being influenced. Give 1-2 concrete things they can do today to support their body and mind.`,
+      `Today is ${today}. Using the actual sky data provided above, describe the current energy around health and wellbeing — focus on the Moon, Mars, and the overall planetary climate. Then connect this to how ${name}'s ${sun} Sun and ${moon} Moon are being influenced. Give 1-2 concrete things they can do today to support their body and mind.`,
   },
   thisMonth: {
     displayName: 'Monthly Forecast',
@@ -250,7 +250,7 @@ A WORD TO CARRY
     prompt1: (name, sun, moon, rising) =>
       `Explore ${name}'s spiritual nature, soul purpose, and karmic path based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. What are they here to learn? What spiritual gifts do they carry? What keeps pulling them back to growth even when it's uncomfortable? Speak to the deeper "why" behind their life.`,
     prompt2: (name, sun, moon, today) =>
-      `Today is ${today}. Describe the spiritual and cosmic undercurrents active today — focus on Neptune, Chiron, and the Moon's influence. Then connect this to ${name}'s ${sun} Sun and ${moon} Moon. What is the universe asking of ${name} spiritually today? Give them one meaningful practice or awareness to carry.`,
+      `Today is ${today}. Using the actual sky data provided above, describe the spiritual and cosmic undercurrents active today — focus on Neptune, the Moon, and the overall planetary climate. Then connect this to ${name}'s ${sun} Sun and ${moon} Moon. What is the universe asking of ${name} spiritually today? Give them one meaningful practice or awareness to carry.`,
   },
   compatibility: {
     displayName: 'Compatibility Reading',
@@ -304,7 +304,7 @@ A WORD TO CARRY
     prompt1: (name, sun, moon, rising) =>
       `Based on ${name}'s ${sun} Sun, ${moon} Moon${rising ? ` and ${rising} Rising` : ''}, identify their core psychic wound — the place of deep sensitivity, old pain, and extraordinary healing potential that Chiron represents in every chart. What is ${name}'s core wound? How has it shaped them — what beliefs formed around it, how does it show up in their relationships and self-concept? Be compassionate and specific: not diagnosing, but witnessing. Then reveal the alchemy: how this exact wound becomes their most profound gift to others. Where are they meant to teach, heal, or lead precisely because of this pain?\n\nWrite in three sections — THE WOUND, HOW IT SHOWS UP NOW, and THE ALCHEMY — using plain paragraphs. Use trauma-informed, compassionate language throughout. Never say "this is why this bad thing happened to you." Honor that healing is non-linear.`,
     prompt2: (name, sun, moon, today) =>
-      `Today is ${today}. Describe the current Chiron and healing energy in the sky. What wounds or tender places might be stirring for ${name} (${sun} Sun, ${moon} Moon) today? Is this a day when old patterns might surface — and if so, what is the invitation in that? Give ${name} one gentle, compassionate practice for whatever comes up today.`,
+      `Today is ${today}. Using the actual sky data provided above, describe the current healing and emotional energy active in the sky today — focus on the Moon, Saturn, and Neptune placements. What wounds or tender places might be stirring for ${name} (${sun} Sun, ${moon} Moon) today? Is this a day when old patterns might surface — and if so, what is the invitation in that? Give ${name} one gentle, compassionate practice for whatever comes up today.`,
   },
   power: {
     displayName: 'Power & Transformation',
@@ -446,7 +446,11 @@ Mercury: ${todaySky.mercury || 'unknown'}
 Venus: ${todaySky.venus || 'unknown'}
 Mars: ${todaySky.mars || 'unknown'}
 Jupiter: ${todaySky.jupiter || 'unknown'}
-Saturn: ${todaySky.saturn || 'unknown'}` : '';
+Saturn: ${todaySky.saturn || 'unknown'}
+Uranus: ${todaySky.uranus || 'unknown'}
+Neptune: ${todaySky.neptune || 'unknown'}
+Pluto: ${todaySky.pluto || 'unknown'}
+Note: Chiron is not calculated — do not state a specific Chiron sign or position.` : '';
 
   const topic = TOPIC_CONFIG[selectedTopic];
   const mode  = topic.mode || 'both';

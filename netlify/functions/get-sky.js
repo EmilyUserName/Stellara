@@ -104,6 +104,9 @@ exports.handler = async function () {
       mars:      planetSign('Mars',    time),
       jupiter:   planetSign('Jupiter', time),
       saturn:    planetSign('Saturn',  time),
+      uranus:    planetSign('Uranus',  time),
+      neptune:   planetSign('Neptune', time),
+      pluto:     planetSign('Pluto',   time),
     };
 
     console.log('[get-sky]', sky);
