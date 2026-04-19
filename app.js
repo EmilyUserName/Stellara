@@ -1390,11 +1390,11 @@ async function loadWeeklySpread() {
       return;
     }
 
-    // Poll up to 10 times (30s) for generation to complete.
+    // Poll up to 20 times (60s) for generation to complete.
     // Only the first request triggers generation (?generate=true);
     // retries just check if the background job has finished.
     let data = null;
-    for (let attempt = 0; attempt < 10; attempt++) {
+    for (let attempt = 0; attempt < 20; attempt++) {
       const url = attempt === 0 ? '/api/get-weekly-spread?generate=true' : '/api/get-weekly-spread';
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${jwt}` },
@@ -1402,7 +1402,7 @@ async function loadWeeklySpread() {
 
       if (res.status === 202) {
         // Generation triggered — show progress and retry
-        const pct = Math.min(90, 10 + attempt * 10);
+        const pct = Math.min(88, 5 + attempt * 5);
         loadingEl.innerHTML = `
           <p style="color:var(--gold);text-align:center;font-size:1rem;padding:20px 20px 8px;">
             Generating your weekly spread…
@@ -1423,7 +1423,10 @@ async function loadWeeklySpread() {
       break;
     }
 
-    if (!data) throw new Error('Spread generation timed out — please try again in a moment.');
+    if (!data) {
+      loadingEl.innerHTML = `<p style="color:var(--silver);text-align:center;font-size:0.9rem;padding:20px;">Your spread is still being generated.<br><a href="#" onclick="loadWeeklySpread();return false;" style="color:var(--gold);">Check again</a></p>`;
+      return;
+    }
     weekSpreadData = data;
 
     // Set date range label

@@ -1249,7 +1249,7 @@ select option { background: var(--navy-2); }
 .insight-text {
   font-size: 1.05rem;
   font-weight: 400;
-  line-height: 1.9;
+  line-height: 1.75;
   color: var(--silver-light);
 }
 
@@ -1271,6 +1271,10 @@ select option { background: var(--navy-2); }
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--silver);
+}
+@media (max-width: 520px) {
+  .today-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .today-date { font-size: 0.62rem; letter-spacing: 0.1em; }
 }
 
 
