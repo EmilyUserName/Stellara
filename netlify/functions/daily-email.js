@@ -77,9 +77,16 @@ exports.handler = async function (event) {
       subscribers.map(user => sendDailyEmail(user, today, todayISO, skyToday, false))
     );
 
-    const sent   = results.filter(r => r.status === 'fulfilled' && r.value === true).length;
+    const sent    = results.filter(r => r.status === 'fulfilled' && r.value === true).length;
     const skipped = results.filter(r => r.status === 'fulfilled' && r.value !== true).length;
-    const failed = results.filter(r => r.status === 'rejected').length;
+    const failed  = results.filter(r => r.status === 'rejected').length;
+
+    results.forEach((r, i) => {
+      if (r.status === 'rejected') {
+        console.error(`[daily-email] FAILED for ${subscribers[i].email} (${subscribers[i].name}): ${r.reason?.message || r.reason}`);
+      }
+    });
+
     console.log(`[daily-email] Sent: ${sent}, Skipped: ${skipped}, Failed: ${failed}`);
 
     return { statusCode: 200, body: JSON.stringify({ sent, failed }) };
@@ -223,6 +230,7 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
     await sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, ...content });
     return true;
   } catch (err) {
+    console.error(`[daily-email] Error for ${email} — rolling back claim. Reason: ${err.message}`);
     // Roll back the claim — clears last_email_date so Run Now (or tomorrow's scheduler) can retry
     if (!skipIdempotency) {
       await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
