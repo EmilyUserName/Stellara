@@ -215,14 +215,29 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
     } catch (_) {}
   }
 
-  // Generate the reading via Claude
-  const style = preferred_style || 'psychological';
-  const natalPlanets = { natalMercury, natalVenus, natalMars, natalJupiter, natalSaturn, natalMC, northNode, southNode };
-  const content = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets });
-
-  // Send the email — only stamp last_email_date after a confirmed successful send
-  await sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, ...content });
-  return true;
+  // Generate + send — if anything fails, roll back the claim so the user can retry today
+  try {
+    const style = preferred_style || 'psychological';
+    const natalPlanets = { natalMercury, natalVenus, natalMars, natalJupiter, natalSaturn, natalMC, northNode, southNode };
+    const content = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets });
+    await sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, ...content });
+    return true;
+  } catch (err) {
+    // Roll back the claim — clears last_email_date so Run Now (or tomorrow's scheduler) can retry
+    if (!skipIdempotency) {
+      await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
+        method:  'PATCH',
+        headers: {
+          'Content-Type':  'application/json',
+          'apikey':         SUPABASE_SERVICE_KEY,
+          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'Prefer':        'return=minimal',
+        },
+        body: JSON.stringify({ last_email_date: null }),
+      }).catch(() => {});
+    }
+    throw err;
+  }
 }
 
 // ------------------------------------------------------------
