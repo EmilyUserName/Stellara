@@ -79,7 +79,7 @@ ${skyBlock}
 Generate TikTok card content for all 12 zodiac signs, grounded in the real planetary positions above.
 
 For each sign:
-- reading: 2–3 evocative sentences, specific to today's sky, no sign name in the text
+- reading: 1–2 short punchy sentences, max 160 characters total, specific to today's sky, no sign name in the text
 - watchFor: 4–6 word phrase (energy or situation to be aware of)
 - leanInto: 4–6 word phrase (quality or energy to embrace)
 - powerMove: 4–6 word phrase (one concrete action or intention)
@@ -247,11 +247,11 @@ body::after {
 }
 .reading {
   font-family: 'DM Serif Display', Georgia, serif;
-  font-style: italic; font-size: 54px;
+  font-style: italic; font-size: 52px;
   color: #0D1E3A; line-height: 1.38;
-  flex: 1;
-  overflow: hidden;
+  flex: 0 0 auto;
 }
+.reading-spacer { flex: 1; }
 .rule-silver {
   height: 1px; background: rgba(13,30,58,0.2);
   margin-top: 24px; margin-bottom: 22px;
@@ -303,6 +303,7 @@ body::after {
     <div id="sign-dates" class="sign-dates"></div>
     <div class="rule-gold"></div>
     <div id="reading" class="reading"></div>
+    <div class="reading-spacer"></div>
     <div class="rule-silver"></div>
     <div class="meta-row">
       <span class="meta-label">WATCH FOR</span>
