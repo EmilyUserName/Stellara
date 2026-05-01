@@ -71,11 +71,10 @@ async function generateForUser(userId, dates) {
     },
     body: JSON.stringify({ userId, dates }),
   });
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Generation failed for ${userId}: ${res.status} ${body}`);
-  }
-  return res.json();
+  // Background function returns 202 immediately (no body) — that means triggered, not failed
+  if (res.status === 202 || res.ok) return { triggered: true };
+  const body = await res.text();
+  throw new Error(`Generation failed for ${userId}: ${res.status} ${body}`);
 }
 
 // ── Get the Monday of the week containing a given date ───────

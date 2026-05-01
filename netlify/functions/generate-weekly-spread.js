@@ -175,6 +175,11 @@ Rules:
     }),
   });
 
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error('[generate-weekly-spread] Claude error', res.status, errText.slice(0, 300));
+    return [];
+  }
   const data = await res.json();
   const raw  = (data.content?.map(b => b.text || '').join('') || '').trim();
 
