@@ -2031,13 +2031,13 @@ select option { background: var(--navy-2); }
 }
 
 .btn-natal {
-  background: rgba(150,100,220,0.1);
-  border: 1px solid rgba(180,140,220,0.55);
-  color: #d4b0f5;
+  background: rgba(100,148,210,0.1);
+  border: 1px solid rgba(143,168,200,0.55);
+  color: var(--silver);
   margin-top: 10px;
   font-size: 0.9rem;
 }
-.btn-natal:hover { background: rgba(150,100,220,0.18); border-color: rgba(180,140,220,0.82); color: #e8d0ff; }
+.btn-natal:hover { background: rgba(100,148,210,0.2); border-color: rgba(143,168,200,0.85); color: var(--white); }
 
 /* Bundle button */
 .btn-bundle {
