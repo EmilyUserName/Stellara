@@ -123,6 +123,10 @@ def send_summary(content: dict, out_dir: Path):
 
 
 def main():
+    if os.environ.get("SEND_PIPELINE_EMAIL", "true").lower() != "true":
+        print("[summary] SEND_PIPELINE_EMAIL is not 'true' — skipping email send.")
+        return
+
     if not RESEND_API_KEY:
         print("Error: RESEND_API_KEY not set")
         sys.exit(1)

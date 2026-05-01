@@ -18,6 +18,16 @@
 # Background function — runs up to 15 minutes, no timeout needed
 [functions."generate-weekly-spread-background"]
 
+[functions."operator-cards-scheduler"]
+  timeout = 30
+  schedule = "0 9 * * *"
+
+# Background function — renders 12 PNG cards + sends operator email
+# Uses puppeteer-core + @sparticuz/chromium; excluded from esbuild bundling
+[functions."operator-cards-background"]
+  external_node_modules = ["@sparticuz/chromium", "puppeteer-core"]
+  node_bundler = "esbuild"
+
 [functions."daily-horoscopes"]
   timeout = 30
 

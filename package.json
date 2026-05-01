@@ -10,6 +10,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "astronomy-engine": "^2.1.19"
+    "astronomy-engine": "^2.1.19",
+    "@sparticuz/chromium": "^131.0.0",
+    "puppeteer-core": "^23.0.0"
   }
 }
