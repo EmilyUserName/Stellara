@@ -402,6 +402,7 @@ async function uploadCard(sign, today, pngBuffer) {
     method:  'POST',
     headers: {
       'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+      'apikey':        SUPABASE_SERVICE_KEY,
       'Content-Type':  'image/png',
       'x-upsert':      'true',
     },
