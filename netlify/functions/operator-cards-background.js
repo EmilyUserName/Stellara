@@ -198,13 +198,13 @@ body::after {
 /* Content */
 .content {
   position: relative; z-index: 5;
-  padding: 52px 64px 48px;
+  padding: 52px 64px 220px;
   height: 100%;
   display: flex; flex-direction: column;
 }
 .header {
   display: flex; justify-content: space-between; align-items: baseline;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 .brand {
   font-family: 'Barlow', sans-serif;
@@ -219,40 +219,40 @@ body::after {
 }
 .header-rule {
   height: 2px; background: #0D1E3A;
-  margin-bottom: 44px;
+  margin-bottom: 28px;
 }
 .sign-glyph {
-  font-size: 160px; line-height: 1;
+  font-size: 130px; line-height: 1;
   color: #0D1E3A;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   font-variant-emoji: text;
 }
 .sign-name {
   font-family: 'Barlow', sans-serif;
-  font-weight: 800; font-size: 110px;
+  font-weight: 800; font-size: 100px;
   color: #0D1E3A; text-transform: uppercase;
   line-height: 1; letter-spacing: -0.02em;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .sign-dates {
   font-family: 'Barlow', sans-serif;
   font-weight: 400; font-size: 30px;
   color: rgba(13,30,58,0.5);
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 .rule-gold {
   height: 1.5px; background: #C8A96E;
-  margin-bottom: 32px;
+  margin-bottom: 22px;
 }
 .reading {
   font-family: 'DM Serif Display', Georgia, serif;
-  font-style: italic; font-size: 60px;
+  font-style: italic; font-size: 54px;
   color: #0D1E3A; line-height: 1.38;
   flex: 1;
 }
 .rule-silver {
   height: 1px; background: rgba(13,30,58,0.2);
-  margin-top: 32px; margin-bottom: 28px;
+  margin-top: 24px; margin-bottom: 22px;
 }
 .meta-row {
   display: flex; align-items: baseline;
@@ -272,7 +272,7 @@ body::after {
 }
 .footer {
   display: flex; justify-content: space-between; align-items: center;
-  margin-top: 24px;
+  margin-top: 20px;
 }
 .footer-url {
   font-family: 'Barlow', sans-serif;
