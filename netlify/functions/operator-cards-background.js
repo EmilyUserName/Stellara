@@ -198,7 +198,7 @@ body::after {
 /* Content */
 .content {
   position: relative; z-index: 5;
-  padding: 52px 64px 220px;
+  padding: 52px 64px 52px;
   height: 100%;
   display: flex; flex-direction: column;
 }
@@ -248,7 +248,8 @@ body::after {
   font-family: 'DM Serif Display', Georgia, serif;
   font-style: italic; font-size: 54px;
   color: #0D1E3A; line-height: 1.38;
-  flex: 1;
+  flex: 0 0 460px;
+  overflow: hidden;
 }
 .rule-silver {
   height: 1px; background: rgba(13,30,58,0.2);
