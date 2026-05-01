@@ -163,6 +163,11 @@ Return ONLY valid JSON in this exact format, nothing else:
     }),
   });
 
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error('[daily-horoscopes] Claude error', res.status, errText.slice(0, 300));
+    return null;
+  }
   const data = await res.json();
   const text = data.content?.map(b => b.text || '').join('') || '';
 

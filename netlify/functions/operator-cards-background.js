@@ -195,12 +195,13 @@ body::after {
   border-radius: 50%;
   z-index: 11;
 }
-/* Content */
+/* Content — sized to TikTok safe zone; below 1180px is decorative watermark area */
 .content {
   position: relative; z-index: 5;
-  padding: 52px 64px 52px;
-  height: 100%;
+  padding: 52px 64px 48px;
+  height: 1180px;
   display: flex; flex-direction: column;
+  box-sizing: border-box;
 }
 .header {
   display: flex; justify-content: space-between; align-items: baseline;
@@ -248,7 +249,7 @@ body::after {
   font-family: 'DM Serif Display', Georgia, serif;
   font-style: italic; font-size: 54px;
   color: #0D1E3A; line-height: 1.38;
-  flex: 0 0 460px;
+  flex: 1;
   overflow: hidden;
 }
 .rule-silver {
