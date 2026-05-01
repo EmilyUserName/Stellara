@@ -196,7 +196,7 @@ Rules:
     },
     body: JSON.stringify({
       model:      'claude-sonnet-4-6',
-      max_tokens: 2500,
+      max_tokens: 4096,
       messages:   [{ role: 'user', content: prompt }],
     }),
   });
