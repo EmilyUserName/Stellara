@@ -50,6 +50,12 @@
 [functions."astrocartography-interpret"]
   timeout = 20
 
+[functions."start-trial"]
+  timeout = 30
+
+[functions."create-trial-checkout"]
+  timeout = 15
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
@@ -128,4 +134,14 @@
 [[redirects]]
   from = "/api/get-sky"
   to = "/.netlify/functions/get-sky"
+  status = 200
+
+[[redirects]]
+  from = "/api/start-trial"
+  to = "/.netlify/functions/start-trial"
+  status = 200
+
+[[redirects]]
+  from = "/api/create-trial-checkout"
+  to = "/.netlify/functions/create-trial-checkout"
   status = 200

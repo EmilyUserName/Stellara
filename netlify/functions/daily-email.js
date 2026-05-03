@@ -1,13 +1,14 @@
 // ============================================================
-// daily-email.js — Scheduled function: runs every morning at 7am UTC
-// Fetches all Pro subscribers, generates a personalized reading
-// for each via Claude, and sends it via Resend.
+// daily-email.js — Scheduled function: runs every morning at 10am UTC
+// Sends personalized readings to Pro subscribers and active trial users.
+// Also sends "trial ended" emails on day 8.
 // ============================================================
 
 const SUPABASE_URL        = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ANTHROPIC_API_KEY   = process.env.ANTHROPIC_API_KEY;
 const RESEND_API_KEY      = process.env.RESEND_API_KEY;
+const SITE_URL            = 'https://stellara-horoscope.com';
 
 const FROM_EMAIL = 'Stellara <hello@stellara-horoscope.com>';
 
@@ -27,10 +28,9 @@ exports.handler = async function (event) {
     const today = now.toLocaleDateString('en-US', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
-    // ISO date string YYYY-MM-DD for idempotency check
     const todayISO = now.toISOString().slice(0, 10);
 
-    // Diagnostic GET: returns raw Supabase subscriber query result
+    // Diagnostic GET
     if (event.httpMethod === 'GET') {
       const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&select=id,name,email,birth_date,birth_city,email_opt_out`;
       const res = await fetch(url, {
@@ -45,51 +45,72 @@ exports.handler = async function (event) {
     }
 
     // Manual test mode: POST with { testEmail: "you@example.com" }
-    // Note: Netlify scheduler also fires as POST with {next_run:...} — only enter test mode if testEmail/testEmails present
     const postBody = JSON.parse(event.body || '{}');
     if (event.httpMethod === 'POST' && (postBody.testEmail || postBody.testEmails)) {
-      const emails = postBody.testEmails || [postBody.testEmail];
-
-      // Calculate today's real sky for test sends too
+      const emails   = postBody.testEmails || [postBody.testEmail];
       const skyToday = await getTodaySky();
-
-      const results = await Promise.allSettled(emails.map(async (testEmail) => {
+      const results  = await Promise.allSettled(emails.map(async (testEmail) => {
         const res  = await fetch(
-          `${SUPABASE_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(testEmail)}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out`,
+          `${SUPABASE_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(testEmail)}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out,trial_start`,
           { headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` } }
         );
         const data = await res.json();
         if (!Array.isArray(data)) return { email: testEmail, error: JSON.stringify(data) };
         const [user] = data;
         if (!user) return { email: testEmail, error: 'no profile found' };
-        await sendDailyEmail(user, today, todayISO, skyToday, /* skipIdempotency */ true);
+        const trialDay = user.trial_start ? daysSince(user.trial_start) : 0;
+        await sendDailyEmail(user, today, todayISO, skyToday, /* skipIdempotency */ true, trialDay);
         return { email: testEmail, sent: true };
       }));
       return { statusCode: 200, body: JSON.stringify(results.map(r => r.value ?? { error: r.reason?.message })) };
     }
 
-    // Scheduled run — calculate today's real sky once, then send to all eligible subscribers
-    const skyToday    = await getTodaySky();
-    const subscribers = await getSubscribers(todayISO);
-    console.log(`[daily-email] Sending to ${subscribers.length} subscribers (sky: Moon in ${skyToday.moon})`);
+    // Scheduled run
+    const skyToday = await getTodaySky();
 
-    const results = await Promise.allSettled(
-      subscribers.map(user => sendDailyEmail(user, today, todayISO, skyToday, false))
+    const [proSubscribers, trialUsers, trialEndedUsers] = await Promise.all([
+      getProSubscribers(todayISO),
+      getTrialUsers(todayISO),
+      getTrialEndedUsers(todayISO),
+    ]);
+
+    console.log(`[daily-email] Pro: ${proSubscribers.length}, Trial active: ${trialUsers.length}, Trial ended: ${trialEndedUsers.length} (sky: Moon in ${skyToday.moon})`);
+
+    // Send daily readings to Pro subscribers and active trial users
+    const readingUsers = [
+      ...proSubscribers.map(u => ({ ...u, _trialDay: 0 })),
+      ...trialUsers.map(u => ({ ...u, _trialDay: daysSince(u.trial_start) })),
+    ];
+
+    const readingResults = await Promise.allSettled(
+      readingUsers.map(u => sendDailyEmail(u, today, todayISO, skyToday, false, u._trialDay))
     );
 
-    const sent    = results.filter(r => r.status === 'fulfilled' && r.value === true).length;
-    const skipped = results.filter(r => r.status === 'fulfilled' && r.value !== true).length;
-    const failed  = results.filter(r => r.status === 'rejected').length;
-
-    results.forEach((r, i) => {
+    readingResults.forEach((r, i) => {
       if (r.status === 'rejected') {
-        console.error(`[daily-email] FAILED for ${subscribers[i].email} (${subscribers[i].name}): ${r.reason?.message || r.reason}`);
+        console.error(`[daily-email] FAILED for ${readingUsers[i].email} (${readingUsers[i].name}): ${r.reason?.message || r.reason}`);
       }
     });
 
-    console.log(`[daily-email] Sent: ${sent}, Skipped: ${skipped}, Failed: ${failed}`);
+    // Send "trial ended" emails
+    const endedResults = await Promise.allSettled(
+      trialEndedUsers.map(u => sendTrialEndedEmail(u, todayISO))
+    );
 
-    return { statusCode: 200, body: JSON.stringify({ sent, failed }) };
+    endedResults.forEach((r, i) => {
+      if (r.status === 'rejected') {
+        console.error(`[daily-email] Trial-ended FAILED for ${trialEndedUsers[i].email}: ${r.reason?.message || r.reason}`);
+      }
+    });
+
+    const sent    = readingResults.filter(r => r.status === 'fulfilled' && r.value === true).length;
+    const skipped = readingResults.filter(r => r.status === 'fulfilled' && r.value !== true).length;
+    const failed  = readingResults.filter(r => r.status === 'rejected').length;
+    const ended   = endedResults.filter(r => r.status === 'fulfilled' && r.value === true).length;
+
+    console.log(`[daily-email] Sent: ${sent}, Skipped: ${skipped}, Failed: ${failed}, Trial-ended: ${ended}`);
+    return { statusCode: 200, body: JSON.stringify({ sent, failed, ended }) };
+
   } catch (err) {
     console.error('[daily-email] Fatal error:', err);
     return { statusCode: 500, body: err.message };
@@ -97,55 +118,85 @@ exports.handler = async function (event) {
 };
 
 // ------------------------------------------------------------
-// CALCULATE TODAY'S REAL SKY (moon sign + sun sign)
-// Called once per run so all readings share the same accurate sky.
+// HELPERS
 // ------------------------------------------------------------
+
+function daysSince(dateStr) {
+  const start = new Date(dateStr + 'T00:00:00Z');
+  const now   = new Date();
+  now.setUTCHours(0, 0, 0, 0);
+  return Math.round((now - start) / 86400000);
+}
+
+function offsetDate(todayISO, days) {
+  const d = new Date(todayISO + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
 async function getTodaySky() {
   try {
     const res = await fetch(`${process.env.URL}/.netlify/functions/get-sky`);
     if (!res.ok) return {};
     return await res.json();
-  } catch (_) {
-    return {};
-  }
+  } catch (_) { return {}; }
 }
 
 // ------------------------------------------------------------
-// FETCH PRO SUBSCRIBERS — skip anyone already emailed today
+// FETCH USERS
 // ------------------------------------------------------------
-async function getSubscribers(todayISO) {
+
+async function getProSubscribers(todayISO) {
   console.log('[daily-email] SUPABASE_URL set:', !!SUPABASE_URL);
   console.log('[daily-email] SUPABASE_SERVICE_KEY set:', !!SUPABASE_SERVICE_KEY);
   const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out,last_email_date`;
-  console.log('[daily-email] fetching:', url);
-  const res = await fetch(url, {
-    headers: {
-      'apikey':        SUPABASE_SERVICE_KEY,
-      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-    },
+  console.log('[daily-email] fetching pro subscribers:', url);
+  const res  = await fetch(url, {
+    headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` },
   });
   console.log('[daily-email] Supabase status:', res.status);
   const data = await res.json();
-  console.log('[daily-email] raw response:', JSON.stringify(data).slice(0, 200));
   if (!Array.isArray(data)) return [];
   return data.filter(u =>
-    u.email &&
-    !u.email_opt_out &&
-    u.name &&
-    u.birth_date &&
-    u.birth_city &&
-    u.last_email_date !== todayISO   // skip if already sent today
+    u.email && !u.email_opt_out && u.name && u.birth_date && u.birth_city &&
+    u.last_email_date !== todayISO
+  );
+}
+
+async function getTrialUsers(todayISO) {
+  const sevenDaysAgo = offsetDate(todayISO, -7);
+  const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.false&trial_start=gte.${sevenDaysAgo}&trial_start=lt.${todayISO}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,preferred_style,email_opt_out,last_email_date,trial_start`;
+  const res  = await fetch(url, {
+    headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` },
+  });
+  const data = await res.json();
+  if (!Array.isArray(data)) return [];
+  return data.filter(u =>
+    u.email && !u.email_opt_out && u.name && u.birth_date && u.birth_city &&
+    u.last_email_date !== todayISO
+  );
+}
+
+async function getTrialEndedUsers(todayISO) {
+  const eightDaysAgo = offsetDate(todayISO, -8);
+  const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.false&trial_start=eq.${eightDaysAgo}&select=id,name,email,last_email_date,trial_start`;
+  const res  = await fetch(url, {
+    headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` },
+  });
+  const data = await res.json();
+  if (!Array.isArray(data)) return [];
+  return data.filter(u =>
+    u.email && u.last_email_date !== todayISO
   );
 }
 
 // ------------------------------------------------------------
-// GENERATE + SEND ONE EMAIL
+// GENERATE + SEND DAILY READING
 // ------------------------------------------------------------
-async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) {
+
+async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency, trialDay = 0) {
   const { name, email, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, preferred_style } = user;
 
-  // Atomic claim — prevents duplicate sends if two function instances run concurrently.
-  // Use or= to match both NULL and any non-today value (plain not.eq misses NULLs in SQL).
   if (!skipIdempotency) {
     const claimRes = await fetch(
       `${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&or=(last_email_date.is.null,last_email_date.not.eq.${todayISO})`,
@@ -162,24 +213,15 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
     );
     const claimed = await claimRes.json();
     if (!Array.isArray(claimed) || claimed.length === 0) {
-      console.log(`[daily-email] Skipping ${email} — already claimed by another run.`);
+      console.log(`[daily-email] Skipping ${email} — already claimed.`);
       return false;
     }
   }
 
-  // Sun and moon are stable — use saved values if present.
-  // Rising always recalculated fresh (sensitive to formula changes).
-  let sun          = sun_sign;
-  let moon         = moon_sign;
-  let rising       = null;
-  let natalMercury = null;
-  let natalVenus   = null;
-  let natalMars    = null;
-  let natalJupiter = null;
-  let natalSaturn  = null;
-  let natalMC      = null;
-  let northNode    = null;
-  let southNode    = null;
+  let sun = sun_sign, moon = moon_sign, rising = null;
+  let natalMercury = null, natalVenus = null, natalMars = null;
+  let natalJupiter = null, natalSaturn = null, natalMC = null;
+  let northNode = null, southNode = null;
 
   if (!sun || !moon || birth_time) {
     try {
@@ -189,20 +231,19 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
         body:    JSON.stringify({ birthDate: birth_date, birthTime: birth_time, birthCity: birth_city }),
       });
       if (chartRes.ok) {
-        const chart    = await chartRes.json();
-        sun            = sun    || chart.sun;
-        moon           = moon   || chart.moon;
-        rising         = chart.rising      || null;
-        natalMercury   = chart.mercury     || null;
-        natalVenus     = chart.venus       || null;
-        natalMars      = chart.mars        || null;
-        natalJupiter   = chart.jupiter     || null;
-        natalSaturn    = chart.saturn      || null;
-        natalMC        = chart.midheaven   || null;
-        northNode      = chart.northNode   || null;
-        southNode      = chart.southNode   || null;
+        const chart  = await chartRes.json();
+        sun          = sun   || chart.sun;
+        moon         = moon  || chart.moon;
+        rising       = chart.rising     || null;
+        natalMercury = chart.mercury    || null;
+        natalVenus   = chart.venus      || null;
+        natalMars    = chart.mars       || null;
+        natalJupiter = chart.jupiter    || null;
+        natalSaturn  = chart.saturn     || null;
+        natalMC      = chart.midheaven  || null;
+        northNode    = chart.northNode  || null;
+        southNode    = chart.southNode  || null;
 
-        // Only cache sun/moon — never cache rising so formula fixes apply immediately
         const patch = {};
         if (!sun_sign  && sun)  patch.sun_sign  = sun;
         if (!moon_sign && moon) patch.moon_sign = moon;
@@ -222,16 +263,14 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
     } catch (_) {}
   }
 
-  // Generate + send — if anything fails, roll back the claim so the user can retry today
   try {
     const style = preferred_style || 'psychological';
     const natalPlanets = { natalMercury, natalVenus, natalMars, natalJupiter, natalSaturn, natalMC, northNode, southNode };
     const content = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets });
-    await sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, ...content });
+    await sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, trialDay, ...content });
     return true;
   } catch (err) {
     console.error(`[daily-email] Error for ${email} — rolling back claim. Reason: ${err.message}`);
-    // Roll back the claim — clears last_email_date so Run Now (or tomorrow's scheduler) can retry
     if (!skipIdempotency) {
       await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
         method:  'PATCH',
@@ -249,7 +288,109 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency) 
 }
 
 // ------------------------------------------------------------
-// CLAUDE — generate the new scannable morning digest
+// SEND TRIAL ENDED EMAIL (day 8)
+// ------------------------------------------------------------
+
+async function sendTrialEndedEmail(user, todayISO) {
+  const { id, name, email } = user;
+
+  // Atomic claim
+  const claimRes = await fetch(
+    `${SUPABASE_URL}/rest/v1/profiles?id=eq.${id}&or=(last_email_date.is.null,last_email_date.not.eq.${todayISO})`,
+    {
+      method:  'PATCH',
+      headers: {
+        'Content-Type':  'application/json',
+        'apikey':         SUPABASE_SERVICE_KEY,
+        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'Prefer':        'return=representation',
+      },
+      body: JSON.stringify({ last_email_date: todayISO }),
+    }
+  );
+  const claimed = await claimRes.json();
+  if (!Array.isArray(claimed) || claimed.length === 0) return false;
+
+  const subject = `Your Stellara trial has ended, ${name}`;
+  const checkoutUrl = `${SITE_URL}/api/create-trial-checkout?email=${encodeURIComponent(email)}`;
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="color-scheme" content="dark"/>
+  <title>${subject}</title>
+  <style>:root { color-scheme: dark; } body, table, td { background-color: #0e1e40 !important; }</style>
+</head>
+<body style="margin:0;padding:0;background:#0e1e40;" bgcolor="#0e1e40">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#0e1e40;padding:48px 20px;" bgcolor="#0e1e40">
+  <tr><td align="center">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+
+    <tr><td style="text-align:center;padding-bottom:36px;" bgcolor="#0e1e40">
+      <div style="font-size:28px;color:#c8a96e;margin-bottom:10px;line-height:1;">✦</div>
+      <div style="font-size:38px;font-weight:800;color:#f8faff;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;margin-bottom:8px;line-height:1;">stellara</div>
+      <div style="font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:#8fa8c8;font-family:Helvetica,Arial,sans-serif;">Your Personal Cosmos</div>
+    </td></tr>
+
+    <tr><td style="padding-bottom:32px;" bgcolor="#0e1e40">
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(200,169,110,0.35),transparent);"></div>
+    </td></tr>
+
+    <tr><td style="padding-bottom:32px;" bgcolor="#0e1e40">
+      <p style="margin:0 0 18px;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">${name},</p>
+      <p style="margin:0 0 18px;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">Your 7-day trial has ended. The sky is still moving — your chart still has something to say every morning. It's just waiting for you to continue.</p>
+      <p style="margin:0;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">Keep your personalized morning reading coming — $7/month, cancel anytime.</p>
+    </td></tr>
+
+    <tr><td style="text-align:center;padding-bottom:32px;" bgcolor="#0e1e40">
+      <a href="${checkoutUrl}" style="display:inline-block;padding:16px 44px;background:linear-gradient(135deg,rgba(200,169,110,0.25),rgba(180,149,90,0.15));border:1px solid rgba(200,169,110,0.7);border-radius:10px;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:0.16em;text-decoration:none;text-transform:uppercase;font-weight:600;">
+        ✦ &nbsp;Continue for $7/month
+      </a>
+    </td></tr>
+
+    <tr><td style="text-align:center;" bgcolor="#0e1e40">
+      <p style="margin:0;font-size:11px;color:#8fa8c8;font-family:Helvetica,Arial,sans-serif;line-height:2;">
+        <a href="${SITE_URL}" style="color:#8fa8c8;text-decoration:none;">stellara-horoscope.com</a>
+        &nbsp;·&nbsp;
+        <a href="${SITE_URL}/.netlify/functions/unsubscribe?id=${id}" style="color:#8fa8c8;text-decoration:none;">Unsubscribe</a>
+      </p>
+    </td></tr>
+
+  </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+
+  const sendRes = await fetch('https://api.resend.com/emails', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${RESEND_API_KEY}` },
+    body: JSON.stringify({ from: FROM_EMAIL, to: email, subject, html }),
+  });
+
+  if (!sendRes.ok) {
+    const errText = await sendRes.text();
+    await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ last_email_date: null }),
+    }).catch(() => {});
+    throw new Error(`Resend error ${sendRes.status}: ${errText}`);
+  }
+
+  fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`, 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ last_email_date: todayISO }),
+  }).catch(() => {});
+
+  return true;
+}
+
+// ------------------------------------------------------------
+// CLAUDE — generate the morning digest
 // ------------------------------------------------------------
 async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets = {} }) {
   const systemPrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.psychological;
@@ -338,7 +479,6 @@ One concrete, actionable suggestion for ${name} today. One line only. Specific, 
   const full = (data.content?.map(b => b.text || '').join('') || '').trim();
   if (!full) throw new Error('Claude returned empty content');
 
-  // Parse each labelled section
   function extract(label) {
     const re = new RegExp(`^${label}:\\s*([\\s\\S]*?)(?=\\n[A-Z]+:|$)`, 'm');
     const m = full.match(re);
@@ -356,21 +496,40 @@ One concrete, actionable suggestion for ${name} today. One line only. Specific, 
 }
 
 // ------------------------------------------------------------
-// RESEND — send the redesigned morning digest email
+// RESEND — send the morning digest
 // ------------------------------------------------------------
-async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, subject, paragraph, quote, watch, lean, power }) {
-  // Clean any stray markdown
-  const clean = s => (s || '')
-    .replace(/\*\*(.*?)\*\*/g, '$1')
-    .replace(/\*(.*?)\*/g, '$1')
-    .trim();
+async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, trialDay = 0, subject, paragraph, quote, watch, lean, power }) {
+  const clean = s => (s || '').replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1').trim();
 
-  const safeSubject  = clean(subject)  || `Your Stellara reading for today, ${name} ✦`;
+  const safeSubject   = clean(subject)    || `Your Stellara reading for today, ${name} ✦`;
   const safeParagraph = clean(paragraph);
-  const safeQuote    = clean(quote);
-  const safeWatch    = clean(watch);
-  const safeLean     = clean(lean);
-  const safePower    = clean(power);
+  const safeQuote     = clean(quote);
+  const safeWatch     = clean(watch);
+  const safeLean      = clean(lean);
+  const safePower     = clean(power);
+
+  const checkoutUrl = `${SITE_URL}/api/create-trial-checkout?email=${encodeURIComponent(email)}`;
+
+  // Footer copy varies between Pro subscribers and trial users
+  const footerLine = trialDay > 0
+    ? `Day ${trialDay} of 7 — your free Stellara trial`
+    : `You're receiving this as a Stellara Pro subscriber.`;
+
+  // Conversion block — shown on trial days 6 and 7
+  const conversionBlock = trialDay >= 6 ? `
+    <tr><td style="padding-top:28px;" bgcolor="#0e1e40">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#102349;border:1px solid rgba(200,169,110,0.3);border-radius:14px;padding:28px 30px;">
+        <tr><td style="text-align:center;" bgcolor="#102349">
+          <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;margin-bottom:12px;">
+            ${trialDay === 7 ? 'This is your last trial reading' : 'Your trial ends tomorrow'}
+          </div>
+          <p style="margin:0 0 20px;font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.7;">Keep your personalized morning reading — $7/month, cancel anytime.</p>
+          <a href="${checkoutUrl}" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,rgba(200,169,110,0.25),rgba(180,149,90,0.15));border:1px solid rgba(200,169,110,0.7);border-radius:10px;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;font-weight:600;">
+            ✦ &nbsp;Continue for $7/month
+          </a>
+        </td></tr>
+      </table>
+    </td></tr>` : '';
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -390,14 +549,12 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO
   <tr><td align="center">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
 
-    <!-- Brand -->
     <tr><td style="text-align:center;padding-bottom:36px;" bgcolor="#0e1e40">
       <div style="font-size:28px;color:#c8a96e;margin-bottom:10px;line-height:1;">✦</div>
       <div style="font-size:38px;font-weight:800;color:#f8faff;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;margin-bottom:8px;line-height:1;">stellara</div>
       <div style="font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:#8fa8c8;font-family:Helvetica,Arial,sans-serif;">Your Personal Cosmos</div>
     </td></tr>
 
-    <!-- Date + placements -->
     <tr><td style="text-align:center;padding-bottom:28px;" bgcolor="#0e1e40">
       <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#9fb5cc;font-family:Helvetica,Arial,sans-serif;margin-bottom:10px;">${today}</div>
       <div style="font-size:12px;color:#8fa8c8;font-family:Helvetica,Arial,sans-serif;letter-spacing:0.06em;">
@@ -405,71 +562,57 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO
       </div>
     </td></tr>
 
-    <!-- Divider -->
     <tr><td style="padding-bottom:32px;" bgcolor="#0e1e40">
       <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(200,169,110,0.35),transparent);"></div>
     </td></tr>
 
-    <!-- Main paragraph -->
     <tr><td style="padding-bottom:32px;" bgcolor="#0e1e40">
       <p style="margin:0;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;text-align:left;">${safeParagraph}</p>
     </td></tr>
 
-    <!-- Quote -->
     <tr><td style="padding:28px 24px;background:#102349;border-left:3px solid #c8a96e;border-radius:0 10px 10px 0;margin-bottom:32px;" bgcolor="#102349">
       <p style="margin:0;font-size:16px;line-height:1.7;color:#c8a96e;font-family:Georgia,'Times New Roman',serif;font-style:italic;text-align:center;">&ldquo;${safeQuote}&rdquo;</p>
     </td></tr>
 
-    <!-- Spacer -->
     <tr><td style="padding-bottom:28px;" bgcolor="#0e1e40"></td></tr>
 
-    <!-- Watch / Lean / Power -->
     <tr><td style="background:#102349;border:1px solid rgba(90,107,140,0.15);border-radius:14px;padding:28px 30px;" bgcolor="#102349">
-
       <table width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-          <td style="padding-bottom:18px;">
-            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#9fb5cc;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Watch for</div>
-            <div style="font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.6;">${safeWatch}</div>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding-bottom:18px;border-top:1px solid rgba(90,107,140,0.1);padding-top:18px;">
-            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#9fb5cc;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Lean into</div>
-            <div style="font-size:18px;color:#f5f8ff;font-family:Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:0.02em;">${safeLean}</div>
-          </td>
-        </tr>
-        <tr>
-          <td style="border-top:1px solid rgba(90,107,140,0.1);padding-top:18px;">
-            <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Your power move today</div>
-            <div style="font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.6;">${safePower}</div>
-          </td>
-        </tr>
+        <tr><td style="padding-bottom:18px;">
+          <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#9fb5cc;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Watch for</div>
+          <div style="font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.6;">${safeWatch}</div>
+        </td></tr>
+        <tr><td style="padding-bottom:18px;border-top:1px solid rgba(90,107,140,0.1);padding-top:18px;">
+          <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#9fb5cc;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Lean into</div>
+          <div style="font-size:18px;color:#f5f8ff;font-family:Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:0.02em;">${safeLean}</div>
+        </td></tr>
+        <tr><td style="border-top:1px solid rgba(90,107,140,0.1);padding-top:18px;">
+          <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;margin-bottom:6px;">Your power move today</div>
+          <div style="font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.6;">${safePower}</div>
+        </td></tr>
       </table>
-
     </td></tr>
 
-    <!-- CTA -->
     <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0e1e40">
-      <a href="https://stellara-horoscope.com" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,rgba(143,168,200,0.22),rgba(90,130,180,0.12));border:1px solid rgba(143,168,200,0.58);border-radius:10px;color:#edf1fb;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
+      <a href="${SITE_URL}" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,rgba(143,168,200,0.22),rgba(90,130,180,0.12));border:1px solid rgba(143,168,200,0.58);border-radius:10px;color:#edf1fb;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
         → Open Stellara for your full reading
       </a>
     </td></tr>
 
-    <!-- Share -->
     <tr><td style="text-align:center;padding-top:20px;" bgcolor="#0e1e40">
-      <a href="https://stellara-horoscope.com" style="display:inline-block;padding:11px 28px;background:transparent;border:1px solid rgba(200,169,110,0.35);border-radius:10px;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
+      <a href="${SITE_URL}" style="display:inline-block;padding:11px 28px;background:transparent;border:1px solid rgba(200,169,110,0.35);border-radius:10px;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
         ✦ Share Stellara with a Friend
       </a>
     </td></tr>
 
-    <!-- Footer -->
+    ${conversionBlock}
+
     <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0e1e40">
       <p style="margin:0;font-size:11px;color:#8fa8c8;font-family:Helvetica,Arial,sans-serif;line-height:2;">
-        You're receiving this as a Stellara Pro subscriber.<br/>
-        <a href="https://stellara-horoscope.com" style="color:#8fa8c8;text-decoration:none;">stellara-horoscope.com</a>
+        ${footerLine}<br/>
+        <a href="${SITE_URL}" style="color:#8fa8c8;text-decoration:none;">stellara-horoscope.com</a>
         &nbsp;·&nbsp;
-        <a href="https://stellara-horoscope.com/.netlify/functions/unsubscribe?id=${user.id}" style="color:#8fa8c8;text-decoration:none;">Unsubscribe</a>
+        <a href="${SITE_URL}/.netlify/functions/unsubscribe?id=${user.id}" style="color:#8fa8c8;text-decoration:none;">Unsubscribe</a>
       </p>
     </td></tr>
 
@@ -481,16 +624,8 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO
 
   const sendRes = await fetch('https://api.resend.com/emails', {
     method:  'POST',
-    headers: {
-      'Content-Type':  'application/json',
-      'Authorization': `Bearer ${RESEND_API_KEY}`,
-    },
-    body: JSON.stringify({
-      from:    FROM_EMAIL,
-      to:      email,
-      subject: safeSubject,
-      html,
-    }),
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
+    body: JSON.stringify({ from: FROM_EMAIL, to: email, subject: safeSubject, html }),
   });
 
   if (!sendRes.ok) {
@@ -498,21 +633,16 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO
     throw new Error(`Resend error ${sendRes.status}: ${errText}`);
   }
 
-  // Stamp last_email_date only after confirmed delivery — prevents orphaned claims
-  // when Claude or Resend fails mid-run (which would block retries all day).
   if (!skipIdempotency) {
-    fetch(
-      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`,
-      {
-        method:  'PATCH',
-        headers: {
-          'Content-Type':  'application/json',
-          'apikey':         SUPABASE_SERVICE_KEY,
-          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-          'Prefer':        'return=minimal',
-        },
-        body: JSON.stringify({ last_email_date: todayISO }),
-      }
-    ).catch(err => console.error('[daily-email] Failed to stamp last_email_date:', err));
+    fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
+      method:  'PATCH',
+      headers: {
+        'Content-Type':  'application/json',
+        'apikey':         SUPABASE_SERVICE_KEY,
+        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'Prefer':        'return=minimal',
+      },
+      body: JSON.stringify({ last_email_date: todayISO }),
+    }).catch(err => console.error('[daily-email] Failed to stamp last_email_date:', err));
   }
 }
