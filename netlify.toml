@@ -29,11 +29,14 @@
   node_bundler = "esbuild"
 
 [functions."daily-horoscopes"]
-  timeout = 30
+  timeout = 15
 
 [functions."daily-horoscopes-scheduler"]
   timeout = 30
   schedule = "0 8 * * *"
+
+# Background function — generates horoscopes via Claude without sync timeout
+[functions."daily-horoscopes-background"]
 
 [functions."get-weekly-spread"]
   timeout = 30

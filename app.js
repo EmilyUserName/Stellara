@@ -1050,6 +1050,20 @@ async function selectSign(sign, target) {
   if (!_freeHoroscopes) {
     try {
       const res  = await fetch('/api/daily-horoscopes');
+      if (res.status === 503) {
+        // Background generation triggered — auto-retry in 8 seconds
+        loadingEl.style.display = 'none';
+        if (upsellEl) upsellEl.style.display = 'none';
+        textEl.textContent      = "Today's horoscopes are being prepared — checking back in a moment…";
+        readingEl.style.display = 'block';
+        setTimeout(() => {
+          readingEl.style.display = 'none';
+          textEl.textContent      = '';
+          loadingEl.style.display = 'block';
+          selectSign(sign, target);
+        }, 8000);
+        return;
+      }
       const data = await res.json();
       if (data && data[sign]) _freeHoroscopes = data;
     } catch (e) {
