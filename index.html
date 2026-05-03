@@ -20,7 +20,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <!-- All styling lives in style.css -->
-  <link rel="stylesheet" href="style.css?v=28" />
+  <link rel="stylesheet" href="style.css?v=29" />
 
   <!-- Leaflet (astrocartography map) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -72,6 +72,41 @@
       <div class="landing-hero">
         <h2 id="landingHeadline"></h2>
         <p>Stellara reads your birth chart and connects it to what's happening in the sky <em>right now</em>. Not a generic horoscope. Your chart. Today's planets. Fresh every morning.</p>
+      </div>
+
+      <div class="landing-cta-early">
+        <button class="btn landing-cta" style="margin-top:0;" onclick="openSignUp()">✦ &nbsp;Begin Your Journey — Free</button>
+        <button class="btn landing-signin-btn" style="margin-top:0;" onclick="openAuthModal()">Sign In</button>
+      </div>
+
+      <div class="landing-horoscope-preview">
+        <div class="landing-horoscope-preview-label">✦ &nbsp;Today's horoscope — free, no account needed</div>
+        <div class="free-horoscopes-signs" id="freeHoroscopeSigns">
+          <button class="sign-pill" data-sign="aries">Aries</button>
+          <button class="sign-pill" data-sign="taurus">Taurus</button>
+          <button class="sign-pill" data-sign="gemini">Gemini</button>
+          <button class="sign-pill" data-sign="cancer">Cancer</button>
+          <button class="sign-pill" data-sign="leo">Leo</button>
+          <button class="sign-pill" data-sign="virgo">Virgo</button>
+          <button class="sign-pill" data-sign="libra">Libra</button>
+          <button class="sign-pill" data-sign="scorpio">Scorpio</button>
+          <button class="sign-pill" data-sign="sagittarius">Sagittarius</button>
+          <button class="sign-pill" data-sign="capricorn">Capricorn</button>
+          <button class="sign-pill" data-sign="aquarius">Aquarius</button>
+          <button class="sign-pill" data-sign="pisces">Pisces</button>
+        </div>
+        <div class="free-horoscope-reading" id="freeHoroscopeReading" style="display:none;">
+          <div class="free-horoscope-sign-name" id="freeHoroscopeSignName"></div>
+          <div class="free-horoscope-text" id="freeHoroscopeText"></div>
+          <div class="free-horoscope-upsell">
+            <div class="free-horoscope-upsell-heading">✦ Your personalized reading goes deeper.</div>
+            <div class="free-horoscope-upsell-body">This is what the sky says to everyone born under your sign. Sign up free and enter your birth details — Stellara writes a reading for your exact chart, your planets, your moment.</div>
+            <button class="btn" onclick="openSignUp()" style="margin-top:0;font-size:0.8rem;padding:11px 22px;">✦ &nbsp;Begin Your Journey — Free</button>
+          </div>
+        </div>
+        <div class="free-horoscope-loading" id="freeHoroscopeLoading" style="display:none;">
+          <div class="orbit" style="width:28px;height:28px;margin:0 auto;"></div>
+        </div>
       </div>
 
       <div class="landing-topics">
@@ -169,6 +204,7 @@
         <button class="share-btn landing-share-btn" onclick="shareStellara()">✦ &nbsp;Share with a Friend</button>
       </div>
     </div>
+
 
 
     <!-- =====================================================

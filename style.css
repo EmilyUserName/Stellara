@@ -492,6 +492,33 @@ select option { background: var(--navy-2); }
   font-style: italic;
 }
 
+.landing-cta-early {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 28px;
+}
+
+.landing-horoscope-preview {
+  background: rgba(143,168,200,0.07);
+  border: 1px solid rgba(143,168,200,0.18);
+  border-radius: 16px;
+  padding: 24px 20px;
+  margin-bottom: 36px;
+}
+
+.landing-horoscope-preview-label {
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 18px;
+}
+
 .landing-topics {
   display: flex;
   flex-wrap: wrap;
