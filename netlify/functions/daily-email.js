@@ -341,12 +341,12 @@ async function sendTrialEndedEmail(user, todayISO) {
     <tr><td style="padding-bottom:32px;" bgcolor="#0e1e40">
       <p style="margin:0 0 18px;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">${name},</p>
       <p style="margin:0 0 18px;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">Your 7-day trial has ended. The sky is still moving — your chart still has something to say every morning. It's just waiting for you to continue.</p>
-      <p style="margin:0;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">Keep your personalized morning reading coming — $7/month, cancel anytime.</p>
+      <p style="margin:0;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">Keep your personalized morning reading coming — $12/month, cancel anytime.</p>
     </td></tr>
 
     <tr><td style="text-align:center;padding-bottom:32px;" bgcolor="#0e1e40">
       <a href="${checkoutUrl}" style="display:inline-block;padding:16px 44px;background:linear-gradient(135deg,rgba(200,169,110,0.25),rgba(180,149,90,0.15));border:1px solid rgba(200,169,110,0.7);border-radius:10px;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:0.16em;text-decoration:none;text-transform:uppercase;font-weight:600;">
-        ✦ &nbsp;Continue for $7/month
+        ✦ &nbsp;Continue for $12/month
       </a>
     </td></tr>
 
@@ -523,9 +523,9 @@ async function sendEmail({ user, name, email, sun, moon, rising, today, todayISO
           <div style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;margin-bottom:12px;">
             ${trialDay === 7 ? 'This is your last trial reading' : 'Your trial ends tomorrow'}
           </div>
-          <p style="margin:0 0 20px;font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.7;">Keep your personalized morning reading — $7/month, cancel anytime.</p>
+          <p style="margin:0 0 20px;font-size:15px;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;line-height:1.7;">Keep your personalized morning reading — $12/month, cancel anytime.</p>
           <a href="${checkoutUrl}" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,rgba(200,169,110,0.25),rgba(180,149,90,0.15));border:1px solid rgba(200,169,110,0.7);border-radius:10px;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;font-weight:600;">
-            ✦ &nbsp;Continue for $7/month
+            ✦ &nbsp;Continue for $12/month
           </a>
         </td></tr>
       </table>

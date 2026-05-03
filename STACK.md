@@ -41,7 +41,7 @@ All serverless, deployed automatically on push to `main`.
 
 ## Payments
 - **Stripe**
-  - Subscription: $7/month (Pro plan)
+  - Subscription: $12/month (Pro plan)
   - Live price ID: `price_1TDtN8EZ8ha2qxjvTEzyBUxC`
   - Webhook: `checkout.session.completed` → sets `subscribed: true` in Supabase
   - Webhook: `customer.subscription.deleted` → sets `subscribed: false`
@@ -62,6 +62,6 @@ All serverless, deployed automatically on push to `main`.
 
 ## Features
 - **Free tier** — Full birth chart reading (sun + moon + rising) with today's transits
-- **Pro tier ($7/mo)** — 13 reading topics, 4 reading styles, daily email digest (coming soon)
+- **Pro tier ($12/mo)** — 13 reading topics, 4 reading styles, daily email digest (coming soon)
 - 13 topics: Full Chart, Love, Career, Finances, Health, This Month, Communication, Inner World, Energy & Timing, Travel, Spiritual Path, Compatibility, Shadow Work
 - 4 styles: Psychological, Spiritual, Modern & Direct, Classical

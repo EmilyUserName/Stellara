@@ -6,7 +6,7 @@ Project reference for AI-assisted development. Covers architecture, constraints,
 
 ## Project Overview
 
-Stellara is a personalized astrology web app. Users enter their birth data, get a natal chart (sun, moon, rising), and receive AI-generated readings across 13 topics in 4 styles. Pro subscribers ($7/mo) get all topics/styles plus a daily personalized email digest.
+Stellara is a personalized astrology web app. Users enter their birth data, get a natal chart (sun, moon, rising), and receive AI-generated readings across 13 topics in 4 styles. Pro subscribers ($12/mo) get all topics/styles plus a daily personalized email digest.
 
 Live site: **stellara-horoscope.com**
 Stack: Vanilla JS frontend + Netlify Functions backend + Supabase + Stripe + Resend + Anthropic Claude API
@@ -48,17 +48,20 @@ netlify/functions/
 ## Critical Constraints
 
 ### Netlify Function Timeouts
+
 - **Synchronous functions**: Hard ~26s limit regardless of `netlify.toml` setting.
 - **Safe Claude max_tokens for sync functions**: ≤ 1000 tokens (~15–20s). 2500 always times out.
 - **Background functions** (`*-background.js`): Up to 15 minutes. Use for any Claude call that needs >1000 tokens or complex multi-step generation.
 - The timeout in `netlify.toml` only affects billing/queueing — the hard platform cap is ~26s.
 
 ### PostgREST NULL Handling
+
 - `not.eq.value` in PostgREST does **not** match NULL rows (standard SQL behavior).
 - Always use `or=(field.is.null,field.not.eq.value)` to mean "field is not set to value today."
 - Example (daily email idempotency): `?id=eq.${id}&or=(last_email_date.is.null,last_email_date.not.eq.${todayISO})`
 
 ### Concurrent Netlify Runs
+
 - Scheduled functions can run as multiple concurrent instances.
 - Use atomic PATCH claims in Supabase before doing any destructive or side-effectful work (e.g., sending emails).
 - Claim pattern: PATCH the row with a filter that only matches if not already claimed, check the returned array length — 0 = already claimed by another run, skip.
@@ -69,15 +72,15 @@ netlify/functions/
 
 Set in Netlify dashboard (never commit):
 
-| Variable | Purpose |
-|---|---|
-| `ANTHROPIC_API_KEY` | Claude API access |
-| `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_SERVICE_KEY` | Supabase service role key (bypasses RLS) |
-| `STRIPE_SECRET_KEY` | Stripe API key |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification |
-| `RESEND_API_KEY` | Resend email sending |
-| `URL` | Netlify site URL (auto-set by Netlify, used for internal function-to-function calls) |
+| Variable                | Purpose                                                                              |
+| ----------------------- | ------------------------------------------------------------------------------------ |
+| `ANTHROPIC_API_KEY`     | Claude API access                                                                    |
+| `SUPABASE_URL`          | Supabase project URL                                                                 |
+| `SUPABASE_SERVICE_KEY`  | Supabase service role key (bypasses RLS)                                             |
+| `STRIPE_SECRET_KEY`     | Stripe API key                                                                       |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification                                                |
+| `RESEND_API_KEY`        | Resend email sending                                                                 |
+| `URL`                   | Netlify site URL (auto-set by Netlify, used for internal function-to-function calls) |
 
 ---
 
@@ -85,24 +88,24 @@ Set in Netlify dashboard (never commit):
 
 **Table: `profiles`**
 
-| Column | Type | Notes |
-|---|---|---|
-| `id` | uuid | Supabase auth user ID |
-| `email` | text | |
-| `name` | text | Display name |
-| `birth_date` | text | YYYY-MM-DD |
-| `birth_time` | text | HH:MM (optional) |
-| `birth_city` | text | Free text, geocoded on chart calc |
-| `sun_sign` | text | Cached after first chart calc |
-| `moon_sign` | text | Cached after first chart calc |
-| `rising_sign` | text | NOT cached — always recalculated (formula may change) |
-| `subscribed` | boolean | Set by Stripe webhook |
-| `stripe_customer_id` | text | |
-| `stripe_subscription_id` | text | |
-| `preferred_style` | text | psychological / spiritual / modern / classical |
-| `email_opt_out` | boolean | User unsubscribed from daily emails |
-| `last_email_date` | text | YYYY-MM-DD, idempotency key for daily email |
-| `solar_return_year` | int | Non-null = has purchased solar return access |
+| Column                   | Type    | Notes                                                 |
+| ------------------------ | ------- | ----------------------------------------------------- |
+| `id`                     | uuid    | Supabase auth user ID                                 |
+| `email`                  | text    |                                                       |
+| `name`                   | text    | Display name                                          |
+| `birth_date`             | text    | YYYY-MM-DD                                            |
+| `birth_time`             | text    | HH:MM (optional)                                      |
+| `birth_city`             | text    | Free text, geocoded on chart calc                     |
+| `sun_sign`               | text    | Cached after first chart calc                         |
+| `moon_sign`              | text    | Cached after first chart calc                         |
+| `rising_sign`            | text    | NOT cached — always recalculated (formula may change) |
+| `subscribed`             | boolean | Set by Stripe webhook                                 |
+| `stripe_customer_id`     | text    |                                                       |
+| `stripe_subscription_id` | text    |                                                       |
+| `preferred_style`        | text    | psychological / spiritual / modern / classical        |
+| `email_opt_out`          | boolean | User unsubscribed from daily emails                   |
+| `last_email_date`        | text    | YYYY-MM-DD, idempotency key for daily email           |
+| `solar_return_year`      | int     | Non-null = has purchased solar return access          |
 
 **Table: `daily_horoscopes`**
 
@@ -143,6 +146,7 @@ Reading styles gate: `psychological` is free; `spiritual`, `modern`, `classical`
 **File**: `netlify/functions/daily-email.js`
 
 Flow:
+
 1. Fetch all `subscribed=true` profiles
 2. Filter: must have email, name, birth_date, birth_city; exclude email_opt_out; exclude already-emailed today
 3. For each user: atomic claim via PATCH, calculate chart (or use cached sun/moon), generate reading via Claude, send via Resend, stamp `last_email_date`
@@ -162,12 +166,11 @@ On-demand (first user load of the week): `get-weekly-spread.js` triggers backgro
 ## CSS Design Tokens (style.css)
 
 ```css
---bg:           #0b1628   (page background)
---surface:      #142c5c   (card surface)
---gold:         #c8a96e   (accent, stars, highlights)
---silver:       #8fa8c8   (secondary text, muted)
---silver-light: #c8d8ea   (body text on dark backgrounds)
---accent:       #5a6b8c   (very muted — avoid for text on dark bg, use for borders only)
+--bg: #0b1628 (page background) --surface: #142c5c (card surface)
+  --gold: #c8a96e (accent, stars, highlights) --silver: #8fa8c8
+  (secondary text, muted) --silver-light: #c8d8ea
+  (body text on dark backgrounds) --accent: #5a6b8c
+  (very muted — avoid for text on dark bg, use for borders only);
 ```
 
 `--accent` (`#5a6b8c`) is too low-contrast on `--bg` or `--surface` for readable text. Use `--silver` or `--silver-light` for any text that needs to be legible.
@@ -190,6 +193,102 @@ On-demand (first user load of the week): `get-weekly-spread.js` triggers backgro
 Push to `main` → Netlify auto-deploys. No build step needed (vanilla JS, no bundler).
 
 To reset a stuck `last_email_date` in Supabase:
+
 ```sql
 UPDATE profiles SET last_email_date = NULL WHERE last_email_date = 'YYYY-MM-DD';
 ```
+
+Here it is, cleaned up and ready to paste:
+
+---
+
+**Here’s the full picture:**
+
+## Services Used in Stellara
+
+### Paid / Account-Required
+
+**Netlify**
+Hosting, serverless functions, and scheduling
+Free tier is usually sufficient; background functions require Pro ($19/month)
+Check if you're on Pro — background functions won’t run on the free plan
+
+**Supabase**
+Database (profiles, horoscopes, spreads)
+Free tier includes 500MB database and 2 projects; Pro starts at $25/month
+Free tier pauses after 1 week of inactivity — important to monitor
+
+**Stripe**
+Payments and subscriptions ($12/month Pro tier)
+No monthly fee; ~2.9% + $0.30 per transaction
+No expiration, but API keys can be rotated
+
+**Resend**
+Sends daily emails
+Free tier includes 3,000 emails/month; paid starts at $20/month
+Keep an eye on email volume as subscribers grow
+
+**Anthropic (Claude API)**
+Generates AI readings and daily email content
+Pay-per-token (Sonnet pricing: ~$3 per million input tokens, ~$15 per million output tokens)
+No subscription; API keys remain valid unless revoked
+
+---
+
+### Free / No Account Needed
+
+**Nominatim (OpenStreetMap)**
+Geocoding (birth city → latitude/longitude)
+Free
+Rate limit: 1 request per second; requires a User-Agent header
+
+**timeapi.io**
+Timezone lookup by coordinates
+Free
+Rate limits unclear — monitor usage
+
+**Open-Meteo**
+Fallback timezone lookup
+Free
+Very generous limits
+
+---
+
+### npm Package
+
+**astronomy-engine**
+Used for rising sign calculations (based on Jean Meeus algorithms)
+
+---
+
+## Expiration & Risk Watchouts
+
+- **Supabase (free tier)**
+  Pauses projects after 7 days of inactivity
+  If paused, the database goes offline until manually reactivated
+
+- **Stripe webhook secret**
+  If API keys or webhook endpoints are rotated, the `STRIPE_WEBHOOK_SECRET` in Netlify environment variables must be updated or events will fail silently
+
+- **Anthropic API key**
+  Does not expire automatically, but regenerating or revoking it will break all AI-powered features
+
+- **Resend API key**
+  Same behavior as Anthropic — regenerating it will stop email delivery
+
+- **timeapi.io**
+  Free third-party service with no SLA
+  Already backed up with Open-Meteo fallback
+
+- **Domain (stellara-horoscope.com)**
+  Check registrar for renewal date
+  Most likely item to accidentally expire
+
+---
+
+## Biggest Practical Risks
+
+- Supabase project pausing (if using free tier)
+- Domain expiration
+
+Everything else is either pay-as-you-go or does not expire.
