@@ -5,94 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Start Your Free Trial — Stellara</title>
   <meta name="description" content="7 days of your personalized daily horoscope — written for your exact birth chart. No credit card." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css?v=30" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-
-    :root {
-      --bg:           #0b1628;
-      --surface:      #142c5c;
-      --surface-deep: #0e1e40;
-      --gold:         #c8a96e;
-      --silver:       #8fa8c8;
-      --silver-light: #c8d8ea;
-      --white:        #f0f4ff;
-      --border:       rgba(143, 168, 200, 0.2);
-    }
-
     body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--silver-light);
-      font-family: 'Barlow', sans-serif;
-      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 48px 20px;
     }
-
-    .card {
+    .trial-card {
       width: 100%;
       max-width: 420px;
+      position: relative;
+      z-index: 1;
     }
-
-    /* Brand */
-    .brand {
+    .trial-brand {
       text-align: center;
       margin-bottom: 40px;
     }
-    .brand-star {
-      font-size: 24px;
-      color: var(--gold);
-      display: block;
-      margin-bottom: 8px;
-    }
-    .brand-name {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 36px;
-      font-weight: 800;
-      color: var(--white);
-      letter-spacing: -0.01em;
-      display: block;
-      margin-bottom: 6px;
-    }
-    .brand-tagline {
-      font-size: 10px;
-      letter-spacing: 0.26em;
-      text-transform: uppercase;
-      color: var(--silver);
-    }
-
-    /* Headline */
-    .headline {
-      font-family: Georgia, 'Times New Roman', serif;
+    .trial-brand-star { font-size: 24px; color: var(--gold); display: block; margin-bottom: 8px; }
+    .trial-brand-name { font-family: Georgia, serif; font-size: 36px; font-weight: 800; color: var(--light); letter-spacing: -0.01em; display: block; margin-bottom: 6px; }
+    .trial-brand-tagline { font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--silver); }
+    .trial-headline {
+      font-family: Georgia, serif;
       font-size: 26px;
       font-weight: 400;
-      color: var(--white);
+      color: var(--light);
       text-align: center;
       line-height: 1.35;
       margin: 0 0 12px;
     }
-    .subhead {
+    .trial-subhead {
       font-size: 15px;
       color: var(--silver);
       text-align: center;
       line-height: 1.65;
       margin: 0 0 36px;
     }
-    .subhead strong {
-      color: var(--silver-light);
-      font-weight: 500;
-    }
-
-    /* Form */
-    .form-group {
-      margin-bottom: 14px;
-    }
-    label {
+    .trial-subhead strong { color: var(--silver-light); font-weight: 500; }
+    .trial-form-group { margin-bottom: 14px; }
+    .trial-form-group label {
       display: block;
       font-size: 11px;
       letter-spacing: 0.16em;
@@ -100,42 +52,28 @@
       color: var(--silver);
       margin-bottom: 6px;
     }
-    input {
+    .trial-form-group input {
       width: 100%;
-      background: rgba(143, 168, 200, 0.07);
-      border: 1px solid var(--border);
+      background: rgba(143,168,200,0.07);
+      border: 1px solid rgba(143,168,200,0.2);
       border-radius: 10px;
       padding: 13px 16px;
       font-size: 15px;
       font-family: 'Barlow', sans-serif;
-      color: var(--white);
+      color: var(--light);
       outline: none;
       transition: border-color 0.2s;
     }
-    input:focus {
-      border-color: rgba(143, 168, 200, 0.5);
-    }
-    input::placeholder {
-      color: rgba(143, 168, 200, 0.4);
-    }
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(0.6);
-      cursor: pointer;
-    }
-    .field-note {
-      font-size: 12px;
-      color: var(--silver);
-      opacity: 0.7;
-      margin: 5px 0 0;
-    }
-
-    /* Submit button */
-    .btn-submit {
+    .trial-form-group input:focus { border-color: rgba(143,168,200,0.5); }
+    .trial-form-group input::placeholder { color: rgba(143,168,200,0.4); }
+    .trial-form-group input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
+    .trial-field-note { font-size: 12px; color: var(--silver); opacity: 0.7; margin: 5px 0 0; }
+    .trial-btn-submit {
       width: 100%;
       margin-top: 8px;
       padding: 15px;
-      background: linear-gradient(135deg, rgba(200, 169, 110, 0.22), rgba(180, 149, 90, 0.12));
-      border: 1px solid rgba(200, 169, 110, 0.6);
+      background: linear-gradient(135deg, rgba(200,169,110,0.22), rgba(180,149,90,0.12));
+      border: 1px solid rgba(200,169,110,0.6);
       border-radius: 12px;
       color: var(--gold);
       font-family: 'Barlow', sans-serif;
@@ -146,168 +84,97 @@
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
     }
-    .btn-submit:hover:not(:disabled) {
-      background: linear-gradient(135deg, rgba(200, 169, 110, 0.32), rgba(180, 149, 90, 0.2));
-      border-color: rgba(200, 169, 110, 0.9);
-    }
-    .btn-submit:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* What you'll get */
-    .perks {
+    .trial-btn-submit:hover:not(:disabled) { background: linear-gradient(135deg,rgba(200,169,110,0.32),rgba(180,149,90,0.2)); border-color: rgba(200,169,110,0.9); }
+    .trial-btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .trial-perks {
       margin-top: 32px;
       padding: 22px 24px;
-      background: rgba(143, 168, 200, 0.05);
-      border: 1px solid var(--border);
+      background: rgba(143,168,200,0.05);
+      border: 1px solid rgba(143,168,200,0.2);
       border-radius: 14px;
     }
-    .perks-label {
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 14px;
-    }
-    .perk {
-      font-size: 14px;
-      color: var(--silver-light);
-      line-height: 1.6;
-      padding: 5px 0;
-      display: flex;
-      gap: 10px;
-    }
-    .perk-star {
-      color: var(--gold);
-      flex-shrink: 0;
-    }
-
-    /* Divider */
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(200, 169, 110, 0.25), transparent);
-      margin: 32px 0;
-    }
-
-    /* Success / error states */
-    .state-success,
-    .state-error {
-      display: none;
-      text-align: center;
-      padding: 28px 0;
-    }
-    .state-success .icon,
-    .state-error .icon {
-      font-size: 32px;
-      margin-bottom: 16px;
-    }
-    .state-success h2 {
-      font-family: Georgia, serif;
-      font-size: 22px;
-      color: var(--white);
-      margin: 0 0 12px;
-    }
-    .state-success p,
-    .state-error p {
-      font-size: 15px;
-      color: var(--silver);
-      line-height: 1.65;
-      margin: 0 0 10px;
-    }
-    .error-msg {
-      font-size: 13px;
-      color: #e87070;
-      text-align: center;
-      margin-top: 10px;
-      display: none;
-    }
-
-    /* Back link */
-    .back-link {
-      display: block;
-      text-align: center;
-      margin-top: 28px;
-      font-size: 13px;
-      color: var(--silver);
-      text-decoration: none;
-      opacity: 0.7;
-    }
-    .back-link:hover { opacity: 1; }
-
-    @media (max-width: 480px) {
-      body { padding: 32px 16px; }
-      .headline { font-size: 22px; }
-    }
+    .trial-perks-label { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+    .trial-perk { font-size: 14px; color: var(--silver-light); line-height: 1.6; padding: 5px 0; display: flex; gap: 10px; }
+    .trial-perk-star { color: var(--gold); flex-shrink: 0; }
+    .trial-divider { height: 1px; background: linear-gradient(90deg,transparent,rgba(200,169,110,0.25),transparent); margin: 32px 0; }
+    .trial-state { display: none; text-align: center; padding: 28px 0; }
+    .trial-state .icon { font-size: 32px; margin-bottom: 16px; }
+    .trial-state h2 { font-family: Georgia, serif; font-size: 22px; color: var(--light); margin: 0 0 12px; }
+    .trial-state p { font-size: 15px; color: var(--silver); line-height: 1.65; margin: 0 0 10px; }
+    .trial-error-msg { font-size: 13px; color: #e87070; text-align: center; margin-top: 10px; display: none; }
+    .trial-back-link { display: block; text-align: center; margin-top: 28px; font-size: 13px; color: var(--silver); text-decoration: none; opacity: 0.7; }
+    .trial-back-link:hover { opacity: 1; }
+    @media (max-width: 480px) { body { padding: 32px 16px; } .trial-headline { font-size: 22px; } }
   </style>
 </head>
 <body>
-  <div class="card">
+  <div class="starfield"></div>
+  <div class="trial-card">
 
-    <div class="brand">
-      <span class="brand-star">✦</span>
-      <span class="brand-name">stellara</span>
-      <span class="brand-tagline">Your Personal Cosmos</span>
+    <div class="trial-brand">
+      <span class="trial-brand-star">✦</span>
+      <span class="trial-brand-name">stellara</span>
+      <span class="trial-brand-tagline">Your Personal Cosmos</span>
     </div>
 
     <div id="form-section">
-      <h1 class="headline">7 days of your personalized morning reading</h1>
-      <p class="subhead">Written for your exact birth chart — your planets, your rising sign, what's in the sky today. <strong>No credit card required.</strong></p>
+      <h1 class="trial-headline">7 days of your personalized morning reading</h1>
+      <p class="trial-subhead">Written for your exact birth chart — your planets, your rising sign, what's in the sky today. <strong>No credit card required.</strong></p>
 
       <form id="trial-form" novalidate>
-        <div class="form-group">
+        <div class="trial-form-group">
           <label for="name">Your name</label>
           <input type="text" id="name" name="name" placeholder="First name is fine" required autocomplete="given-name" />
         </div>
 
-        <div class="form-group">
+        <div class="trial-form-group">
           <label for="email">Email address</label>
           <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email" />
         </div>
 
-        <div class="form-group">
+        <div class="trial-form-group">
           <label for="birthDate">Date of birth</label>
           <input type="date" id="birthDate" name="birthDate" required />
         </div>
 
-        <div class="form-group">
+        <div class="trial-form-group">
           <label for="birthCity">City of birth</label>
           <input type="text" id="birthCity" name="birthCity" placeholder="e.g. Chicago, IL" required autocomplete="off" />
         </div>
 
-        <div class="form-group">
+        <div class="trial-form-group">
           <label for="birthTime">Time of birth <span style="font-weight:400;opacity:0.6;">(optional)</span></label>
           <input type="time" id="birthTime" name="birthTime" />
-          <p class="field-note">Used to calculate your rising sign. Leave blank if unknown.</p>
+          <p class="trial-field-note">Used to calculate your rising sign. Leave blank if unknown.</p>
         </div>
 
-        <button type="submit" class="btn-submit" id="submit-btn">✦ &nbsp;Start My Free Trial</button>
-        <p class="error-msg" id="error-msg"></p>
+        <button type="submit" class="trial-btn-submit" id="submit-btn">✦ &nbsp;Start My Free Trial</button>
+        <p class="trial-error-msg" id="error-msg"></p>
       </form>
 
-      <div class="divider"></div>
+      <div class="trial-divider"></div>
 
-      <div class="perks">
-        <div class="perks-label">Each morning you'll receive</div>
-        <div class="perk"><span class="perk-star">✦</span><span>A personalized reading for your exact chart and the day's sky</span></div>
-        <div class="perk"><span class="perk-star">✦</span><span>An insight written for your exact planetary moment</span></div>
-        <div class="perk"><span class="perk-star">✦</span><span>One thing to watch for — and your power move for the day</span></div>
+      <div class="trial-perks">
+        <div class="trial-perks-label">Each morning you'll receive</div>
+        <div class="trial-perk"><span class="trial-perk-star">✦</span><span>A personalized reading for your exact chart and the day's sky</span></div>
+        <div class="trial-perk"><span class="trial-perk-star">✦</span><span>An insight written for your exact planetary moment</span></div>
+        <div class="trial-perk"><span class="trial-perk-star">✦</span><span>One thing to watch for — and your power move for the day</span></div>
       </div>
     </div>
 
-    <div class="state-success" id="state-success">
+    <div class="trial-state" id="state-success">
       <div class="icon">✦</div>
       <h2 id="success-name">Your trial has started.</h2>
       <p>Your first reading arrives tomorrow morning. Check the inbox you just entered — and check your spam folder if it doesn't appear.</p>
       <p style="opacity:0.6;font-size:13px;">7 days, no credit card, cancel anytime.</p>
     </div>
 
-    <div class="state-error" id="state-error">
+    <div class="trial-state" id="state-error">
       <div class="icon" style="color:#e87070;">✦</div>
       <p id="error-detail">Something went wrong. Please try again.</p>
     </div>
 
-    <a href="https://stellara-horoscope.com" class="back-link">← Back to Stellara</a>
+    <a href="https://stellara-horoscope.com" class="trial-back-link">← Back to Stellara</a>
   </div>
 
   <script>
@@ -315,7 +182,7 @@
       e.preventDefault();
 
       const btn     = document.getElementById('submit-btn');
-      const errorEl = document.getElementById('error-msg');
+      const errorEl  = document.getElementById('error-msg');
 
       const name      = document.getElementById('name').value.trim();
       const email     = document.getElementById('email').value.trim();
