@@ -390,6 +390,64 @@ async function sendTrialEndedEmail(user, todayISO) {
 }
 
 // ------------------------------------------------------------
+// WHOLE SIGN HOUSE CALCULATION
+// ------------------------------------------------------------
+
+const TRANSIT_SIGN_NAMES = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo',
+                             'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+
+const HOUSE_KEYWORDS = {
+   1: 'self, identity, body, new beginnings',
+   2: 'money, possessions, values, self-worth',
+   3: 'communication, learning, local life, siblings',
+   4: 'home, roots, family, private self',
+   5: 'creativity, romance, play, joy',
+   6: 'health, daily work, routines, service',
+   7: 'partnerships, one-on-one relationships, contracts',
+   8: 'transformation, shared resources, depth, intimacy',
+   9: 'beliefs, travel, higher learning, expansion',
+  10: 'career, public life, reputation, legacy',
+  11: 'community, friendships, hopes, collective causes',
+  12: 'solitude, hidden matters, spirituality, the unconscious',
+};
+
+function ordinal(n) {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+function planetHouse(transitSign, risingSign) {
+  const t = TRANSIT_SIGN_NAMES.indexOf(transitSign);
+  const r = TRANSIT_SIGN_NAMES.indexOf(risingSign);
+  if (t === -1 || r === -1) return null;
+  return ((t - r + 12) % 12) + 1;
+}
+
+function buildHouseBlock(skyToday, rising) {
+  if (!rising || !skyToday) return null;
+  const planets = [
+    { name: 'Sun',     sign: skyToday.sun },
+    { name: 'Moon',    sign: skyToday.moon },
+    { name: 'Mercury', sign: skyToday.mercury },
+    { name: 'Venus',   sign: skyToday.venus },
+    { name: 'Mars',    sign: skyToday.mars },
+    { name: 'Jupiter', sign: skyToday.jupiter },
+    { name: 'Saturn',  sign: skyToday.saturn },
+    { name: 'Neptune', sign: skyToday.neptune },
+    { name: 'Pluto',   sign: skyToday.pluto },
+  ];
+  const lines = planets
+    .filter(p => p.sign)
+    .map(p => {
+      const h = planetHouse(p.sign, rising);
+      return h ? `${p.name}: ${p.sign} → ${ordinal(h)} house (${HOUSE_KEYWORDS[h]})` : null;
+    })
+    .filter(Boolean);
+  return lines.length ? lines.join('\n') : null;
+}
+
+// ------------------------------------------------------------
 // CLAUDE — generate the morning digest
 // ------------------------------------------------------------
 async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets = {} }) {
@@ -433,6 +491,10 @@ Birth city: ${birth_city}
 
 TODAY'S ACTUAL SKY:
 ${skyLines}
+${rising && buildHouseBlock(skyToday, rising) ? `
+TODAY'S TRANSITS BY HOUSE (Whole Sign, ${rising} Rising):
+${buildHouseBlock(skyToday, rising)}
+Use these house placements to ground the reading in ${name}'s specific life areas — weave them in naturally, don't list them mechanically.` : ''}
 
 Write the following sections using EXACTLY these labels on their own lines. No extra text between labels.
 
