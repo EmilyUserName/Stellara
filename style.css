@@ -2779,3 +2779,353 @@ body.has-bottom-nav #weekSection { padding-bottom: 160px; }
   margin-top: 12px;
   letter-spacing: 0.06em;
 }
+
+
+/* ============================================================
+   SEO LANDING PAGES — sign pages & birth-chart page
+   ============================================================ */
+
+/* Sign links on main landing */
+.landing-sign-links {
+  margin: 0 0 32px;
+  text-align: center;
+}
+.landing-sign-links-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.landing-sign-links-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 6px;
+}
+.landing-sign-links-grid a {
+  font-size: 13px;
+  color: var(--silver);
+  text-decoration: none;
+  padding: 4px 10px;
+  border: 1px solid rgba(143,168,200,0.18);
+  border-radius: 20px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.landing-sign-links-grid a:hover { color: var(--gold); border-color: rgba(200,169,110,0.4); }
+
+/* SEO page wrapper */
+.seo-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 20px 64px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Nav bar */
+.seo-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0 32px;
+}
+.seo-nav-brand {
+  font-family: Georgia, serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+.seo-nav-cta {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  border: 1px solid rgba(200,169,110,0.5);
+  border-radius: 20px;
+  padding: 7px 16px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.seo-nav-cta:hover { background: rgba(200,169,110,0.1); border-color: rgba(200,169,110,0.85); }
+
+/* Sign hero */
+.seo-sign-hero {
+  text-align: center;
+  padding: 16px 0 36px;
+  border-bottom: 1px solid rgba(143,168,200,0.12);
+  margin-bottom: 40px;
+}
+.seo-sign-symbol {
+  font-size: 48px;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+.seo-sign-hero h1 {
+  font-family: Georgia, serif;
+  font-size: 36px;
+  font-weight: 400;
+  color: var(--white);
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+.seo-sign-dates {
+  font-size: 14px;
+  color: var(--silver);
+  letter-spacing: 0.08em;
+  margin: 0 0 16px;
+}
+.seo-sign-badges {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.seo-badge {
+  font-size: 12px;
+  color: var(--silver-light);
+  background: rgba(143,168,200,0.09);
+  border: 1px solid rgba(143,168,200,0.2);
+  border-radius: 20px;
+  padding: 4px 12px;
+  letter-spacing: 0.06em;
+}
+
+/* Section titles */
+.seo-section-title {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--white);
+  margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+.seo-section-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+/* Horoscope section */
+.seo-horoscope-section {
+  margin-bottom: 40px;
+  padding: 28px;
+  background: rgba(143,168,200,0.05);
+  border: 1px solid rgba(143,168,200,0.14);
+  border-radius: 16px;
+}
+.seo-horoscope-text {
+  font-size: 16px;
+  color: var(--silver-light);
+  line-height: 1.75;
+  margin: 0;
+}
+.seo-horoscope-loading {
+  text-align: center;
+  padding: 16px 0;
+  color: var(--silver);
+  font-size: 14px;
+}
+.seo-horoscope-loading p { margin: 12px 0 0; opacity: 0.6; }
+.seo-horoscope-error {
+  font-size: 14px;
+  color: var(--silver);
+  opacity: 0.6;
+  text-align: center;
+  padding: 12px 0;
+}
+.seo-horoscope-date {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+
+/* About section */
+.seo-about-section {
+  margin-bottom: 40px;
+}
+.seo-about-text {
+  font-size: 15px;
+  color: var(--silver-light);
+  line-height: 1.8;
+  margin: 0 0 24px;
+}
+.seo-about-text + .seo-about-text { margin-top: -14px; }
+.seo-traits-title {
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--silver);
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+.seo-traits {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+}
+.seo-traits li {
+  font-size: 15px;
+  color: var(--silver-light);
+  line-height: 1.65;
+  padding: 5px 0;
+  display: flex;
+  gap: 10px;
+}
+.seo-traits li::before {
+  content: "✦";
+  color: var(--gold);
+  flex-shrink: 0;
+  font-size: 10px;
+  margin-top: 5px;
+}
+
+/* CTA section */
+.seo-cta-section {
+  margin-bottom: 40px;
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(200,169,110,0.06), rgba(143,168,200,0.04));
+  border: 1px solid rgba(200,169,110,0.25);
+  border-radius: 16px;
+  text-align: center;
+}
+.seo-cta-section h2 {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--white);
+  margin: 0 0 14px;
+}
+.seo-cta-section p {
+  font-size: 15px;
+  color: var(--silver);
+  line-height: 1.7;
+  margin: 0 0 24px;
+}
+.seo-cta-btn {
+  display: inline-block;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, rgba(200,169,110,0.22), rgba(180,149,90,0.12));
+  border: 1px solid rgba(200,169,110,0.6);
+  border-radius: 12px;
+  color: var(--gold);
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+.seo-cta-btn:hover { background: linear-gradient(135deg,rgba(200,169,110,0.32),rgba(180,149,90,0.2)); border-color: rgba(200,169,110,0.9); }
+.seo-cta-note {
+  font-size: 12px;
+  color: var(--silver);
+  opacity: 0.6;
+  margin-top: 12px;
+}
+
+/* Sign navigation */
+.seo-sign-nav {
+  margin-bottom: 40px;
+}
+.seo-sign-nav-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--silver);
+  opacity: 0.5;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.seo-sign-nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 6px;
+}
+.seo-sign-nav-links a {
+  font-size: 13px;
+  color: var(--silver);
+  text-decoration: none;
+  padding: 5px 12px;
+  border: 1px solid rgba(143,168,200,0.18);
+  border-radius: 20px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.seo-sign-nav-links a:hover { color: var(--gold); border-color: rgba(200,169,110,0.4); }
+.seo-sign-nav-links a.active { color: var(--gold); border-color: rgba(200,169,110,0.45); background: rgba(200,169,110,0.06); }
+
+/* Footer */
+.seo-footer {
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid rgba(143,168,200,0.1);
+}
+.seo-footer a {
+  font-size: 13px;
+  color: var(--silver);
+  opacity: 0.55;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.seo-footer a:hover { opacity: 1; }
+
+/* Birth-chart page extras */
+.seo-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.seo-feature-card {
+  padding: 20px;
+  background: rgba(143,168,200,0.05);
+  border: 1px solid rgba(143,168,200,0.14);
+  border-radius: 14px;
+}
+.seo-feature-card-icon { font-size: 20px; margin-bottom: 8px; }
+.seo-feature-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.seo-feature-card-desc {
+  font-size: 13px;
+  color: var(--silver);
+  line-height: 1.65;
+}
+.seo-divider {
+  height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(200,169,110,0.2),transparent);
+  margin: 36px 0;
+}
+.seo-faq { margin-bottom: 40px; }
+.seo-faq-item { margin-bottom: 24px; }
+.seo-faq-q {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+.seo-faq-a {
+  font-size: 15px;
+  color: var(--silver-light);
+  line-height: 1.75;
+}
+
+@media (max-width: 600px) {
+  .seo-sign-hero h1 { font-size: 28px; }
+  .seo-sign-symbol { font-size: 40px; }
+  .seo-horoscope-section, .seo-cta-section { padding: 20px; }
+  .seo-wrap { padding: 0 16px 48px; }
+}
