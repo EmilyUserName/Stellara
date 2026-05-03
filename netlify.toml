@@ -31,6 +31,10 @@
 [functions."daily-horoscopes"]
   timeout = 30
 
+[functions."daily-horoscopes-scheduler"]
+  timeout = 30
+  schedule = "0 8 * * *"
+
 [functions."get-weekly-spread"]
   timeout = 30
 

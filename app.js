@@ -1045,6 +1045,8 @@ async function selectSign(sign, target) {
   readingEl.style.display = 'none';
   loadingEl.style.display = 'block';
 
+  const upsellEl = readingEl.querySelector('.free-horoscope-upsell');
+
   if (!_freeHoroscopes) {
     try {
       const res  = await fetch('/api/daily-horoscopes');
@@ -1052,6 +1054,7 @@ async function selectSign(sign, target) {
       if (data && data[sign]) _freeHoroscopes = data;
     } catch (e) {
       loadingEl.style.display = 'none';
+      if (upsellEl) upsellEl.style.display = 'none';
       textEl.textContent      = 'Could not load today\'s horoscopes. Please try again in a moment.';
       readingEl.style.display = 'block';
       return;
@@ -1060,11 +1063,13 @@ async function selectSign(sign, target) {
 
   loadingEl.style.display = 'none';
   if (!_freeHoroscopes?.[sign]) {
+    if (upsellEl) upsellEl.style.display = 'none';
     textEl.textContent      = 'Could not load this reading. Please try again in a moment.';
     readingEl.style.display = 'block';
     return;
   }
 
+  if (upsellEl) upsellEl.style.display = '';
   nameEl.innerHTML        = `<span class="sign-icon">${SIGN_SYMBOLS[sign]}</span> ${SIGN_NAMES[sign]}`;
   textEl.textContent      = _freeHoroscopes[sign];
   readingEl.style.display = 'block';
