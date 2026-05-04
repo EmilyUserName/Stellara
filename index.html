@@ -62,7 +62,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <!-- All styling lives in style.css -->
-  <link rel="stylesheet" href="style.css?v=40" />
+  <link rel="stylesheet" href="style.css?v=41" />
 
   <!-- Leaflet (astrocartography map) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -670,19 +670,19 @@
       <h2 class="modal-title">Your Solar Return</h2>
       <p class="modal-subtitle">The Sun returns to its exact natal degree once a year — your personal new year. Cast for where you are on that day.</p>
 
-      <div class="form-field" style="margin-top:20px;">
+      <div class="form-field" style="margin-top:28px;">
         <label class="form-label">Which year?</label>
         <input id="solarYear" class="form-input" type="number" min="1950" max="2050" placeholder="e.g. 2025" />
       </div>
 
-      <div class="form-field" style="margin-top:14px;">
+      <div class="form-field" style="margin-top:24px;">
         <label class="form-label">Where were / will you be on your birthday?</label>
         <input id="solarLocation" class="form-input" type="text" placeholder="City, Country" autocomplete="off" />
         <div id="solarLocationSuggestions" class="city-dropdown"></div>
-        <p style="font-size:0.75rem;color:var(--silver);opacity:0.55;margin-top:6px;">The Solar Return chart shifts based on your location — even a short trip can change it significantly.</p>
+        <p style="font-size:0.75rem;color:var(--silver);opacity:0.55;margin-top:8px;line-height:1.5;">The Solar Return chart shifts based on your location — even a short trip can change it significantly.</p>
       </div>
 
-      <button class="btn" style="margin-top:24px;" onclick="submitSolarSetup()">Generate My Solar Return ☀</button>
+      <button class="btn" style="margin-top:36px;" onclick="submitSolarSetup()">Generate My Solar Return</button>
     </div>
   </div>
 
