@@ -175,11 +175,9 @@ header {
 }
 
 .logo-symbol {
-  font-size: 2rem;
   margin-bottom: 12px;
-  color: var(--gold);
-  filter: drop-shadow(0 0 12px rgba(200,169,110,0.45));
   display: inline-block;
+  filter: drop-shadow(0 0 10px rgba(240,244,255,0.3));
 }
 
 /* Want to change the main title size? Edit clamp() below.
