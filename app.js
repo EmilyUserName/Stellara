@@ -175,8 +175,9 @@ A WORD TO CARRY
     displayName: 'Career Reading',
     section1Label: 'Your Purpose & Ambition',
     section2Label: 'Career energy in the sky today',
+    maxTokens: 1000,
     prompt1: (name, sun, moon, rising) =>
-      `Focus entirely on ${name}'s career, life purpose, and ambition based on their ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}. What drives them professionally? What kind of work fulfills them? What are their natural strengths and potential blind spots in a career context? Where are they being called to grow?\n\nThen analyze ${name}'s natural talents, decision-making style, and hidden drives revealed by their chart. Reveal the 3 career or business paths where they are destined to achieve extraordinary success, and name the one field they should absolutely avoid at all costs — and why.`,
+      `Based on ${name}'s ${sun} Sun and ${moon} Moon${rising ? ` and ${rising} Rising` : ''}, write two focused paragraphs about their career and life purpose. First paragraph: what drives ${name} professionally, what kind of work fulfills them, and their natural strengths in a career context. Second paragraph: the 2-3 career paths where they are built to thrive, and the one working style or environment they should avoid. Be specific and direct — no generic advice.`,
     prompt2: (name, sun, moon, today) =>
       `Today is ${today}. Describe the current planetary energy around work and ambition — focus on Saturn, Mars, Mercury, and the Sun's movements. Then connect this specifically to ${name}'s ${sun} Sun and ${moon} Moon. Give 1-2 concrete actions or awarenesses for their professional life today.`,
   },
