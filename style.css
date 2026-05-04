@@ -1137,6 +1137,7 @@ select option { background: var(--navy-2); }
   width: 100%;
   margin-top: 28px;
   padding: 18px;
+  text-decoration: none;
   background: linear-gradient(135deg, rgba(143,168,200,0.22), rgba(90,130,180,0.12));
   border: 1px solid rgba(143,168,200,0.55);
   border-radius: 12px;

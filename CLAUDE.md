@@ -4,6 +4,12 @@ Project reference for AI-assisted development. Covers architecture, constraints,
 
 ---
 
+## Permissions
+
+Claude may run `git add`, `git commit`, and `git push` without asking for confirmation.
+
+---
+
 ## Project Overview
 
 Stellara is a personalized astrology web app. Users enter their birth data, get a natal chart (sun, moon, rising), and receive AI-generated readings across 13 topics in 4 styles. Pro subscribers ($12/mo) get all topics/styles plus a daily personalized email digest.
