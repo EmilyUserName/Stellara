@@ -1,17 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Background -->
   <rect width="512" height="512" fill="#0b1628" rx="100"/>
-  <!-- Subtle glow -->
-  <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-    <stop offset="0%" stop-color="#c8a96e" stop-opacity="0.15"/>
-    <stop offset="100%" stop-color="#c8a96e" stop-opacity="0"/>
-  </radialGradient>
-  <rect width="512" height="512" fill="url(#glow)" rx="100"/>
-  <!-- Small accent stars -->
-  <circle cx="340" cy="140" r="5" fill="#c8a96e" opacity="0.6"/>
-  <circle cx="370" cy="200" r="3" fill="#c8a96e" opacity="0.4"/>
-  <circle cx="355" cy="165" r="2" fill="#c8a96e" opacity="0.3"/>
-  <!-- Crescent moon — two overlapping circles -->
-  <circle cx="240" cy="256" r="155" fill="#c8a96e"/>
-  <circle cx="296" cy="226" r="140" fill="#0b1628"/>
+  <defs>
+    <mask id="crescent-mask">
+      <rect width="512" height="512" fill="white"/>
+      <circle cx="330" cy="230" r="185" fill="black"/>
+    </mask>
+  </defs>
+  <!-- Filled crescent opening to the right (☽ style) -->
+  <circle cx="240" cy="256" r="200" fill="#f0f4ff" mask="url(#crescent-mask)"/>
+  <!-- Small 4-pointed star in the concave area -->
+  <polygon points="422,210 408,248 365,256 408,264 422,302 436,264 479,256 436,248" fill="#f0f4ff"/>
 </svg>
