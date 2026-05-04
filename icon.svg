@@ -1,18 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <!-- Background -->
   <rect width="512" height="512" fill="#0b1628" rx="100"/>
-  <!-- Subtle radial glow behind star -->
-  <radialGradient id="glow" cx="50%" cy="50%" r="40%">
-    <stop offset="0%" stop-color="#c8a96e" stop-opacity="0.18"/>
+  <!-- Subtle glow -->
+  <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#c8a96e" stop-opacity="0.15"/>
     <stop offset="100%" stop-color="#c8a96e" stop-opacity="0"/>
   </radialGradient>
   <rect width="512" height="512" fill="url(#glow)" rx="100"/>
   <!-- Small accent stars -->
-  <circle cx="148" cy="148" r="6" fill="#c8a96e" opacity="0.5"/>
-  <circle cx="364" cy="148" r="4" fill="#c8a96e" opacity="0.35"/>
-  <circle cx="138" cy="364" r="4" fill="#c8a96e" opacity="0.35"/>
-  <circle cx="370" cy="370" r="6" fill="#c8a96e" opacity="0.5"/>
-  <circle cx="256" cy="110" r="3" fill="#c8a96e" opacity="0.3"/>
-  <!-- Main 4-pointed star in gold -->
-  <text x="256" y="340" font-size="280" text-anchor="middle" fill="#c8a96e" font-family="serif">✦</text>
+  <circle cx="340" cy="140" r="5" fill="#c8a96e" opacity="0.6"/>
+  <circle cx="370" cy="200" r="3" fill="#c8a96e" opacity="0.4"/>
+  <circle cx="355" cy="165" r="2" fill="#c8a96e" opacity="0.3"/>
+  <!-- Crescent moon — two overlapping circles -->
+  <circle cx="240" cy="256" r="155" fill="#c8a96e"/>
+  <circle cx="296" cy="226" r="140" fill="#0b1628"/>
 </svg>

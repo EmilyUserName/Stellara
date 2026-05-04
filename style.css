@@ -177,9 +177,9 @@ header {
 .logo-symbol {
   font-size: 2rem;
   margin-bottom: 12px;
-  filter: drop-shadow(0 0 12px rgba(90,107,140,0.6));
+  color: var(--gold);
+  filter: drop-shadow(0 0 12px rgba(200,169,110,0.45));
   display: inline-block;
-  animation: rotateSlow 30s linear infinite;
 }
 
 /* Want to change the main title size? Edit clamp() below.
