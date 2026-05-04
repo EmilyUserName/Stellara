@@ -681,6 +681,18 @@ select option { background: var(--navy-2); }
   line-height: 1.85;
   margin-bottom: 20px;
 }
+.free-horoscope-sign-page-link {
+  display: block;
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--silver);
+  opacity: 0.6;
+  text-decoration: none;
+  margin: 6px 0 14px;
+  transition: opacity 0.2s;
+}
+.free-horoscope-sign-page-link:hover { opacity: 1; color: var(--gold); }
+
 /* Upsell teaser after free reading */
 .free-horoscope-upsell {
   background: rgba(200,169,110,0.07);

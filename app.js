@@ -1042,6 +1042,10 @@ async function selectSign(sign, target) {
     : document.getElementById('freeHoroscopeSigns');
   container.querySelectorAll('.sign-pill').forEach(b => b.classList.toggle('active', b.dataset.sign === sign));
 
+  // Update "About this sign" link
+  const signPageLink = document.getElementById('freeHoroscopeSignPageLink' + suffix);
+  if (signPageLink) signPageLink.href = `/daily-horoscope/${sign}`;
+
   readingEl.style.display = 'none';
   loadingEl.style.display = 'block';
 
