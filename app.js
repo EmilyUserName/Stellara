@@ -1024,7 +1024,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sign && SIGN_SYMBOLS[sign]) {
       btn.innerHTML = `<span class="sign-icon">${SIGN_SYMBOLS[sign]}</span>${btn.textContent.trim()}`;
     }
-    btn.addEventListener('click', () => selectSign(sign, btn.dataset.target));
+    btn.addEventListener('click', (e) => { e.preventDefault(); selectSign(sign, btn.dataset.target); });
   });
 });
 
