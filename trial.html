@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Start Your Free Trial — Stellara</title>
   <meta name="description" content="7 days of your personalized daily horoscope — written for your exact birth chart. No credit card." />
-  <link rel="stylesheet" href="/style.css?v=36" />
+  <link rel="stylesheet" href="/style.css?v=37" />
   <style>
     body {
       display: flex;
@@ -148,7 +148,7 @@
           <p class="trial-field-note">Used to calculate your rising sign. Leave blank if unknown.</p>
         </div>
 
-        <button type="submit" class="trial-btn-submit" id="submit-btn">✦ &nbsp;Start My Free Trial</button>
+        <button type="submit" class="trial-btn-submit" id="submit-btn">Start My Free Trial</button>
         <p class="trial-error-msg" id="error-msg"></p>
       </form>
 
@@ -216,7 +216,7 @@
           errorEl.textContent    = data.message || "You're already a Pro subscriber.";
           errorEl.style.display  = 'block';
           btn.disabled           = false;
-          btn.textContent        = '✦  Start My Free Trial';
+          btn.textContent        = 'Start My Free Trial';
         } else if (data.error === 'trial_active') {
           document.getElementById('form-section').style.display   = 'none';
           document.getElementById('error-detail').textContent      = data.message || 'Your trial is already running — check your inbox.';
@@ -225,13 +225,13 @@
           errorEl.textContent    = data.error || 'Something went wrong. Please try again.';
           errorEl.style.display  = 'block';
           btn.disabled           = false;
-          btn.textContent        = '✦  Start My Free Trial';
+          btn.textContent        = 'Start My Free Trial';
         }
       } catch (err) {
         errorEl.textContent   = 'Network error — please try again.';
         errorEl.style.display = 'block';
         btn.disabled          = false;
-        btn.textContent       = '✦  Start My Free Trial';
+        btn.textContent       = 'Start My Free Trial';
       }
     });
   </script>
