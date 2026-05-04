@@ -1,4 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#060d1f" rx="80"/>
-  <text x="256" y="340" font-size="280" text-anchor="middle" fill="#7ea8d4" font-family="serif">✦</text>
+  <!-- Background -->
+  <rect width="512" height="512" fill="#0b1628" rx="100"/>
+  <!-- Subtle radial glow behind star -->
+  <radialGradient id="glow" cx="50%" cy="50%" r="40%">
+    <stop offset="0%" stop-color="#c8a96e" stop-opacity="0.18"/>
+    <stop offset="100%" stop-color="#c8a96e" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="512" height="512" fill="url(#glow)" rx="100"/>
+  <!-- Small accent stars -->
+  <circle cx="148" cy="148" r="6" fill="#c8a96e" opacity="0.5"/>
+  <circle cx="364" cy="148" r="4" fill="#c8a96e" opacity="0.35"/>
+  <circle cx="138" cy="364" r="4" fill="#c8a96e" opacity="0.35"/>
+  <circle cx="370" cy="370" r="6" fill="#c8a96e" opacity="0.5"/>
+  <circle cx="256" cy="110" r="3" fill="#c8a96e" opacity="0.3"/>
+  <!-- Main 4-pointed star in gold -->
+  <text x="256" y="340" font-size="280" text-anchor="middle" fill="#c8a96e" font-family="serif">✦</text>
 </svg>
