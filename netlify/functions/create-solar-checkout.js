@@ -1,5 +1,5 @@
 // ============================================================
-// create-solar-checkout.js — One-time $29 Solar Return purchase
+// create-solar-checkout.js — One-time $19 Solar Return purchase
 // ============================================================
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
