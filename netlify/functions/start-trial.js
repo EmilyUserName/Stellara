@@ -93,14 +93,14 @@ exports.handler = async function (event) {
     }
     userId = authData.id;
 
-    // Insert profile row
+    // Upsert profile row (handles trigger-created rows and retries)
     const profileRes = await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
       method: 'POST',
       headers: {
         apikey: SUPABASE_SERVICE_KEY,
         Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
         'Content-Type': 'application/json',
-        Prefer: 'return=minimal',
+        Prefer: 'resolution=merge-duplicates,return=minimal',
       },
       body: JSON.stringify({
         id: userId,
