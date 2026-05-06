@@ -104,6 +104,11 @@
     .trial-error-msg { font-size: 13px; color: #e87070; text-align: center; margin-top: 10px; display: none; }
     .trial-back-link { display: block; text-align: center; margin-top: 28px; font-size: 13px; color: var(--silver); text-decoration: none; opacity: 0.7; }
     .trial-back-link:hover { opacity: 1; }
+    .trial-city-wrap { position: relative; }
+    .trial-city-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #0a1526; border: 1px solid rgba(143,168,200,0.35); border-top: none; border-radius: 0 0 10px 10px; z-index: 100; max-height: 200px; overflow-y: auto; }
+    .trial-city-dropdown.active { display: block; }
+    .trial-city-item { padding: 11px 16px; font-size: 14px; color: #fff; cursor: pointer; }
+    .trial-city-item:hover { color: var(--gold); background: rgba(143,168,200,0.08); }
     @media (max-width: 480px) { body { padding: 32px 16px; } .trial-headline { font-size: 22px; } }
   </style>
 </head>
@@ -139,7 +144,10 @@
 
         <div class="trial-form-group">
           <label for="birthCity">City of birth</label>
-          <input type="text" id="birthCity" name="birthCity" placeholder="e.g. Chicago, IL" required autocomplete="off" />
+          <div class="trial-city-wrap">
+            <input type="text" id="birthCity" name="birthCity" placeholder="e.g. Chicago, IL" required autocomplete="off" />
+            <div class="trial-city-dropdown" id="cityDropdown"></div>
+          </div>
         </div>
 
         <div class="trial-form-group">
@@ -178,6 +186,68 @@
   </div>
 
   <script>
+    // City autocomplete
+    (function () {
+      const input    = document.getElementById('birthCity');
+      const dropdown = document.getElementById('cityDropdown');
+      let timer = null;
+      let skipNext = false;
+
+      input.addEventListener('input', () => {
+        if (skipNext) { skipNext = false; return; }
+        clearTimeout(timer);
+        const q = input.value.trim();
+        if (q.length < 2) { close(); return; }
+        timer = setTimeout(() => fetchSuggestions(q), 350);
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!input.parentNode.contains(e.target)) close();
+      });
+
+      async function fetchSuggestions(q) {
+        try {
+          const res = await fetch(`/api/geocode?city=${encodeURIComponent(q)}&autocomplete=true`);
+          if (!res.ok) { close(); return; }
+          const results = await res.json();
+          render(results);
+        } catch (_) { close(); }
+      }
+
+      function format(addr) {
+        const city    = addr.city || addr.town || addr.village || addr.municipality || addr.county || '';
+        const state   = addr.state || addr.region || '';
+        const country = addr.country || '';
+        return [city, state, country].filter(Boolean).join(', ');
+      }
+
+      function render(results) {
+        dropdown.innerHTML = '';
+        const seen = new Set();
+        results.forEach(r => {
+          const label = format(r.address);
+          if (!label || seen.has(label)) return;
+          seen.add(label);
+          const item = document.createElement('div');
+          item.className = 'trial-city-item';
+          item.textContent = label;
+          item.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            skipNext = true;
+            input.value = label;
+            close();
+          });
+          dropdown.appendChild(item);
+        });
+        dropdown.classList.toggle('active', dropdown.children.length > 0);
+      }
+
+      function close() {
+        dropdown.classList.remove('active');
+        dropdown.innerHTML = '';
+      }
+    })();
+
     document.getElementById('trial-form').addEventListener('submit', async function (e) {
       e.preventDefault();
 
