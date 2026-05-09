@@ -374,7 +374,7 @@ async function startCheckout() {
 async function loadProfile() {
   let result = await sb
     .from('profiles')
-    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, solar_return_year, has_astrocartography, preferred_style')
+    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, solar_return_year, has_astrocartography, preferred_style, pro_expires_at')
     .eq('id', currentUser.id)
     .maybeSingle();
 
@@ -409,7 +409,9 @@ async function loadProfile() {
     return;
   }
 
-  currentSubscribed      = data.subscribed       || false;
+  const today             = new Date().toISOString().slice(0, 10);
+  const hasActiveEtsyTrial = data.pro_expires_at && data.pro_expires_at >= today;
+  currentSubscribed      = data.subscribed || hasActiveEtsyTrial || false;
   currentHasNatal        = data.has_natal_chart  || false;
   currentSolarReturnYear = data.solar_return_year || null;
   currentHasAstro        = data.has_astrocartography || false;

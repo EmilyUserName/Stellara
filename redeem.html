@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redeem Your Code — Stellara</title>
+  <meta name="description" content="Redeem your Etsy order code for 30 days of Stellara Pro access." />
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="/style.css?v=41" />
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 20px;
+    }
+    .redeem-card {
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      z-index: 1;
+    }
+    .redeem-brand {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .redeem-brand-star { font-size: 24px; color: var(--gold); display: block; margin-bottom: 8px; }
+    .redeem-brand-name { font-family: Georgia, serif; font-size: 36px; font-weight: 800; color: var(--light); letter-spacing: -0.01em; display: block; margin-bottom: 6px; }
+    .redeem-brand-tagline { font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--silver); }
+    .redeem-headline {
+      font-family: Georgia, serif;
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--light);
+      text-align: center;
+      line-height: 1.35;
+      margin: 0 0 12px;
+    }
+    .redeem-subhead {
+      font-size: 15px;
+      color: var(--silver);
+      text-align: center;
+      line-height: 1.65;
+      margin: 0 0 36px;
+    }
+    .redeem-subhead strong { color: var(--silver-light); font-weight: 500; }
+    .redeem-form-group { margin-bottom: 14px; }
+    .redeem-form-group label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--silver);
+      margin-bottom: 6px;
+    }
+    .redeem-form-group input {
+      width: 100%;
+      background: rgba(143,168,200,0.07);
+      border: 1px solid rgba(143,168,200,0.2);
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-family: 'Barlow', sans-serif;
+      color: var(--light);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .redeem-form-group input:focus { border-color: rgba(143,168,200,0.5); }
+    .redeem-form-group input::placeholder { color: rgba(143,168,200,0.4); }
+    .redeem-field-note { font-size: 12px; color: var(--silver); opacity: 0.7; margin: 5px 0 0; }
+    .redeem-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 15px;
+      background: linear-gradient(135deg, rgba(200,169,110,0.22), rgba(180,149,90,0.12));
+      border: 1px solid rgba(200,169,110,0.6);
+      border-radius: 12px;
+      color: var(--gold);
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .redeem-btn:hover:not(:disabled) { background: linear-gradient(135deg,rgba(200,169,110,0.32),rgba(180,149,90,0.2)); border-color: rgba(200,169,110,0.9); }
+    .redeem-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .redeem-error { font-size: 13px; color: #e87070; text-align: center; margin-top: 10px; display: none; }
+    .redeem-divider { height: 1px; background: linear-gradient(90deg,transparent,rgba(200,169,110,0.25),transparent); margin: 32px 0; }
+    .redeem-perks {
+      padding: 22px 24px;
+      background: rgba(143,168,200,0.05);
+      border: 1px solid rgba(143,168,200,0.2);
+      border-radius: 14px;
+    }
+    .redeem-perks-label { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+    .redeem-perk { font-size: 14px; color: var(--silver-light); line-height: 1.6; padding: 5px 0; display: flex; gap: 10px; }
+    .redeem-perk-star { color: var(--gold); flex-shrink: 0; }
+    /* States */
+    .redeem-state { display: none; text-align: center; padding: 28px 0; }
+    .redeem-state .state-icon { font-size: 32px; margin-bottom: 16px; color: var(--gold); }
+    .redeem-state h2 { font-family: Georgia, serif; font-size: 22px; color: var(--light); margin: 0 0 14px; }
+    .redeem-state p { font-size: 15px; color: var(--silver); line-height: 1.65; margin: 0 0 10px; }
+    .redeem-state .expiry-note { font-size: 13px; color: var(--silver); opacity: 0.65; margin-top: 16px; }
+    .redeem-back-link { display: block; text-align: center; margin-top: 28px; font-size: 13px; color: var(--silver); text-decoration: none; opacity: 0.7; }
+    .redeem-back-link:hover { opacity: 1; }
+    @media (max-width: 480px) { body { padding: 32px 16px; } .redeem-headline { font-size: 22px; } }
+  </style>
+</head>
+<body>
+  <div class="starfield"></div>
+  <div class="redeem-card">
+
+    <div class="redeem-brand">
+      <span class="redeem-brand-star">✦</span>
+      <span class="redeem-brand-name">stellara</span>
+      <span class="redeem-brand-tagline">Your Personal Cosmos</span>
+    </div>
+
+    <!-- Form -->
+    <div id="redeem-form-section">
+      <h1 class="redeem-headline">Redeem your access code</h1>
+      <p class="redeem-subhead">Enter the code from your Etsy order to unlock <strong>30 days of Stellara Pro</strong> — every reading, every morning, written for your exact chart.</p>
+
+      <form id="redeem-form" novalidate>
+        <div class="redeem-form-group">
+          <label for="redeem-code">Your code</label>
+          <input type="text" id="redeem-code" name="code" placeholder="ETSY-XXXX-XXXX" required autocomplete="off" style="text-transform:uppercase;letter-spacing:0.08em;" />
+          <p class="redeem-field-note">Found in your Etsy order confirmation or shop message.</p>
+        </div>
+
+        <div class="redeem-form-group">
+          <label for="redeem-email">Email address</label>
+          <input type="email" id="redeem-email" name="email" placeholder="you@example.com" required autocomplete="email" />
+          <p class="redeem-field-note">This will be your Stellara login — use any email you like.</p>
+        </div>
+
+        <button type="submit" class="redeem-btn" id="redeem-btn">Activate My 30-Day Access</button>
+        <p class="redeem-error" id="redeem-error"></p>
+      </form>
+
+      <div class="redeem-divider"></div>
+
+      <div class="redeem-perks">
+        <div class="redeem-perks-label">30 days of Pro includes</div>
+        <div class="redeem-perk"><span class="redeem-perk-star">✦</span><span>A personalized morning reading written for your exact chart and today's sky</span></div>
+        <div class="redeem-perk"><span class="redeem-perk-star">✦</span><span>All 13 reading topics — love, career, finances, soul purpose, and more</span></div>
+        <div class="redeem-perk"><span class="redeem-perk-star">✦</span><span>Daily email delivered to your inbox each morning</span></div>
+        <div class="redeem-perk"><span class="redeem-perk-star">✦</span><span>Weekly spread and full chart access</span></div>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div class="redeem-state" id="state-success">
+      <div class="state-icon">✦</div>
+      <h2>Your access is activated.</h2>
+      <p>Check your inbox — we've sent you a sign-in link to open Stellara. Your first morning reading will arrive tomorrow.</p>
+      <p>After your 30 days, continue for $12/month or let it lapse — no charge either way.</p>
+      <p class="expiry-note" id="expiry-note"></p>
+    </div>
+
+    <!-- Error state (already redeemed / invalid) -->
+    <div class="redeem-state" id="state-error">
+      <div class="state-icon" style="color:#e87070;">✦</div>
+      <h2>Something went wrong</h2>
+      <p id="state-error-msg">Please try again or message the Stellara shop on Etsy.</p>
+    </div>
+
+    <a href="https://stellara-horoscope.com" class="redeem-back-link">← Back to Stellara</a>
+  </div>
+
+  <script>
+    // Uppercase code as user types
+    document.getElementById('redeem-code').addEventListener('input', function () {
+      const pos = this.selectionStart;
+      this.value = this.value.toUpperCase();
+      this.setSelectionRange(pos, pos);
+    });
+
+    document.getElementById('redeem-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const btn     = document.getElementById('redeem-btn');
+      const errorEl = document.getElementById('redeem-error');
+      const code    = document.getElementById('redeem-code').value.trim();
+      const email   = document.getElementById('redeem-email').value.trim();
+
+      if (!code || !email) {
+        errorEl.textContent    = 'Please enter both your code and email address.';
+        errorEl.style.display  = 'block';
+        return;
+      }
+
+      btn.disabled    = true;
+      btn.textContent = 'Activating…';
+      errorEl.style.display = 'none';
+
+      try {
+        const res  = await fetch('/api/redeem-code', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ code, email }),
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          document.getElementById('redeem-form-section').style.display = 'none';
+          if (data.proExpiresAt) {
+            const expiry = new Date(data.proExpiresAt + 'T12:00:00');
+            const label  = expiry.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            document.getElementById('expiry-note').textContent = `Pro access expires ${label}.`;
+          }
+          document.getElementById('state-success').style.display = 'block';
+        } else if (data.error === 'invalid_code') {
+          errorEl.textContent   = data.message || "That code wasn't found. Check for typos.";
+          errorEl.style.display = 'block';
+          btn.disabled          = false;
+          btn.textContent       = 'Activate My 30-Day Access';
+        } else if (data.error === 'already_redeemed') {
+          document.getElementById('redeem-form-section').style.display = 'none';
+          document.getElementById('state-error-msg').textContent       = 'This code has already been redeemed. If that wasn\'t you, message the Stellara shop on Etsy.';
+          document.getElementById('state-error').style.display         = 'block';
+        } else {
+          errorEl.textContent   = data.message || data.error || 'Something went wrong. Please try again.';
+          errorEl.style.display = 'block';
+          btn.disabled          = false;
+          btn.textContent       = 'Activate My 30-Day Access';
+        }
+      } catch (err) {
+        errorEl.textContent   = 'Network error — please try again.';
+        errorEl.style.display = 'block';
+        btn.disabled          = false;
+        btn.textContent       = 'Activate My 30-Day Access';
+      }
+    });
+  </script>
+</body>
+</html>
