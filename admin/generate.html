@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generate Codes — Stellara Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="/style.css?v=41" />
+  <style>
+    body {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 20px;
+    }
+    .admin-card {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      z-index: 1;
+    }
+    .admin-title {
+      font-family: Georgia, serif;
+      font-size: 22px;
+      color: var(--light);
+      margin: 0 0 6px;
+    }
+    .admin-sub {
+      font-size: 13px;
+      color: var(--silver);
+      margin: 0 0 36px;
+      opacity: 0.7;
+    }
+    .admin-group { margin-bottom: 16px; }
+    .admin-group label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--silver);
+      margin-bottom: 6px;
+    }
+    .admin-group input,
+    .admin-group select {
+      width: 100%;
+      background: rgba(143,168,200,0.07);
+      border: 1px solid rgba(143,168,200,0.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: 'Barlow', sans-serif;
+      color: var(--light);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .admin-group input:focus,
+    .admin-group select:focus { border-color: rgba(143,168,200,0.5); }
+    .admin-group select option { background: #0b1628; }
+    .admin-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(200,169,110,0.22), rgba(180,149,90,0.12));
+      border: 1px solid rgba(200,169,110,0.6);
+      border-radius: 12px;
+      color: var(--gold);
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .admin-btn:hover:not(:disabled) { background: linear-gradient(135deg,rgba(200,169,110,0.32),rgba(180,149,90,0.2)); border-color: rgba(200,169,110,0.9); }
+    .admin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .admin-error { font-size: 13px; color: #e87070; margin-top: 10px; display: none; }
+    .admin-divider { height: 1px; background: linear-gradient(90deg,transparent,rgba(200,169,110,0.25),transparent); margin: 28px 0; }
+    .codes-out { display: none; }
+    .codes-label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .code-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(143,168,200,0.07);
+      border: 1px solid rgba(143,168,200,0.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+    }
+    .code-text {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--light);
+      letter-spacing: 0.12em;
+      font-family: 'Barlow', monospace;
+    }
+    .copy-btn {
+      background: rgba(200,169,110,0.12);
+      border: 1px solid rgba(200,169,110,0.35);
+      border-radius: 7px;
+      color: var(--gold);
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { background: rgba(200,169,110,0.22); }
+    .copy-btn.copied { color: #7dcfaa; border-color: rgba(125,207,170,0.4); }
+    .etsy-msg {
+      margin-top: 20px;
+      padding: 16px 18px;
+      background: rgba(143,168,200,0.05);
+      border: 1px solid rgba(143,168,200,0.15);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--silver);
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+    .etsy-msg-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--silver);
+      opacity: 0.6;
+      margin-bottom: 8px;
+    }
+    .copy-msg-btn {
+      margin-top: 10px;
+      background: none;
+      border: 1px solid rgba(143,168,200,0.25);
+      border-radius: 7px;
+      color: var(--silver);
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      cursor: pointer;
+    }
+    .copy-msg-btn:hover { border-color: rgba(143,168,200,0.5); color: var(--light); }
+    .copy-msg-btn.copied { color: #7dcfaa; border-color: rgba(125,207,170,0.4); }
+  </style>
+</head>
+<body>
+  <div class="starfield"></div>
+  <div class="admin-card">
+
+    <p class="admin-sub">✦ stellara admin</p>
+    <h1 class="admin-title">Generate Etsy Codes</h1>
+    <p class="admin-sub">One code per order. Share it with the buyer via Etsy message.</p>
+
+    <div class="admin-group">
+      <label for="secret">Admin secret</label>
+      <input type="password" id="secret" placeholder="Your ADMIN_SECRET" autocomplete="current-password" />
+    </div>
+
+    <div class="admin-group">
+      <label for="product">Product</label>
+      <select id="product">
+        <option value="natal">Natal Birth Chart — $14</option>
+        <option value="solar_return">Solar Return — $19</option>
+      </select>
+    </div>
+
+    <div class="admin-group">
+      <label for="count">Number of codes</label>
+      <input type="number" id="count" value="1" min="1" max="50" />
+    </div>
+
+    <button class="admin-btn" id="gen-btn">Generate Code</button>
+    <p class="admin-error" id="gen-error"></p>
+
+    <div class="admin-divider"></div>
+
+    <div class="codes-out" id="codes-out">
+      <div class="codes-label" id="codes-label">Generated codes</div>
+      <div id="codes-list"></div>
+      <div id="etsy-msg-wrap" style="display:none;">
+        <div class="admin-divider" style="margin:20px 0;"></div>
+        <div class="etsy-msg-label">Etsy message template</div>
+        <div class="etsy-msg" id="etsy-msg"></div>
+        <button class="copy-msg-btn" id="copy-msg-btn">Copy message</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const btn      = document.getElementById('gen-btn');
+    const errorEl  = document.getElementById('gen-error');
+    const codesOut = document.getElementById('codes-out');
+    const codesList = document.getElementById('codes-list');
+
+    btn.addEventListener('click', async () => {
+      const secret  = document.getElementById('secret').value.trim();
+      const product = document.getElementById('product').value;
+      const count   = parseInt(document.getElementById('count').value) || 1;
+
+      if (!secret) {
+        errorEl.textContent   = 'Enter your admin secret.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      btn.disabled    = true;
+      btn.textContent = 'Generating…';
+      errorEl.style.display = 'none';
+      codesOut.style.display = 'none';
+
+      try {
+        const res  = await fetch('/api/generate-codes', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ secret, product, count }),
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.codes) {
+          errorEl.textContent   = data.error || 'Something went wrong.';
+          errorEl.style.display = 'block';
+          btn.disabled          = false;
+          btn.textContent       = 'Generate Code';
+          return;
+        }
+
+        // Render codes
+        codesList.innerHTML = '';
+        data.codes.forEach(code => {
+          const row = document.createElement('div');
+          row.className = 'code-row';
+          row.innerHTML = `
+            <span class="code-text">${code}</span>
+            <button class="copy-btn" data-code="${code}">Copy</button>
+          `;
+          codesList.appendChild(row);
+        });
+
+        // Wire copy buttons
+        codesList.querySelectorAll('.copy-btn').forEach(b => {
+          b.addEventListener('click', () => {
+            navigator.clipboard.writeText(b.dataset.code);
+            b.textContent = 'Copied!';
+            b.classList.add('copied');
+            setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('copied'); }, 2000);
+          });
+        });
+
+        // Etsy message template (only for single codes)
+        const msgWrap = document.getElementById('etsy-msg-wrap');
+        if (data.codes.length === 1) {
+          const productLabel = product === 'solar_return' ? 'Solar Return Reading' : 'Natal Birth Chart Reading';
+          const msg = `Hi! Thank you so much for your order ✦\n\nHere's your code for 30 days of Stellara Pro — included with your ${productLabel}:\n\n${data.codes[0]}\n\nRedeem it at: stellara-horoscope.com/redeem\nJust enter the code and any email address you'd like to use.\n\nYour first morning reading will arrive tomorrow. I hope you love it!`;
+          document.getElementById('etsy-msg').textContent = msg;
+          msgWrap.style.display = 'block';
+
+          document.getElementById('copy-msg-btn').onclick = function () {
+            navigator.clipboard.writeText(msg);
+            this.textContent = 'Copied!';
+            this.classList.add('copied');
+            setTimeout(() => { this.textContent = 'Copy message'; this.classList.remove('copied'); }, 2000);
+          };
+        } else {
+          msgWrap.style.display = 'none';
+        }
+
+        document.getElementById('codes-label').textContent = `${data.codes.length} code${data.codes.length > 1 ? 's' : ''} generated`;
+        codesOut.style.display = 'block';
+
+      } catch (err) {
+        errorEl.textContent   = 'Network error — please try again.';
+        errorEl.style.display = 'block';
+      }
+
+      btn.disabled    = false;
+      btn.textContent = 'Generate Code';
+    });
+  </script>
+</body>
+</html>
