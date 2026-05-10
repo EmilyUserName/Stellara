@@ -1174,8 +1174,9 @@ function loadSolarReturn(year, location) {
     .then(data => {
       document.getElementById('solarLoading').style.display = 'none';
       if (data.reading) {
-        window._lastSolarReading = { text: data.reading, year };
+        window._lastSolarReading = { text: data.reading, year, returnLocation: location };
         renderSolarReading(data.reading, year);
+        showSolarFullReadingPromo();
       } else {
         document.getElementById('solarReadingBody').innerHTML =
           '<p style="color:#e74c3c;text-align:center;">Could not load your reading. Please try again.</p>';
@@ -1316,6 +1317,52 @@ async function sendFullReading() {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ userId: currentUser.id }),
+    });
+
+    if (res.status === 202 || res.ok) {
+      btn.textContent = '✓ On its way — check your inbox';
+    } else {
+      const data = await res.json().catch(() => ({}));
+      btn.textContent = data.error || 'Something went wrong';
+      btn.disabled    = false;
+      setTimeout(() => { btn.textContent = original; }, 4000);
+    }
+  } catch {
+    btn.textContent = 'Network error — try again';
+    btn.disabled    = false;
+    setTimeout(() => { btn.textContent = original; }, 4000);
+  }
+}
+
+// ------------------------------------------------------------
+// FULL SOLAR RETURN READING PROMO
+// ------------------------------------------------------------
+function showSolarFullReadingPromo() {
+  const promo = document.getElementById('solarFullReadingPromo');
+  const btn   = document.getElementById('solarFullReadingBtn');
+  if (!promo || !btn) return;
+  btn.disabled    = false;
+  btn.textContent = 'Send me the full Solar Return →';
+  promo.style.display = 'block';
+}
+
+async function sendFullSolarReading() {
+  const btn      = document.getElementById('solarFullReadingBtn');
+  const original = btn.textContent;
+  btn.disabled    = true;
+  btn.textContent = 'Generating… check your inbox in ~2 min';
+
+  const solarData = window._lastSolarReading || {};
+
+  try {
+    const res = await fetch('/.netlify/functions/send-full-solar-background', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        userId:         currentUser.id,
+        year:           solarData.year,
+        returnLocation: solarData.returnLocation || null,
+      }),
     });
 
     if (res.status === 202 || res.ok) {
