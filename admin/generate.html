@@ -197,6 +197,37 @@
       </div>
     </div>
 
+    <!-- ── SEND CHART READING ─────────────────────────────── -->
+    <div class="admin-divider" style="margin:40px 0 32px;"></div>
+
+    <h2 class="admin-title" style="font-size:18px;margin-bottom:4px;">Send Chart Reading</h2>
+    <p class="admin-sub">Generates a full 6-section reading (~4000 words) and emails it directly to the customer. Takes ~2 minutes — they'll receive the email automatically.</p>
+
+    <div class="admin-group">
+      <label for="chart-name">Customer name</label>
+      <input type="text" id="chart-name" placeholder="First and last name" />
+    </div>
+    <div class="admin-group">
+      <label for="chart-email">Customer email</label>
+      <input type="email" id="chart-email" placeholder="their@email.com" />
+    </div>
+    <div class="admin-group">
+      <label for="chart-date">Date of birth</label>
+      <input type="date" id="chart-date" />
+    </div>
+    <div class="admin-group">
+      <label for="chart-time">Time of birth <span style="font-weight:400;opacity:0.6;">(optional)</span></label>
+      <input type="time" id="chart-time" />
+    </div>
+    <div class="admin-group">
+      <label for="chart-city">City of birth</label>
+      <input type="text" id="chart-city" placeholder="e.g. Chicago, Illinois, USA" />
+    </div>
+
+    <button class="admin-btn" id="chart-btn">Generate &amp; Send Reading</button>
+    <p class="admin-error" id="chart-error"></p>
+    <p id="chart-success" style="display:none;font-size:13px;color:#7dcfaa;margin-top:10px;text-align:center;">✓ Queued! The email will arrive in ~2 minutes.</p>
+
   </div>
 
   <script>
@@ -287,6 +318,51 @@
 
       btn.disabled    = false;
       btn.textContent = 'Generate Code';
+    });
+
+    // ── Send chart reading ──────────────────────────────────
+    document.getElementById('chart-btn').addEventListener('click', async () => {
+      const chartBtn     = document.getElementById('chart-btn');
+      const chartError   = document.getElementById('chart-error');
+      const chartSuccess = document.getElementById('chart-success');
+
+      const secret    = document.getElementById('secret').value.trim();
+      const name      = document.getElementById('chart-name').value.trim();
+      const email     = document.getElementById('chart-email').value.trim();
+      const birthDate = document.getElementById('chart-date').value;
+      const birthTime = document.getElementById('chart-time').value || null;
+      const birthCity = document.getElementById('chart-city').value.trim();
+
+      chartError.style.display   = 'none';
+      chartSuccess.style.display = 'none';
+
+      if (!secret) { chartError.textContent = 'Enter your admin secret above.'; chartError.style.display = 'block'; return; }
+      if (!name || !email || !birthDate || !birthCity) { chartError.textContent = 'Name, email, date of birth, and city are all required.'; chartError.style.display = 'block'; return; }
+
+      chartBtn.disabled    = true;
+      chartBtn.textContent = 'Sending…';
+
+      try {
+        const res = await fetch('/.netlify/functions/full-chart-email-background', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ secret, name, email, birthDate, birthTime, birthCity }),
+        });
+
+        if (res.status === 202 || res.ok) {
+          chartSuccess.style.display = 'block';
+        } else {
+          const data = await res.json().catch(() => ({}));
+          chartError.textContent   = data.error || `Error ${res.status} — check Netlify logs.`;
+          chartError.style.display = 'block';
+        }
+      } catch (err) {
+        chartError.textContent   = 'Network error — please try again.';
+        chartError.style.display = 'block';
+      }
+
+      chartBtn.disabled    = false;
+      chartBtn.textContent = 'Generate & Send Reading';
     });
   </script>
 </body>
