@@ -12,7 +12,7 @@ const FROM_EMAIL           = 'Stellara <hello@stellara-horoscope.com>';
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
-  const { userId, readingType, readingText, year } = JSON.parse(event.body || '{}');
+  const { userId, readingType, readingText, year, topicName } = JSON.parse(event.body || '{}');
   if (!userId || !readingType || !readingText) {
     return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Missing required fields' }) };
   }
@@ -31,36 +31,48 @@ exports.handler = async function (event) {
   const { name, email, sun_sign, moon_sign, rising_sign } = profile;
 
   const isSolar   = readingType === 'solar';
-  const title     = isSolar ? `Solar Return ${year}` : 'Your Natal Birth Chart';
-  const subtitle  = isSolar ? `${year} Personal Year Reading` : 'Full Chart Reading';
+  const isTopic   = !isSolar && topicName && topicName !== 'Birth Chart';
+  const title     = isSolar ? `Solar Return ${year}` : isTopic ? topicName : 'Your Natal Birth Chart';
+  const subtitle  = isSolar ? `${year} Personal Year Reading` : isTopic ? 'Personalized Reading' : 'Full Chart Reading';
   const sections  = isSolar
     ? ['THE YEAR AHEAD', 'THE SKY THIS YEAR', 'LOVE & RELATIONSHIPS', 'WORK & PURPOSE', 'MONEY & RESOURCES', 'BODY & WELLBEING', 'INNER WORK', 'A WORD TO CARRY']
     : ['CORE IDENTITY', 'EMOTIONAL WORLD', 'LOVE & RELATIONSHIPS', 'WORK & PURPOSE', 'GIFTS & EDGES', 'A WORD TO CARRY'];
 
-  // Parse sections into HTML
   let bodyHtml = '';
-  let remaining = readingText.trim();
-  sections.forEach((section, i) => {
-    const next  = sections[i + 1];
-    const start = remaining.indexOf(section);
-    if (start === -1) return;
-    const end     = next ? remaining.indexOf(next, start + section.length) : remaining.length;
-    const content = remaining.slice(start + section.length, end).trim();
-    const paras   = content.split('\n\n').filter(Boolean).map(p =>
-      `<p style="margin:0 0 14px 0;line-height:1.8;">${p.trim()}</p>`
-    ).join('');
-    bodyHtml += `
-      <div style="margin-bottom:28px;">
-        <div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#7ea8d4;font-weight:600;margin-bottom:10px;font-family:'Helvetica Neue',sans-serif;">${section}</div>
-        <div style="font-size:15px;color:#dce4f0;font-family:'Georgia',serif;">${paras}</div>
-      </div>`;
-  });
 
-  // Fallback: no sections found, just render as paragraphs
-  if (!bodyHtml) {
-    bodyHtml = readingText.trim().split('\n\n').filter(Boolean)
-      .map(p => `<p style="margin:0 0 16px 0;line-height:1.8;font-size:15px;color:#dce4f0;font-family:'Georgia',serif;">${p.trim()}</p>`)
-      .join('');
+  if (isTopic) {
+    // Topic readings use ---TRANSITS--- delimiter or are plain paragraphs — render directly
+    const parts = readingText.split('---TRANSITS---');
+    bodyHtml = parts.map(part => part.trim()).filter(Boolean).map(part =>
+      part.split('\n\n').filter(Boolean)
+        .map(p => `<p style="margin:0 0 16px 0;line-height:1.8;font-size:15px;color:#dce4f0;font-family:'Georgia',serif;">${p.trim()}</p>`)
+        .join('')
+    ).join('<div style="height:1px;background:linear-gradient(90deg,transparent,rgba(126,168,212,0.2),transparent);margin:24px 0;"></div>');
+  } else {
+    // Natal/solar: parse named sections
+    let remaining = readingText.trim();
+    sections.forEach((section, i) => {
+      const next  = sections[i + 1];
+      const start = remaining.indexOf(section);
+      if (start === -1) return;
+      const end     = next ? remaining.indexOf(next, start + section.length) : remaining.length;
+      const content = remaining.slice(start + section.length, end).trim();
+      const paras   = content.split('\n\n').filter(Boolean).map(p =>
+        `<p style="margin:0 0 14px 0;line-height:1.8;">${p.trim()}</p>`
+      ).join('');
+      bodyHtml += `
+        <div style="margin-bottom:28px;">
+          <div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#7ea8d4;font-weight:600;margin-bottom:10px;font-family:'Helvetica Neue',sans-serif;">${section}</div>
+          <div style="font-size:15px;color:#dce4f0;font-family:'Georgia',serif;">${paras}</div>
+        </div>`;
+    });
+
+    // Fallback: no sections found
+    if (!bodyHtml) {
+      bodyHtml = readingText.trim().split('\n\n').filter(Boolean)
+        .map(p => `<p style="margin:0 0 16px 0;line-height:1.8;font-size:15px;color:#dce4f0;font-family:'Georgia',serif;">${p.trim()}</p>`)
+        .join('');
+    }
   }
 
   const placementLine = [
@@ -126,7 +138,9 @@ exports.handler = async function (event) {
 
   const subject = isSolar
     ? `Your Solar Return ${year} — ${name} ✦`
-    : `Your Natal Birth Chart — ${name} ✦`;
+    : isTopic
+      ? `Your ${topicName} — ${name} ✦`
+      : `Your Natal Birth Chart — ${name} ✦`;
 
   const sendRes = await fetch('https://api.resend.com/emails', {
     method:  'POST',

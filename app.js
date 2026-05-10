@@ -630,8 +630,9 @@ Be concise and potent — every sentence should land. No filler. No bullet point
       document.getElementById('transitReading').textContent = (parts[1] || '').trim();
     }
 
-    // Store reading text for all modes so the email button always works
-    window._lastChartReading = text;
+    // Store reading text and topic name for email
+    window._lastChartReading   = text;
+    window._lastTopicDisplay   = topic.displayName;
 
     // --- 11. Hide loading, show results ---
     clearInterval(msgInterval);
@@ -1262,6 +1263,7 @@ async function emailReading(type) {
         readingType: type,
         readingText: readingData.text,
         year:        readingData.year || null,
+        topicName:   (!isSolar && window._lastTopicDisplay) ? window._lastTopicDisplay : null,
       }),
     });
     const data = await res.json();
