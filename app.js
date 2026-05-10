@@ -638,6 +638,7 @@ Be concise and potent — every sentence should land. No filler. No bullet point
     clearInterval(msgInterval);
     document.getElementById('loading').className  = 'loading';
     document.getElementById('results').className  = 'results card active';
+    showFullReadingPromo();
 
   } catch (e) {
     // --- 12. If something went wrong, show an error ---
@@ -1280,6 +1281,57 @@ async function emailReading(type) {
   }
 }
 
+
+// ------------------------------------------------------------
+// FULL CHART READING PROMO
+// ------------------------------------------------------------
+function showFullReadingPromo() {
+  const promo      = document.getElementById('fullReadingPromo');
+  const sendBtn    = document.getElementById('fullReadingBtn');
+  const upgradeBtn = document.getElementById('fullReadingUpgradeBtn');
+  if (!promo) return;
+
+  // Reset button state in case user generated a second reading
+  sendBtn.disabled    = false;
+  sendBtn.textContent = 'Send me the full reading →';
+
+  if (currentSubscribed) {
+    sendBtn.style.display    = 'block';
+    upgradeBtn.style.display = 'none';
+  } else {
+    sendBtn.style.display    = 'none';
+    upgradeBtn.style.display = 'block';
+  }
+  promo.style.display = 'block';
+}
+
+async function sendFullReading() {
+  const btn      = document.getElementById('fullReadingBtn');
+  const original = btn.textContent;
+  btn.disabled    = true;
+  btn.textContent = 'Generating… check your inbox in ~2 min';
+
+  try {
+    const res = await fetch('/.netlify/functions/send-full-reading-background', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ userId: currentUser.id }),
+    });
+
+    if (res.status === 202 || res.ok) {
+      btn.textContent = '✓ On its way — check your inbox';
+    } else {
+      const data = await res.json().catch(() => ({}));
+      btn.textContent = data.error || 'Something went wrong';
+      btn.disabled    = false;
+      setTimeout(() => { btn.textContent = original; }, 4000);
+    }
+  } catch {
+    btn.textContent = 'Network error — try again';
+    btn.disabled    = false;
+    setTimeout(() => { btn.textContent = original; }, 4000);
+  }
+}
 
 // ============================================================
 // BOTTOM NAVIGATION
