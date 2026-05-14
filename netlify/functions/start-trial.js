@@ -24,10 +24,13 @@ exports.handler = async function (event) {
   let body;
   try { body = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid request body' }) }; }
 
-  const { name, email, birthDate, birthTime, birthCity } = body;
+  const { name, email, password, birthDate, birthTime, birthCity } = body;
 
   if (!name?.trim() || !email?.trim() || !birthDate || !birthCity?.trim()) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Name, email, birth date, and birth city are required.' }) };
+  }
+  if (!password || password.length < 6) {
+    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Password must be at least 6 characters.' }) };
   }
 
   const emailLower = email.toLowerCase().trim();
@@ -52,8 +55,17 @@ exports.handler = async function (event) {
       return { statusCode: 409, headers, body: JSON.stringify({ error: 'trial_active', message: "Your trial is already running — check your inbox each morning for your readings." }) };
     }
 
-    // Profile exists but no trial yet — start it
+    // Profile exists but no trial yet — set password and start trial
     userId = profile.id;
+    await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
+      method: 'PUT',
+      headers: {
+        apikey: SUPABASE_SERVICE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
+    });
     await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`, {
       method: 'PATCH',
       headers: {
@@ -81,6 +93,7 @@ exports.handler = async function (event) {
       },
       body: JSON.stringify({
         email: emailLower,
+        password,
         email_confirm: true,
         user_metadata: { name: name.trim() },
       }),

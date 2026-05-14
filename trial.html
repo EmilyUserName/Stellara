@@ -138,6 +138,12 @@
         </div>
 
         <div class="trial-form-group">
+          <label for="password">Create a password</label>
+          <input type="password" id="password" name="password" placeholder="At least 6 characters" required autocomplete="new-password" minlength="6" />
+          <p class="trial-field-note">You'll use this to sign in to Stellara.</p>
+        </div>
+
+        <div class="trial-form-group">
           <label for="birthDate">Date of birth</label>
           <input type="date" id="birthDate" name="birthDate" required />
         </div>
@@ -173,8 +179,13 @@
     <div class="trial-state" id="state-success">
       <div class="icon">✦</div>
       <h2 id="success-name">Your trial has started.</h2>
-      <p>Your first reading arrives tomorrow morning. Check the inbox you just entered — and check your spam folder if it doesn't appear.</p>
-      <p style="opacity:0.6;font-size:13px;">7 days, no credit card, cancel anytime.</p>
+      <p>Your account is ready — sign in now to explore all 15 topic readings and your full Pro access.</p>
+      <p style="margin-top:20px;">
+        <a href="https://stellara-horoscope.com" style="display:inline-block;padding:13px 32px;background:linear-gradient(135deg,rgba(200,169,110,0.22),rgba(180,149,90,0.12));border:1px solid rgba(200,169,110,0.6);border-radius:10px;color:var(--gold);font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.16em;text-decoration:none;text-transform:uppercase;">
+          Open Stellara →
+        </a>
+      </p>
+      <p style="opacity:0.6;font-size:13px;margin-top:16px;">Your first morning reading arrives tomorrow. Check your spam if it doesn't appear.</p>
     </div>
 
     <div class="trial-state" id="state-error">
@@ -256,12 +267,18 @@
 
       const name      = document.getElementById('name').value.trim();
       const email     = document.getElementById('email').value.trim();
+      const password  = document.getElementById('password').value;
       const birthDate = document.getElementById('birthDate').value;
       const birthCity = document.getElementById('birthCity').value.trim();
       const birthTime = document.getElementById('birthTime').value || null;
 
-      if (!name || !email || !birthDate || !birthCity) {
+      if (!name || !email || !password || !birthDate || !birthCity) {
         errorEl.textContent = 'Please fill in all required fields.';
+        errorEl.style.display = 'block';
+        return;
+      }
+      if (password.length < 6) {
+        errorEl.textContent = 'Password must be at least 6 characters.';
         errorEl.style.display = 'block';
         return;
       }
@@ -274,7 +291,7 @@
         const res  = await fetch('/api/start-trial', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ name, email, birthDate, birthTime, birthCity }),
+          body:    JSON.stringify({ name, email, password, birthDate, birthTime, birthCity }),
         });
         const data = await res.json();
 
