@@ -374,7 +374,7 @@ async function startCheckout() {
 async function loadProfile() {
   let result = await sb
     .from('profiles')
-    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, solar_return_year, has_astrocartography, preferred_style, pro_expires_at, email_opt_out, email_time_preference, weekly_spread_notifications, transit_alerts, reading_depth, reading_tone, reading_length')
+    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, solar_return_year, has_astrocartography, preferred_style, pro_expires_at, trial_start, email_opt_out, email_time_preference, weekly_spread_notifications, transit_alerts, reading_depth, reading_tone, reading_length')
     .eq('id', currentUser.id)
     .maybeSingle();
 
@@ -411,7 +411,8 @@ async function loadProfile() {
 
   const today             = new Date().toISOString().slice(0, 10);
   const hasActiveEtsyTrial = data.pro_expires_at && data.pro_expires_at >= today;
-  currentSubscribed      = data.subscribed || hasActiveEtsyTrial || false;
+  const hasActiveTrial    = data.trial_start && Math.floor((new Date() - new Date(data.trial_start + 'T00:00:00Z')) / 86400000) < 7;
+  currentSubscribed      = data.subscribed || hasActiveEtsyTrial || hasActiveTrial || false;
   currentHasNatal        = data.has_natal_chart  || false;
   currentSolarReturnYear = data.solar_return_year || null;
   currentHasAstro        = data.has_astrocartography || false;

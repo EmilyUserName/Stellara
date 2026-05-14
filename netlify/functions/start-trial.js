@@ -133,7 +133,21 @@ exports.handler = async function (event) {
 };
 
 async function sendWelcomeEmail({ name, email, userId }) {
-  const subject = `Welcome to Stellara, ${name} — your first reading arrives tomorrow ✦`;
+  const subject = `${name}, your 7-day Pro access is live ✦`;
+
+  const features = [
+    ['15 topic readings', 'Love, career, money, purpose, and more — each one written for your exact chart.'],
+    ['Daily morning reading', 'A personalized forecast in your inbox every morning, calibrated to the day\'s sky.'],
+    ['Your chart vs. today\'s sky', 'Toggle between what your natal chart says and what\'s happening right now.'],
+    ['4 reading styles', 'Choose psychological depth, spiritual guidance, modern coaching, or classical tradition.'],
+    ['Reading preferences', 'Dial in how deep, how direct, and how long your readings go.'],
+  ];
+
+  const featureRows = features.map(([title, desc]) => `
+    <tr><td style="padding:16px 0;border-bottom:1px solid rgba(143,168,200,0.15);" bgcolor="#0e1e40">
+      <div style="font-size:13px;font-weight:700;color:#c8a96e;font-family:Helvetica,Arial,sans-serif;letter-spacing:0.04em;margin-bottom:5px;">${title}</div>
+      <div style="font-size:15px;line-height:1.75;color:#c8d8ea;font-family:Georgia,'Times New Roman',serif;">${desc}</div>
+    </td></tr>`).join('');
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -159,33 +173,38 @@ async function sendWelcomeEmail({ name, email, userId }) {
       <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(200,169,110,0.35),transparent);"></div>
     </td></tr>
 
-    <tr><td style="padding-bottom:28px;" bgcolor="#0e1e40">
+    <tr><td style="padding-bottom:32px;" bgcolor="#0e1e40">
       <p style="margin:0 0 18px;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">Hi ${name},</p>
-      <p style="margin:0 0 18px;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">Your 7-day trial has started. Each morning, a personalized reading will land in this inbox — written for your exact birth chart, your planets, and what's actually in the sky that day.</p>
-      <p style="margin:0;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">Your first reading arrives tomorrow morning.</p>
+      <p style="margin:0 0 18px;font-size:17px;line-height:1.85;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">Your 7-day free trial is active — and you have full Pro access right now. Everything is unlocked. Log in and explore.</p>
     </td></tr>
 
-    <tr><td style="padding:28px 24px;background:#102349;border-left:3px solid #c8a96e;border-radius:0 10px 10px 0;margin-bottom:32px;" bgcolor="#102349">
-      <p style="margin:0 0 10px;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#9fb5cc;font-family:Helvetica,Arial,sans-serif;">Each morning you'll receive</p>
-      <p style="margin:0;font-size:15px;line-height:1.9;color:#dce8f8;font-family:Georgia,'Times New Roman',serif;">
-        A personalized reading for your chart &amp; the day's sky<br/>
-        A quote written for your exact planetary moment<br/>
-        One thing to watch for, and your power move
-      </p>
+    <tr><td style="padding:24px;background:#102349;border-radius:12px;margin-bottom:32px;" bgcolor="#102349">
+      <p style="margin:0 0 20px;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:#9fb5cc;font-family:Helvetica,Arial,sans-serif;">What's included in your trial</p>
+      <table width="100%" cellpadding="0" cellspacing="0">
+        ${featureRows}
+      </table>
     </td></tr>
 
-    <tr><td style="padding-top:32px;text-align:center;" bgcolor="#0e1e40">
-      <a href="${SITE_URL}" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,rgba(143,168,200,0.22),rgba(90,130,180,0.12));border:1px solid rgba(143,168,200,0.58);border-radius:10px;color:#edf1fb;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
-        → Explore Stellara
+    <tr><td style="padding:32px 0;text-align:center;" bgcolor="#0e1e40">
+      <a href="${SITE_URL}" style="display:inline-block;padding:16px 44px;background:linear-gradient(135deg,#c8a96e,#a07840);border-radius:10px;color:#0e1e40;font-family:Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;">
+        Open Stellara Now →
       </a>
     </td></tr>
 
-    <tr><td style="text-align:center;padding-top:36px;" bgcolor="#0e1e40">
-      <p style="margin:0;font-size:11px;color:#8fa8c8;font-family:Helvetica,Arial,sans-serif;line-height:2;">
+    <tr><td style="padding-bottom:32px;" bgcolor="#0e1e40">
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(200,169,110,0.18),transparent);"></div>
+    </td></tr>
+
+    <tr><td style="padding-bottom:28px;" bgcolor="#0e1e40">
+      <p style="margin:0;font-size:15px;line-height:1.85;color:#8fa8c8;font-family:Georgia,'Times New Roman',serif;">Your first personalized morning reading arrives tomorrow. After your 7 days, you can continue with a Pro subscription — or simply come back to explore on your own terms.</p>
+    </td></tr>
+
+    <tr><td style="text-align:center;" bgcolor="#0e1e40">
+      <p style="margin:0;font-size:11px;color:#6a82a0;font-family:Helvetica,Arial,sans-serif;line-height:2;">
         You signed up for a 7-day free trial at Stellara.<br/>
-        <a href="${SITE_URL}" style="color:#8fa8c8;text-decoration:none;">stellara-horoscope.com</a>
+        <a href="${SITE_URL}" style="color:#6a82a0;text-decoration:none;">stellara-horoscope.com</a>
         &nbsp;·&nbsp;
-        <a href="${SITE_URL}/.netlify/functions/unsubscribe?id=${userId}" style="color:#8fa8c8;text-decoration:none;">Unsubscribe</a>
+        <a href="${SITE_URL}/.netlify/functions/unsubscribe?id=${userId}" style="color:#6a82a0;text-decoration:none;">Unsubscribe</a>
       </p>
     </td></tr>
 
