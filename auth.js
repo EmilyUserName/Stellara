@@ -212,10 +212,9 @@ function requireAuth() {
 
 function requireSubscription() {
   if (!currentUser) { openAuthModal(); return false; }
-  return true; // TEMP: all users get Pro access
-  // if (currentSubscribed) return true;
-  // openUpgradeModal();
-  // return false;
+  if (currentSubscribed) return true;
+  openUpgradeModal();
+  return false;
 }
 
 function requireNatalChart() {
@@ -544,7 +543,7 @@ function showForm() {
 
 async function saveProfile() {
   if (!currentUser) return;
-  await sb.from('profiles').upsert({
+  const { error } = await sb.from('profiles').upsert({
     id:              currentUser.id,
     email:           currentUser.email,
     name:            document.getElementById('name').value.trim(),
@@ -563,4 +562,5 @@ async function saveProfile() {
     reading_tone:                 parseInt(document.getElementById('readingTone')?.value   || 50),
     reading_length:               parseInt(document.getElementById('readingLength')?.value || 50),
   });
+  if (!error && typeof showToast === 'function') showToast('Settings saved ✦');
 }

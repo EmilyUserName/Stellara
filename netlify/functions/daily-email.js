@@ -156,7 +156,10 @@ async function getProSubscribers(todayISO) {
   });
   console.log('[daily-email] Supabase status:', res.status);
   const data = await res.json();
-  if (!Array.isArray(data)) return [];
+  if (!Array.isArray(data)) {
+    console.error('[daily-email] getProSubscribers unexpected response:', JSON.stringify(data).slice(0, 200));
+    return [];
+  }
   return data.filter(u =>
     u.email && !u.email_opt_out && u.name && u.birth_date && u.birth_city &&
     u.last_email_date !== todayISO
@@ -170,7 +173,10 @@ async function getTrialUsers(todayISO) {
     headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` },
   });
   const data = await res.json();
-  if (!Array.isArray(data)) return [];
+  if (!Array.isArray(data)) {
+    console.error('[daily-email] getTrialUsers unexpected response:', JSON.stringify(data).slice(0, 200));
+    return [];
+  }
   return data.filter(u =>
     u.email && !u.email_opt_out && u.name && u.birth_date && u.birth_city &&
     u.last_email_date !== todayISO
@@ -184,7 +190,10 @@ async function getTrialEndedUsers(todayISO) {
     headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` },
   });
   const data = await res.json();
-  if (!Array.isArray(data)) return [];
+  if (!Array.isArray(data)) {
+    console.error('[daily-email] getTrialEndedUsers unexpected response:', JSON.stringify(data).slice(0, 200));
+    return [];
+  }
   return data.filter(u =>
     u.email && u.last_email_date !== todayISO
   );

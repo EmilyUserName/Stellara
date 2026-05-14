@@ -87,6 +87,15 @@ const STYLE_CONFIG = {
 
 const FREE_STYLES = ['psychological'];
 
+function showToast(msg) {
+  const t = document.getElementById('stellaraToast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
 function selectStyle(el) {
   const hasAnyPaid = currentSubscribed || currentHasNatal || currentHasAstro || currentSolarReturnYear;
   if (!FREE_STYLES.includes(el.dataset.style) && !hasAnyPaid) { openUpgradeModal(); return; }

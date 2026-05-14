@@ -3464,3 +3464,28 @@ body.has-bottom-nav #weekSection { padding-bottom: 160px; }
   border-color: rgba(200,169,110,0.5);
   color: var(--gold);
 }
+
+/* Toast notification */
+#stellaraToast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: #142c5c;
+  border: 1px solid rgba(200,169,110,0.45);
+  color: var(--gold);
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  padding: 11px 22px;
+  border-radius: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 9999;
+  white-space: nowrap;
+}
+#stellaraToast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
