@@ -690,7 +690,7 @@ Be concise and potent — every sentence should land. No filler. No bullet point
     clearInterval(msgInterval);
     document.getElementById('loading').className  = 'loading';
     document.getElementById('results').className  = 'results card active';
-    showFullReadingPromo();
+    showTopicReadingPromo();
 
   } catch (e) {
     // --- 12. If something went wrong, show an error ---
@@ -1338,6 +1338,59 @@ async function emailReading(type) {
 // ------------------------------------------------------------
 // FULL CHART READING PROMO
 // ------------------------------------------------------------
+function showTopicReadingPromo() {
+  const promo      = document.getElementById('fullTopicPromo');
+  const sendBtn    = document.getElementById('fullTopicBtn');
+  const upgradeBtn = document.getElementById('fullTopicUpgradeBtn');
+  const headline   = document.getElementById('fullTopicHeadline');
+  const body       = document.getElementById('fullTopicBody');
+  if (!promo) return;
+
+  // Today's Sky is a short daily reading — a "full" version doesn't apply
+  if (selectedTopic === 'daily') { promo.style.display = 'none'; return; }
+
+  const label = window._lastTopicDisplay || 'this reading';
+  headline.textContent = `Want the full ${label}?`;
+  body.textContent     = 'Get a complete, in-depth version sent to your inbox — more nuance, more sections, written specifically for your chart.';
+
+  sendBtn.disabled    = false;
+  sendBtn.textContent = 'Send me the full reading →';
+
+  if (currentSubscribed) {
+    sendBtn.style.display    = 'block';
+    upgradeBtn.style.display = 'none';
+  } else {
+    sendBtn.style.display    = 'none';
+    upgradeBtn.style.display = 'block';
+  }
+  promo.style.display = 'block';
+}
+
+async function sendFullTopicReading() {
+  const btn = document.getElementById('fullTopicBtn');
+  btn.disabled    = true;
+  btn.textContent = 'Generating… check your inbox in ~2 min';
+  try {
+    const res = await fetch('/.netlify/functions/send-full-topic-reading-background', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ userId: currentUser.id, topic: selectedTopic }),
+    });
+    if (res.status === 202 || res.ok) {
+      btn.textContent = '✓ On its way — check your inbox';
+    } else {
+      const data = await res.json().catch(() => ({}));
+      btn.textContent = data.error || 'Something went wrong';
+      btn.disabled    = false;
+      setTimeout(() => { btn.textContent = 'Send me the full reading →'; btn.disabled = false; }, 4000);
+    }
+  } catch {
+    btn.textContent = 'Something went wrong';
+    btn.disabled    = false;
+    setTimeout(() => { btn.textContent = 'Send me the full reading →'; btn.disabled = false; }, 4000);
+  }
+}
+
 function showFullReadingPromo() {
   const promo      = document.getElementById('fullReadingPromo');
   const sendBtn    = document.getElementById('fullReadingBtn');
