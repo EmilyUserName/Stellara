@@ -79,7 +79,7 @@ exports.handler = async function (event) {
 
   // Fetch profile
   const profileRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=name,sun_sign,moon_sign,rising_sign,birth_city,birth_date,birth_time,solar_return_year,preferred_style`,
+    `${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=name,sun_sign,moon_sign,rising_sign,birth_city,birth_date,birth_time,solar_return_year,preferred_style,reading_depth,reading_tone,reading_length`,
     { headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` } }
   );
   const profiles = await profileRes.json();
@@ -122,8 +122,20 @@ exports.handler = async function (event) {
   };
 };
 
+function sliderInstructions(depth = 50, tone = 50, length = 50) {
+  const parts = [];
+  if (depth < 35)       parts.push('Write at a beginner-friendly level — plain language, no jargon, explain astrological concepts simply.');
+  else if (depth > 65)  parts.push('Write at an advanced level — use precise astrological terminology, house placements, aspects, and technical depth.');
+  if (tone < 35)        parts.push('Be especially warm, nurturing, and gentle in tone — hold the reader with care.');
+  else if (tone > 65)   parts.push('Be direct and unfiltered — honest, confident, no softening.');
+  if (length < 35)      parts.push('Keep each section brief — 1 tight paragraph max.');
+  else if (length > 65) parts.push('Go deep and thorough — give the full picture, do not cut ideas short.');
+  return parts.length ? '\n\nReading style adjustments: ' + parts.join(' ') : '';
+}
+
 async function generateReading(profile, year, returnLocation, natalPlanets = {}, srSky = null) {
-  const { name, sun_sign, moon_sign, rising_sign, birth_city, birth_date, preferred_style } = profile;
+  const { name, sun_sign, moon_sign, rising_sign, birth_city, birth_date, preferred_style,
+          reading_depth = 50, reading_tone = 50, reading_length = 50 } = profile;
   const style = STYLE_PROMPTS[preferred_style] || STYLE_PROMPTS.psychological;
   const { mercury, venus, mars, jupiter, saturn, midheaven, northNode, southNode } = natalPlanets;
 
@@ -200,7 +212,7 @@ A closing reflection of 2 sentences ${name} can return to all year. Make it true
     body: JSON.stringify({
       model:      'claude-sonnet-4-6',
       max_tokens: 1000,
-      messages:   [{ role: 'user', content: prompt }],
+      messages:   [{ role: 'user', content: prompt + sliderInstructions(reading_depth, reading_tone, reading_length) }],
     }),
   });
 
