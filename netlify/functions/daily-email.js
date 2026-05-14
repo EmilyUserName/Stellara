@@ -51,7 +51,7 @@ exports.handler = async function (event) {
       const skyToday = await getTodaySky();
       const results  = await Promise.allSettled(emails.map(async (testEmail) => {
         const res  = await fetch(
-          `${SUPABASE_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(testEmail)}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out,trial_start`,
+          `${SUPABASE_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(testEmail)}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out,trial_start,reading_depth,reading_tone,reading_length`,
           { headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` } }
         );
         const data = await res.json();
@@ -149,7 +149,7 @@ async function getTodaySky() {
 async function getProSubscribers(todayISO) {
   console.log('[daily-email] SUPABASE_URL set:', !!SUPABASE_URL);
   console.log('[daily-email] SUPABASE_SERVICE_KEY set:', !!SUPABASE_SERVICE_KEY);
-  const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out,last_email_date`;
+  const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.true&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,rising_sign,preferred_style,email_opt_out,last_email_date,reading_depth,reading_tone,reading_length`;
   console.log('[daily-email] fetching pro subscribers:', url);
   const res  = await fetch(url, {
     headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` },
@@ -165,7 +165,7 @@ async function getProSubscribers(todayISO) {
 
 async function getTrialUsers(todayISO) {
   const sevenDaysAgo = offsetDate(todayISO, -7);
-  const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.false&trial_start=gte.${sevenDaysAgo}&trial_start=lt.${todayISO}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,preferred_style,email_opt_out,last_email_date,trial_start`;
+  const url = `${SUPABASE_URL}/rest/v1/profiles?subscribed=eq.false&trial_start=gte.${sevenDaysAgo}&trial_start=lt.${todayISO}&select=id,name,email,birth_date,birth_time,birth_city,sun_sign,moon_sign,preferred_style,email_opt_out,last_email_date,trial_start,reading_depth,reading_tone,reading_length`;
   const res  = await fetch(url, {
     headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` },
   });
@@ -195,7 +195,8 @@ async function getTrialEndedUsers(todayISO) {
 // ------------------------------------------------------------
 
 async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency, trialDay = 0) {
-  const { name, email, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, preferred_style } = user;
+  const { name, email, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, preferred_style,
+          reading_depth, reading_tone, reading_length } = user;
 
   if (!skipIdempotency) {
     const claimRes = await fetch(
@@ -266,7 +267,7 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency, 
   try {
     const style = preferred_style || 'psychological';
     const natalPlanets = { natalMercury, natalVenus, natalMars, natalJupiter, natalSaturn, natalMC, northNode, southNode };
-    const content = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets });
+    const content = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets, reading_depth, reading_tone, reading_length });
     await sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, trialDay, ...content });
     return true;
   } catch (err) {
@@ -450,7 +451,19 @@ function buildHouseBlock(skyToday, rising) {
 // ------------------------------------------------------------
 // CLAUDE — generate the morning digest
 // ------------------------------------------------------------
-async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets = {} }) {
+
+function sliderInstructions(depth = 50, tone = 50, length = 50) {
+  const parts = [];
+  if (depth < 35)       parts.push('Write at a beginner-friendly level — plain language, no jargon, explain astrological concepts simply.');
+  else if (depth > 65)  parts.push('Write at an advanced level — use precise astrological terminology, house placements, aspects, and technical depth.');
+  if (tone < 35)        parts.push('Be especially warm, nurturing, and gentle in tone — hold the reader with care.');
+  else if (tone > 65)   parts.push('Be direct and unfiltered — honest, confident, no softening.');
+  if (length < 35)      parts.push('Keep each section brief — 1 tight sentence max.');
+  else if (length > 65) parts.push('Go deep and thorough — give the full picture, do not cut ideas short.');
+  return parts.length ? '\n\nReading style adjustments: ' + parts.join(' ') : '';
+}
+
+async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets = {}, reading_depth = 50, reading_tone = 50, reading_length = 50 }) {
   const systemPrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.psychological;
   const { natalMercury, natalVenus, natalMars, natalJupiter, natalSaturn, natalMC, northNode, southNode } = natalPlanets;
 
@@ -516,6 +529,8 @@ LEAN:
 POWER:
 One concrete, actionable suggestion for ${name} today. One line only. Specific, not generic.`;
 
+  const finalPrompt = prompt + sliderInstructions(reading_depth, reading_tone, reading_length);
+
   if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -528,7 +543,7 @@ One concrete, actionable suggestion for ${name} today. One line only. Specific, 
     body: JSON.stringify({
       model:      'claude-sonnet-4-6',
       max_tokens: 500,
-      messages:   [{ role: 'user', content: prompt }],
+      messages:   [{ role: 'user', content: finalPrompt }],
     }),
   });
 
