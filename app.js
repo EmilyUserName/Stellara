@@ -521,11 +521,8 @@ Note: Chiron is not calculated — do not state a specific Chiron sign or positi
   const style = STYLE_CONFIG[selectedStyle];
 
   // Read partner info for compatibility topic
-  const homeVisible = document.getElementById('partnerInputHome')?.style.display !== 'none';
-  const nameId  = homeVisible ? 'partnerNameHome'  : 'partnerNameCard';
-  const signId  = homeVisible ? 'partnerSignHome'  : 'partnerSignCard';
-  const partnerName = (document.getElementById(nameId)?.value || '').trim();
-  const partnerSign = (document.getElementById(signId)?.value || '').trim();
+  const partnerName = (document.getElementById('partnerNameHome')?.value || '').trim();
+  const partnerSign = (document.getElementById('partnerSignHome')?.value || '').trim();
   const partnerInfo = [partnerName, partnerSign].filter(Boolean).join(', ');
 
   const userContext = `The user's name is ${name}.
