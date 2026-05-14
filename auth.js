@@ -377,11 +377,11 @@ async function loadProfile() {
     .eq('id', currentUser.id)
     .maybeSingle();
 
-  // If query fails (e.g. new columns not yet added), retry without them
+  // If query fails (e.g. new columns not yet added), retry with core fields only
   if (result.error) {
     result = await sb
       .from('profiles')
-      .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, preferred_style')
+      .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, preferred_style, pro_expires_at, trial_start, has_natal_chart, solar_return_year, has_astrocartography')
       .eq('id', currentUser.id)
       .maybeSingle();
   }
