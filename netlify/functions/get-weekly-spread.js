@@ -38,13 +38,18 @@ exports.handler = async function (event) {
 
     // ── 2. Check Pro subscription ───────────────────────────
     const profileRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=subscribed,name,birth_date`,
+      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=subscribed,trial_start,pro_expires_at,name,birth_date`,
       { headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` } }
     );
     const profiles = await profileRes.json();
     const profile  = Array.isArray(profiles) ? profiles[0] : null;
 
-    if (!profile?.subscribed) {
+    const todayISO        = new Date().toISOString().slice(0, 10);
+    const hasActiveTrial  = profile?.trial_start && Math.floor((new Date() - new Date(profile.trial_start + 'T00:00:00Z')) / 86400000) < 7;
+    const hasEtsyAccess   = profile?.pro_expires_at && profile.pro_expires_at >= todayISO;
+    const hasAccess       = profile?.subscribed || hasActiveTrial || hasEtsyAccess;
+
+    if (!hasAccess) {
       return { statusCode: 403, body: JSON.stringify({ error: 'Pro subscription required' }) };
     }
     if (!profile?.birth_date) {
