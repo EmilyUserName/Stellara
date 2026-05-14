@@ -374,7 +374,7 @@ async function startCheckout() {
 async function loadProfile() {
   let result = await sb
     .from('profiles')
-    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, solar_return_year, has_astrocartography, preferred_style, pro_expires_at')
+    .select('name, birth_date, birth_time, birth_city, sun_sign, moon_sign, rising_sign, subscribed, has_natal_chart, solar_return_year, has_astrocartography, preferred_style, pro_expires_at, email_opt_out, email_time_preference, weekly_spread_notifications, transit_alerts, reading_depth, reading_tone, reading_length')
     .eq('id', currentUser.id)
     .maybeSingle();
 
@@ -487,6 +487,29 @@ async function loadProfile() {
     document.querySelectorAll(`.style-card:not([data-style="${selectedStyle}"])`).forEach(c => c.classList.remove('active'));
   }
 
+  // Restore notification preferences
+  const dailyEmailEl = document.getElementById('dailyEmailEnabled');
+  if (dailyEmailEl) dailyEmailEl.checked = !data.email_opt_out;
+
+  const emailTimeEl = document.getElementById('emailTimePreference');
+  if (emailTimeEl && data.email_time_preference) emailTimeEl.value = data.email_time_preference;
+
+  const weeklyEl = document.getElementById('weeklySpreadEnabled');
+  if (weeklyEl) weeklyEl.checked = data.weekly_spread_notifications !== false;
+
+  const transitEl = document.getElementById('transitAlertsEnabled');
+  if (transitEl) transitEl.checked = data.transit_alerts !== false;
+
+  // Restore reading preference sliders
+  const depthEl = document.getElementById('readingDepth');
+  if (depthEl && data.reading_depth != null) { depthEl.value = data.reading_depth; depthEl.dispatchEvent(new Event('input')); }
+
+  const toneEl = document.getElementById('readingTone');
+  if (toneEl && data.reading_tone != null) { toneEl.value = data.reading_tone; toneEl.dispatchEvent(new Event('input')); }
+
+  const lengthEl = document.getElementById('readingLength');
+  if (lengthEl && data.reading_length != null) { lengthEl.value = data.reading_length; lengthEl.dispatchEvent(new Event('input')); }
+
   document.getElementById('welcomeName').textContent = data.name;
   showHome();
 
@@ -511,10 +534,11 @@ function showHome() {
 }
 
 function showForm() {
-  document.getElementById('homeSection').style.display   = 'none';
-  document.getElementById('inputCard').style.display     = 'block';
-  document.getElementById('signOverrides').style.display = 'block';
-  document.getElementById('onboardingIntro').style.display = 'none';
+  document.getElementById('homeSection').style.display      = 'none';
+  document.getElementById('inputCard').style.display        = 'block';
+  document.getElementById('signOverrides').style.display    = 'block';
+  document.getElementById('accountSettings').style.display  = 'block';
+  document.getElementById('onboardingIntro').style.display  = 'none';
 }
 
 async function saveProfile() {
@@ -529,6 +553,13 @@ async function saveProfile() {
     sun_sign:        document.getElementById('sunSign').value   || null,
     moon_sign:       document.getElementById('moonSign').value  || null,
     rising_sign:     document.getElementById('risingSign').value || null,
-    preferred_style: selectedStyle || 'psychological',
+    preferred_style:              selectedStyle || 'psychological',
+    email_opt_out:                !(document.getElementById('dailyEmailEnabled')?.checked ?? true),
+    email_time_preference:        document.getElementById('emailTimePreference')?.value || '07:00',
+    weekly_spread_notifications:  document.getElementById('weeklySpreadEnabled')?.checked ?? true,
+    transit_alerts:               document.getElementById('transitAlertsEnabled')?.checked ?? true,
+    reading_depth:                parseInt(document.getElementById('readingDepth')?.value  || 50),
+    reading_tone:                 parseInt(document.getElementById('readingTone')?.value   || 50),
+    reading_length:               parseInt(document.getElementById('readingLength')?.value || 50),
   });
 }

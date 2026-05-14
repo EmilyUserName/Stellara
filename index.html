@@ -349,30 +349,7 @@
         <!-- Shown to Pro users -->
         <div id="proTopicsCard" style="display:none;">
           <div class="reading-config-box">
-            <div class="style-selector">
-              <label><span class="flow-step">1</span> Choose your reading style</label>
-              <div class="style-cards">
-                <button class="style-card active" data-style="psychological" onclick="selectStyle(this)">
-                  <div class="style-card-name">Psychological</div>
-                  <div class="style-card-desc">Jungian depth, archetypes, shadow work</div>
-                </button>
-                <button class="style-card" data-style="spiritual" onclick="selectStyle(this)">
-                  <div class="style-card-name">Spiritual</div>
-                  <div class="style-card-desc">Soul-centered, mystical, cosmic connection</div>
-                </button>
-                <button class="style-card" data-style="modern" onclick="selectStyle(this)">
-                  <div class="style-card-name">Modern & Direct</div>
-                  <div class="style-card-desc">Clear, grounded, practical insights</div>
-                </button>
-                <button class="style-card" data-style="classical" onclick="selectStyle(this)">
-                  <div class="style-card-name">Classical</div>
-                  <div class="style-card-desc">Traditional astrology, mythological planets</div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="reading-config-box" style="margin-top:12px;">
-            <label style="display:block; margin-bottom:10px;"><span class="flow-step">2</span> What would you like to explore?</label>
+            <label style="display:block; margin-bottom:10px;">What would you like to explore?</label>
             <div class="topic-pills home-topic-pills">
               <button class="topic-pill topic-pill-featured active" data-topic="daily" onclick="selectTopic(this)">Today's Sky</button>
 
@@ -521,26 +498,109 @@
         </div>
       </div>
 
-      <div class="style-selector">
-        <label>Reading Style</label>
-        <div class="style-cards">
-          <button class="style-card active" data-style="psychological" onclick="selectStyle(this)">
-            <div class="style-card-name">Psychological</div>
-            <div class="style-card-desc">Jungian depth, archetypes, shadow work</div>
-          </button>
-          <button class="style-card" data-style="spiritual" onclick="selectStyle(this)">
-            <div class="style-card-name">Spiritual</div>
-            <div class="style-card-desc">Soul-centered, mystical, cosmic connection</div>
-          </button>
-          <button class="style-card" data-style="modern" onclick="selectStyle(this)">
-            <div class="style-card-name">Modern & Direct</div>
-            <div class="style-card-desc">Clear, grounded, practical insights</div>
-          </button>
-          <button class="style-card" data-style="classical" onclick="selectStyle(this)">
-            <div class="style-card-name">Classical</div>
-            <div class="style-card-desc">Traditional astrology, mythological planets</div>
-          </button>
+      <!-- Account Settings — shown in edit mode only -->
+      <div id="accountSettings" style="display:none;">
+
+        <div class="settings-section">
+          <div class="settings-section-title">Reading Style</div>
+          <div class="style-cards">
+            <button class="style-card active" data-style="psychological" onclick="selectStyle(this)">
+              <div class="style-card-name">Psychological</div>
+              <div class="style-card-desc">Jungian depth, archetypes, shadow work</div>
+            </button>
+            <button class="style-card" data-style="spiritual" onclick="selectStyle(this)">
+              <div class="style-card-name">Spiritual</div>
+              <div class="style-card-desc">Soul-centered, mystical, cosmic connection</div>
+            </button>
+            <button class="style-card" data-style="modern" onclick="selectStyle(this)">
+              <div class="style-card-name">Modern & Direct</div>
+              <div class="style-card-desc">Clear, grounded, practical insights</div>
+            </button>
+            <button class="style-card" data-style="classical" onclick="selectStyle(this)">
+              <div class="style-card-name">Classical</div>
+              <div class="style-card-desc">Traditional astrology, mythological planets</div>
+            </button>
+          </div>
         </div>
+
+        <div class="settings-section">
+          <div class="settings-section-title">Reading Preferences</div>
+
+          <div class="slider-row">
+            <div class="slider-label-row">
+              <span class="slider-label">Depth</span>
+              <div class="slider-ends"><span>Beginner friendly</span><span>Technically advanced</span></div>
+            </div>
+            <input type="range" id="readingDepth" min="0" max="100" value="50" class="reading-slider">
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label-row">
+              <span class="slider-label">Tone</span>
+              <div class="slider-ends"><span>Warm &amp; gentle</span><span>Direct &amp; unfiltered</span></div>
+            </div>
+            <input type="range" id="readingTone" min="0" max="100" value="50" class="reading-slider">
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label-row">
+              <span class="slider-label">Length</span>
+              <div class="slider-ends"><span>Quick snapshot</span><span>Deep dive</span></div>
+            </div>
+            <input type="range" id="readingLength" min="0" max="100" value="50" class="reading-slider">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-title">Notification Preferences</div>
+
+          <div class="settings-toggle-row">
+            <div class="settings-toggle-info">
+              <div class="settings-toggle-label">Daily reading email <span class="pill-pro">Pro</span></div>
+              <div class="settings-toggle-desc">Personalized morning reading in your inbox</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="dailyEmailEnabled" checked>
+              <span class="toggle-knob"></span>
+            </label>
+          </div>
+
+          <div id="emailTimeRow" class="settings-sub-row">
+            <label class="settings-sub-label">Delivery time</label>
+            <select id="emailTimePreference" class="settings-select">
+              <option value="05:00">5:00 AM</option>
+              <option value="06:00">6:00 AM</option>
+              <option value="07:00" selected>7:00 AM</option>
+              <option value="08:00">8:00 AM</option>
+              <option value="09:00">9:00 AM</option>
+              <option value="10:00">10:00 AM</option>
+            </select>
+            <span class="settings-sub-note">Approx. times — current schedule is ~6 AM ET</span>
+          </div>
+
+          <div class="settings-toggle-row">
+            <div class="settings-toggle-info">
+              <div class="settings-toggle-label">Weekly card spread <span class="pill-pro">Pro</span></div>
+              <div class="settings-toggle-desc">Your weekly cosmic forecast every Monday</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="weeklySpreadEnabled" checked>
+              <span class="toggle-knob"></span>
+            </label>
+          </div>
+
+          <div class="settings-toggle-row">
+            <div class="settings-toggle-info">
+              <div class="settings-toggle-label">Transit alerts <span class="pill-pro">Pro</span></div>
+              <div class="settings-toggle-desc">Mercury retrograde, eclipses, major conjunctions</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="transitAlertsEnabled" checked>
+              <span class="toggle-knob"></span>
+            </label>
+          </div>
+        </div>
+
       </div>
 
       <div class="topic-selector">
@@ -619,6 +679,12 @@
 
       <!-- Sun / Moon / Rising placement cards -->
       <div class="placements" id="placements"></div>
+
+      <!-- Reading view toggle — shown when a topic has both chart + transit content -->
+      <div class="reading-view-toggle" id="readingViewToggle" style="display:none;">
+        <button class="reading-view-btn active" id="viewBtnChart" onclick="setReadingView('chart')">Your Chart</button>
+        <button class="reading-view-btn" id="viewBtnToday" onclick="setReadingView('today')">Today's Sky</button>
+      </div>
 
       <!-- Birth chart reading from Claude -->
       <div id="chartSection">

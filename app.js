@@ -95,6 +95,55 @@ function selectStyle(el) {
   selectedStyle = el.dataset.style;
 }
 
+// Returns a string appended to the Claude prompt based on the user's slider settings.
+// Only adds instructions when sliders are pushed to a non-default zone (< 35 or > 65).
+function getSliderInstructions() {
+  const depth  = parseInt(document.getElementById('readingDepth')?.value  ?? 50);
+  const tone   = parseInt(document.getElementById('readingTone')?.value   ?? 50);
+  const length = parseInt(document.getElementById('readingLength')?.value ?? 50);
+  const parts  = [];
+  if (depth < 35)       parts.push('Write at a beginner-friendly level — plain language, no jargon, explain astrological concepts simply.');
+  else if (depth > 65)  parts.push('Write at an advanced level — use precise astrological terminology, house placements, aspects, and technical depth.');
+  if (tone < 35)        parts.push('Be especially warm, nurturing, and gentle in tone — hold the reader with care.');
+  else if (tone > 65)   parts.push('Be direct and unfiltered — honest, confident, no softening.');
+  if (length < 35)      parts.push('Keep it brief — 1 tight paragraph max per section.');
+  else if (length > 65) parts.push('Go deep and thorough — give the full picture, do not cut ideas short.');
+  return parts.length ? '\n\nReading style adjustments: ' + parts.join(' ') : '';
+}
+
+// Toggles the results view between the natal chart section and today's transits.
+function setReadingView(view) {
+  const chartSection = document.getElementById('chartSection');
+  const divider      = document.querySelector('#results .divider');
+  const todayCard    = document.querySelector('.today-card');
+  if (view === 'chart') {
+    if (chartSection) chartSection.style.display = 'block';
+    if (todayCard)    todayCard.style.display    = 'none';
+  } else {
+    if (chartSection) chartSection.style.display = 'none';
+    if (todayCard)    todayCard.style.display    = 'block';
+  }
+  if (divider) divider.style.display = 'none';
+  document.getElementById('viewBtnChart')?.classList.toggle('active', view === 'chart');
+  document.getElementById('viewBtnToday')?.classList.toggle('active', view !== 'chart');
+}
+
+// Syncs slider track fill color to match slider position (called after loading saved values).
+function syncSliderFills() {
+  document.querySelectorAll('.reading-slider').forEach(slider => {
+    const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+    slider.style.background = `linear-gradient(to right, #c8a96e 0%, #c8a96e ${pct}%, rgba(90,107,140,0.3) ${pct}%, rgba(90,107,140,0.3) 100%)`;
+  });
+}
+
+// Live slider fill update as user drags
+document.querySelectorAll('.reading-slider').forEach(slider => {
+  slider.addEventListener('input', () => {
+    const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+    slider.style.background = `linear-gradient(to right, #c8a96e 0%, #c8a96e ${pct}%, rgba(90,107,140,0.3) ${pct}%, rgba(90,107,140,0.3) 100%)`;
+  });
+});
+
 
 // ------------------------------------------------------------
 // TOPIC SELECTION — tracks which focus pill is active
@@ -535,6 +584,8 @@ ${topic.prompt2(name, sun, moon, today, partnerInfo)}${noTimeNote}
 Be concise and potent — every sentence should land. No filler. No bullet points. No headers. Just paragraphs.`;
   }
 
+  prompt += getSliderInstructions();
+
   // --- 7. Send the prompt to our serverless function ---
   // (horoscope.js in netlify/functions — that's what holds the API key safely)
   try {
@@ -581,9 +632,11 @@ Be concise and potent — every sentence should land. No filler. No bullet point
     if (styleBadge) styleBadge.textContent = styleLabels[selectedStyle] ? '· ' + styleLabels[selectedStyle] : '';
     document.getElementById('todayDate').textContent    = today;
 
-    const chartSection = document.getElementById('chartSection');
-    const divider      = document.querySelector('#results .divider');
-    const todayCard    = document.querySelector('.today-card');
+    const chartSection      = document.getElementById('chartSection');
+    const divider           = document.querySelector('#results .divider');
+    const todayCard         = document.querySelector('.today-card');
+    const readingViewToggle = document.getElementById('readingViewToggle');
+    if (readingViewToggle) readingViewToggle.style.display = 'none';
 
     if (mode === 'chart') {
       chartSection.style.display = 'block';
@@ -621,13 +674,12 @@ Be concise and potent — every sentence should land. No filler. No bullet point
       document.getElementById('transitReading').textContent = text.trim();
     } else {
       const parts = text.split('---TRANSITS---');
-      chartSection.style.display = 'block';
       chartSection.querySelector('.section-label').textContent = topic.section1Label;
       document.getElementById('chartReading').textContent = parts[0].trim();
-      divider.style.display   = 'block';
-      todayCard.style.display = 'block';
       todayCard.querySelector('.section-label').textContent = topic.section2Label;
       document.getElementById('transitReading').textContent = (parts[1] || '').trim();
+      if (readingViewToggle) readingViewToggle.style.display = 'flex';
+      setReadingView('chart');
     }
 
     // Store reading text and topic name for email
