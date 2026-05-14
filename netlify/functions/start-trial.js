@@ -98,11 +98,37 @@ exports.handler = async function (event) {
         user_metadata: { name: name.trim() },
       }),
     });
-    const authData = await authRes.json();
+    let authData = await authRes.json();
 
     if (!authRes.ok || !authData.id) {
-      console.error('[start-trial] Auth user creation failed:', JSON.stringify(authData).slice(0, 300));
-      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Could not create account. Please try again.' }) };
+      // Email already exists as an auth user but has no profiles row — look up the user and update their password
+      const isAlreadyRegistered = JSON.stringify(authData).includes('already') || JSON.stringify(authData).includes('exists');
+      if (!isAlreadyRegistered) {
+        console.error('[start-trial] Auth user creation failed:', JSON.stringify(authData).slice(0, 300));
+        return { statusCode: 500, headers, body: JSON.stringify({ error: 'Could not create account. Please try again.' }) };
+      }
+
+      // Find the existing auth user by email
+      const listRes = await fetch(
+        `${SUPABASE_URL}/auth/v1/admin/users?email=${encodeURIComponent(emailLower)}&page=1&per_page=1`,
+        { headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` } }
+      );
+      const listData = await listRes.json();
+      const existingUser = listData?.users?.[0];
+
+      if (!existingUser?.id) {
+        console.error('[start-trial] Could not find existing auth user for email:', emailLower);
+        return { statusCode: 500, headers, body: JSON.stringify({ error: 'Could not create account. Please try again.' }) };
+      }
+
+      // Update their password
+      await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${existingUser.id}`, {
+        method: 'PUT',
+        headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+
+      authData = { id: existingUser.id };
     }
     userId = authData.id;
 
