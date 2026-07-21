@@ -6,7 +6,7 @@ Project reference for AI-assisted development. Covers architecture, constraints,
 
 ## Permissions
 
-Claude may run `git add`, `git commit`, and `git push` without asking for confirmation.
+Claude must run `git add`, `git commit`, and `git push` immediately after making any code change in this repo — every time, without asking for confirmation first. Do not leave finished changes sitting uncommitted. Only pause for the user's input when there's an action they must personally take (e.g. an env var in the Netlify dashboard, a Supabase SQL command, approving something destructive).
 
 ---
 
