@@ -6,7 +6,6 @@
 
 [functions."daily-email"]
   timeout = 120
-  schedule = "0 10 * * *"
 
 [functions."weekly-spread-scheduler"]
   timeout = 120
