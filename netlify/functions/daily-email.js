@@ -4,6 +4,8 @@
 // Also sends "trial ended" emails on day 8.
 // ============================================================
 
+const Astronomy = require('astronomy-engine');
+
 const SUPABASE_URL        = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ANTHROPIC_API_KEY   = process.env.ANTHROPIC_API_KEY;
@@ -276,7 +278,7 @@ async function sendDailyEmail(user, today, todayISO, skyToday, skipIdempotency, 
   try {
     const style = preferred_style || 'psychological';
     const natalPlanets = { natalMercury, natalVenus, natalMars, natalJupiter, natalSaturn, natalMC, northNode, southNode };
-    const content = await generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets, reading_depth, reading_tone, reading_length });
+    const content = await generateReading({ name, sun, moon, rising, birth_city, birth_date, birth_time, today, style, skyToday, natalPlanets, reading_depth, reading_tone, reading_length });
     await sendEmail({ user, name, email, sun, moon, rising, today, todayISO, skipIdempotency, trialDay, ...content });
     return true;
   } catch (err) {
@@ -458,6 +460,80 @@ function buildHouseBlock(skyToday, rising) {
 }
 
 // ------------------------------------------------------------
+// TRANSIT-TO-NATAL ASPECTS
+// Sign-level placements (e.g. "Venus in Libra") stay identical for weeks,
+// which is why the digest can feel repetitive. Exact degrees move every
+// day, so aspects (angular relationships between today's sky and the
+// natal chart) give fresh, specific material daily even when signs don't
+// change. Only sun/moon/mercury/venus/mars/jupiter/saturn are used here —
+// these don't require birth_time/birth_city, so aspects work for every
+// user with a birth_date, not just those with a full natal chart.
+// ------------------------------------------------------------
+
+const NATAL_ASPECT_BODIES = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn'];
+
+function computeNatalLongitudes(birthDate, birthTime) {
+  try {
+    const dt   = new Date(`${birthDate}T${birthTime || '12:00'}:00Z`);
+    const time = Astronomy.MakeTime(dt);
+    const lons = {};
+    for (const body of NATAL_ASPECT_BODIES) {
+      try {
+        const vec = Astronomy.GeoVector(body, time, true);
+        lons[body.toLowerCase()] = ((Astronomy.Ecliptic(vec).elon % 360) + 360) % 360;
+      } catch (_) {
+        lons[body.toLowerCase()] = null;
+      }
+    }
+    return lons;
+  } catch (_) {
+    return null;
+  }
+}
+
+const ASPECT_DEFS = [
+  { name: 'conjunct',  label: 'conjunct',      angle: 0,   orb: 8 },
+  { name: 'sextile',   label: 'sextile to',    angle: 60,  orb: 4 },
+  { name: 'square',    label: 'square',        angle: 90,  orb: 6 },
+  { name: 'trine',     label: 'trine',         angle: 120, orb: 6 },
+  { name: 'opposite',  label: 'opposite',      angle: 180, orb: 8 },
+];
+
+function angleDiff(a, b) {
+  const d = Math.abs(a - b) % 360;
+  return d > 180 ? 360 - d : d;
+}
+
+function findAspects(transitLons, natalLons) {
+  if (!transitLons || !natalLons) return [];
+  const hits = [];
+  for (const [tBody, tLon] of Object.entries(transitLons)) {
+    if (tLon == null) continue;
+    for (const [nBody, nLon] of Object.entries(natalLons)) {
+      if (nLon == null) continue;
+      const diff = angleDiff(tLon, nLon);
+      for (const asp of ASPECT_DEFS) {
+        const orb = Math.abs(diff - asp.angle);
+        if (orb <= asp.orb) {
+          hits.push({ tBody, nBody, ...asp, orb });
+          break; // closest matching aspect type only
+        }
+      }
+    }
+  }
+  hits.sort((a, b) => a.orb - b.orb);
+  return hits.slice(0, 6);
+}
+
+function buildAspectBlock(hits) {
+  if (!hits.length) return null;
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  return hits
+    .map(h => `Transiting ${cap(h.tBody)} ${h.label} natal ${cap(h.nBody)} (orb ${h.orb.toFixed(1)}°)`)
+    .join('\n');
+}
+
+// ------------------------------------------------------------
 // CLAUDE — generate the morning digest
 // ------------------------------------------------------------
 
@@ -472,9 +548,13 @@ function sliderInstructions(depth = 50, tone = 50, length = 50) {
   return parts.length ? '\n\nReading style adjustments: ' + parts.join(' ') : '';
 }
 
-async function generateReading({ name, sun, moon, rising, birth_city, birth_time, today, style, skyToday, natalPlanets = {}, reading_depth = 50, reading_tone = 50, reading_length = 50 }) {
+async function generateReading({ name, sun, moon, rising, birth_city, birth_date, birth_time, today, style, skyToday, natalPlanets = {}, reading_depth = 50, reading_tone = 50, reading_length = 50 }) {
   const systemPrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.psychological;
   const { natalMercury, natalVenus, natalMars, natalJupiter, natalSaturn, natalMC, northNode, southNode } = natalPlanets;
+
+  const natalLons  = computeNatalLongitudes(birth_date, birth_time);
+  const aspectHits = findAspects(skyToday?.longitudes, natalLons);
+  const aspectBlock = buildAspectBlock(aspectHits);
 
   const lunaLine = skyToday?.newMoonSign
     ? `Lunar phase: ${skyToday.moonPhase || 'unknown'} — this lunation's new moon was exact in ${skyToday.newMoonSign}${skyToday.newMoonDate ? ' on ' + skyToday.newMoonDate : ''}`
@@ -517,26 +597,32 @@ ${rising && buildHouseBlock(skyToday, rising) ? `
 TODAY'S TRANSITS BY HOUSE (Whole Sign, ${rising} Rising):
 ${buildHouseBlock(skyToday, rising)}
 Use these house placements to ground the reading in ${name}'s specific life areas — weave them in naturally, don't list them mechanically.` : ''}
+${aspectBlock ? `
+ACTIVE ASPECTS TODAY (transits to ${name}'s natal chart):
+${aspectBlock}
+Signs alone (e.g. "Venus in Libra") can stay the same for weeks — these aspects are what's specifically different about today vs. other recent days. Anchor the reading in the tightest one or two, don't just restate the sign placements above.` : ''}
+
+Do not use stock astrology-newsletter phrases — "the universe is aligning", "trust the process", "everything happens for a reason", "the cosmos has a plan", etc. Every section below must be traceable to a specific fact stated above (the tightest aspect if one is listed, otherwise the current Moon transit or sign placements) — if you can't point to which fact drove a sentence, rewrite it.
 
 Write the following sections using EXACTLY these labels on their own lines. No extra text between labels.
 
 SUBJECT:
-A short, intriguing, personalized email subject line for ${name}. Never generic. Examples: "Something soft is arriving today, ${name}" / "${name}, Venus has a message for you" / "Today your chart says: slow down." Make it feel like it was written just for them. Max 10 words.
+A short, intriguing, personalized email subject line for ${name}. Never generic. Reference the specific driving fact (name the planet/aspect). Examples: "Something soft is arriving today, ${name}" / "${name}, Venus has a message for you" / "Today your chart says: slow down." Make it feel like it was written just for them. Max 10 words.
 
 PARAGRAPH:
-3–4 sentences written directly to ${name} in second person. Warm, poetic, psychologically intelligent. Reference their actual ${sun} Sun and ${moon} Moon and today's planetary energy. Specific to their chart — not generic. Tone of a wise friend, not a textbook. No em dashes used as list separators.
+3–4 sentences written directly to ${name} in second person. Warm, poetic, psychologically intelligent. Name the specific transiting planet(s) and aspect (or Moon transit, if no aspect is listed above) driving today, and connect it explicitly to their natal ${sun} Sun or ${moon} Moon. Specific to their chart and to today — not a generic sun-sign horoscope. Tone of a wise friend, not a textbook. No em dashes used as list separators.
 
 QUOTE:
-One original 1–2 line quote tied directly to today's planetary theme for ${name}. Something they would screenshot and share to Instagram stories. Feels true and timely. Do NOT use a famous quote — write an original one.
+One original 1–2 line quote tied directly to the specific aspect or transit named in the paragraph above — not a generic planetary theme. Something they would screenshot and share to Instagram stories. Feels true and timely. Do NOT use a famous quote — write an original one.
 
 WATCH:
-One specific thing for ${name} to be aware of today. One line only.
+One specific thing for ${name} to be aware of today, tied to the same driving fact. One line only.
 
 LEAN:
 2–4 words or a very short phrase — the energy ${name} should embrace today.
 
 POWER:
-One concrete, actionable suggestion for ${name} today. One line only. Specific, not generic.`;
+One concrete, actionable suggestion for ${name} today, tied to the same driving fact. One line only. Specific, not generic.`;
 
   const finalPrompt = prompt + sliderInstructions(reading_depth, reading_tone, reading_length);
 

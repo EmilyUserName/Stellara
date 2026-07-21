@@ -90,6 +90,16 @@ function bodySign(bodyName, time) {
   }
 }
 
+// Raw degree (0-360), used for transit-to-natal aspect math — signs alone
+// stay identical for weeks/months, but exact degrees shift every day.
+function safeLon(bodyName, time) {
+  try {
+    return bodyLongitude(bodyName, time);
+  } catch (e) {
+    return null;
+  }
+}
+
 exports.handler = async function () {
   try {
     const now  = new Date();
@@ -144,6 +154,18 @@ exports.handler = async function () {
       uranus:    bodySign('Uranus',  time),
       neptune:   bodySign('Neptune', time),
       pluto:     bodySign('Pluto',   time),
+      longitudes: {
+        sun:     sunLon,
+        moon:    moonLon,
+        mercury: safeLon('Mercury', time),
+        venus:   safeLon('Venus',   time),
+        mars:    safeLon('Mars',    time),
+        jupiter: safeLon('Jupiter', time),
+        saturn:  safeLon('Saturn',  time),
+        uranus:  safeLon('Uranus',  time),
+        neptune: safeLon('Neptune', time),
+        pluto:   safeLon('Pluto',   time),
+      },
     };
 
     console.log('[get-sky]', sky);
@@ -165,6 +187,7 @@ exports.handler = async function () {
         sun:       SIGNS[Math.floor(sunLon  / 30)],
         moon:      SIGNS[Math.floor(moonLon / 30)],
         moonPhase: moonPhase(angle),
+        longitudes: { sun: sunLon, moon: moonLon },
       };
       console.log('[get-sky] Meeus fallback:', fallback);
       return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fallback) };
