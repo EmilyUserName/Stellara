@@ -6,6 +6,7 @@
 
 [functions."daily-email"]
   timeout = 120
+  schedule = "0 10 * * *"
 
 [functions."weekly-spread-scheduler"]
   timeout = 120
@@ -19,7 +20,6 @@
 
 [functions."operator-cards-scheduler"]
   timeout = 30
-  schedule = "0 9 * * *"
 
 # Background function — renders 12 PNG cards + sends operator email
 # Uses puppeteer-core + @sparticuz/chromium; excluded from esbuild bundling
